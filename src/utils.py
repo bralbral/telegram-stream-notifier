@@ -33,8 +33,8 @@ def check_live_streams(
                 )
                 # get all stream entries
                 entries = streams_info.get("entries", None)
-                if isinstance(entries, list):
-                    for entry in streams_info["entries"]:
+                if entries:
+                    for entry in entries:
                         # get info for using entry url
                         if entry["live_status"] == "is_live":
                             concurrent_view_count = entry["concurrent_view_count"]
