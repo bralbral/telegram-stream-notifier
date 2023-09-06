@@ -32,18 +32,22 @@ def check_live_streams(
                     force_generic_extractor=False,
                 )
                 # get all stream entries
-                for entry in streams_info["entries"]:
-                    # get info for using entry url
-                    if entry["live_status"] == "is_live":
-                        concurrent_view_count = entry["concurrent_view_count"]
-                        channel_d.concurrent_view_count = (
-                            concurrent_view_count
-                            if concurrent_view_count is not None
-                            else 0
-                        )
-                        channel_d.url = entry["url"]
-                        result.append(channel_d)
-                        break
+                entries = streams_info.get("entries", None)
+                if isinstance(entries, list):
+                    for entry in streams_info["entries"]:
+                        # get info for using entry url
+                        if entry["live_status"] == "is_live":
+                            concurrent_view_count = entry["concurrent_view_count"]
+                            channel_d.concurrent_view_count = (
+                                concurrent_view_count
+                                if concurrent_view_count is not None
+                                else 0
+                            )
+                            channel_d.url = entry["url"]
+                            result.append(channel_d)
+                            break
+                else:
+                    logger.error(f"Entries from {channel_d.url}/streams is empty")
 
             except yt_dlp.utils.DownloadError as ex:
                 logger.error(f"{channel_d.url} {ex}")
