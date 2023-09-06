@@ -6,6 +6,7 @@ from datetime import timedelta
 from aiogram import Bot
 from aiogram import Dispatcher
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.interval import IntervalTrigger
 from pydantic import TypeAdapter
 
 from src.bot import setup_bot
@@ -45,8 +46,7 @@ async def main(conf: Config) -> None:
     scheduler = AsyncIOScheduler(timezone=conf.timezone)
     scheduler.add_job(
         send_report,
-        trigger="date",
-        run_date=datetime.now() + timedelta(seconds=conf.interval_s),
+        trigger=IntervalTrigger(seconds=conf.interval_s),
         kwargs=notify_kwargs,
     )
 
