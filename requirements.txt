@@ -1,0 +1,8 @@
+aiogram==3.0.0
+APScheduler==3.10.4
+yt-dlp==2023.7.6
+sulguk==0.4.1
+pyyaml==6.0.1
+pydantic==2.3.0
+structlog==23.1.0
+orjson==3.9.5

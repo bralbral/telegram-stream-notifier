@@ -1,0 +1,14 @@
+version: '2.2'
+
+services:
+  yt-notifier:
+    image: bral1488/youtube_notifier:latest
+    container_name: yt-notifier
+    restart: always
+    volumes:
+      - ./config.yaml:/app/config.yaml
+      - ./messages.dump:/app/messages.dump
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    command: bash -c "python -m src"
+

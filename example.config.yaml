@@ -1,0 +1,13 @@
+bot:
+  token: 123456789:ABCDEFGHIJKLMOPRSTQYWZ
+  chat_id: 123456789
+
+
+channels:
+  - label: Your label 🎈
+    url: https://www.youtube.com/@user
+
+interval_s: 60
+timezone: Europe/Moscow
+fire_when_starts: True
+
