@@ -1,4 +1,5 @@
 import operator
+from datetime import datetime
 from typing import Any
 from typing import Optional
 
@@ -12,6 +13,13 @@ from src.decorators import wrap_sync_to_async
 from src.logger import logger
 
 
+def make_readable(seconds):
+    h = seconds // 3600
+    m = (seconds - h * 3600) // 60
+    s = seconds - (h * 3600) - (m * 60)
+    return f"{h:0>2d}:{m:0>2d}:{s:0>2d}"
+
+
 def check_live_streams(
     channel_descriptions: list[ChannelDescription],
 ) -> list[ChannelDescription]:
@@ -21,7 +29,7 @@ def check_live_streams(
     """
     result: list[ChannelDescription] = []
 
-    ydl_opts: dict[str, Any] = {}
+    ydl_opts: dict[str, Any] = {"quiet": False}
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         for channel_d in channel_descriptions:
             try:
@@ -38,13 +46,32 @@ def check_live_streams(
                     for entry in entries:
                         # get info for using entry url
                         if entry["live_status"] == "is_live":
-                            concurrent_view_count = entry["concurrent_view_count"]
+                            live_info = ydl.extract_info(
+                                url=entry["url"],
+                                download=False,
+                                process=False,
+                                force_generic_extractor=False,
+                            )
+
+                            concurrent_view_count = live_info.get(
+                                "concurrent_view_count", 0
+                            )
+                            like_count = live_info.get("like_count", 0)
+                            release_timestamp = live_info["release_timestamp"]
+                            duration = make_readable(
+                                int(datetime.now().timestamp() - release_timestamp)
+                            )
+                            url = live_info["original_url"]
+
                             channel_d.concurrent_view_count = (
                                 concurrent_view_count
                                 if concurrent_view_count is not None
                                 else 0
                             )
-                            channel_d.url = entry["url"]
+                            channel_d.url = url
+                            channel_d.like_count = like_count
+                            channel_d.duration = duration
+
                             result.append(channel_d)
                             break
                 else:
@@ -89,7 +116,23 @@ async def send_report(
     if live_list:
         msg_body += "<ol type='1'>"
         for cd in live_list:
-            msg_body += f"<li><b><a href='{cd.url}'>{cd.label}</a> <br/>👀Cмотрят: {cd.concurrent_view_count}</b></li><br/>"
+            entry_body = ""
+
+            entry_body += f"<b><a href='{cd.url}'>{cd.label}</a></b> <br/>"
+            if cd.concurrent_view_count:
+                entry_body += f"<b>👀 Cмотрят: {cd.concurrent_view_count}</b> <br/>"
+
+            if cd.like_count:
+                entry_body += f"<b>👍 Понравилось: {cd.like_count}</b> <br/>"
+
+            if cd.duration:
+                entry_body += f"<b>🕑 Длительность: {cd.duration}</b> <br/>"
+
+            entry_body = "<li>" + entry_body + "</li>"
+            entry_body += "<br/>"
+
+            msg_body += entry_body
+
         msg_body += "</ol>"
 
     if msg_body:

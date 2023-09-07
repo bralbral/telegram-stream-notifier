@@ -22,7 +22,6 @@ class Config(BaseModel):
     channels: list[Channel]
     interval_s: int
     timezone: str
-    fire_when_starts: bool = True
 
 
 __all__ = ["BotConfig", "Config"]

@@ -1,7 +1,5 @@
 import asyncio
 import os.path
-from datetime import datetime
-from datetime import timedelta
 
 from aiogram import Bot
 from aiogram import Dispatcher
@@ -43,16 +41,16 @@ async def main(conf: Config) -> None:
 
     await logger.ainfo("Setup Scheduler")
 
+    # await send_report(**notify_kwargs)
+
     scheduler = AsyncIOScheduler(timezone=conf.timezone)
     scheduler.add_job(
         send_report,
         trigger=IntervalTrigger(seconds=conf.interval_s),
         kwargs=notify_kwargs,
+        replace_existing=True,
+        max_instances=1,
     )
-
-    if conf.fire_when_starts:
-        await logger.ainfo("Fire when starts")
-        await send_report(**notify_kwargs)
 
     try:
         scheduler.start()
