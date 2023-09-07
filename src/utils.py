@@ -1,3 +1,4 @@
+import operator
 from typing import Any
 from typing import Optional
 
@@ -52,6 +53,9 @@ def check_live_streams(
             except yt_dlp.utils.DownloadError as ex:
                 logger.error(f"{channel_d.url} {ex}")
 
+    result = sorted(
+        result, key=operator.attrgetter("concurrent_view_count"), reverse=True
+    )
     return result
 
 
@@ -72,24 +76,21 @@ async def send_report(
     )
 
     msg_header = f"""
-    <b>✅ СЕЙЧАС В ЭФИРЕ:<b>
-    <br/>
+    <h1>✅ СЕЙЧАС В ЭФИРЕ:</h1>
     <br/>
     """
     msg_footer = f"""
-    <br/>
-    <br/>
-    <b>------------------------</b>
+    <hr/>
+    <i>Powered by <a href='https://t.me/diskordovoselo'>DiskordovoSelo</a></i>
     """
 
     msg_body = ""
 
     if live_list:
-        msg_body += "<ul>"
+        msg_body += "<ol type='1'>"
         for cd in live_list:
-            msg_body += f"<li><a href='{cd.url}'>{cd.label}</a> <b>Cмотрят: {cd.concurrent_view_count}</b></li>"
-
-        msg_body += "</ul>"
+            msg_body += f"<li><b><a href='{cd.url}'>{cd.label}</a> <br/>👀Cмотрят: {cd.concurrent_view_count}</b></li><br/>"
+        msg_body += "</ol>"
 
     if msg_body:
         message_text = msg_header + msg_body + msg_footer
