@@ -29,9 +29,10 @@ def check_live_streams(
     """
     result: list[ChannelDescription] = []
 
-    ydl_opts: dict[str, Any] = {"quiet": False}
+    ydl_opts: dict[str, Any] = {"quiet": True}
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         for channel_d in channel_descriptions:
+            logger.info(f"{channel_d.label} {channel_d.url} started")
             try:
                 # Get basic streams info from YT
                 streams_info = ydl.extract_info(
@@ -40,12 +41,14 @@ def check_live_streams(
                     process=False,
                     force_generic_extractor=False,
                 )
+                logger.info(f"{channel_d.label} {channel_d.url} stream_info")
                 # get all stream entries
                 entries = streams_info.get("entries", None)
                 if entries:
                     for entry in entries:
                         # get info for using entry url
                         if entry["live_status"] == "is_live":
+                            logger.info(f"{channel_d.label} {channel_d.url} live")
                             live_info = ydl.extract_info(
                                 url=entry["url"],
                                 download=False,
@@ -73,13 +76,15 @@ def check_live_streams(
                             channel_d.duration = duration
 
                             result.append(channel_d)
+                            logger.info(f"{channel_d.label} {channel_d.url} finished")
                             break
                 else:
                     logger.error(f"Entries from {channel_d.url}/streams is empty")
 
-            except yt_dlp.utils.DownloadError as ex:
+            except Exception as ex:
                 logger.error(f"{channel_d.url} {ex}")
 
+    logger.info(f"Sort results")
     result = sorted(
         result, key=operator.attrgetter("concurrent_view_count"), reverse=True
     )
