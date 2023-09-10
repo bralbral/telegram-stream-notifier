@@ -4,8 +4,10 @@ from typing import Any
 from typing import Optional
 
 import aiofiles
+import aiogram
 import yt_dlp
 from aiogram import Bot
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.exceptions import TelegramNetworkError
 from sulguk import SULGUK_PARSE_MODE
 
@@ -21,6 +23,15 @@ def make_readable(seconds):
     return f"{h:0>2d}:{m:0>2d}:{s:0>2d}"
 
 
+# https://github.com/yt-dlp/yt-dlp#filter-videos
+def is_alive(info, *, incomplete):
+    """Download only videos longer than a minute (or with unknown duration)"""
+    is_live = info.get("is_live")
+    was_live = info.get("was_live")
+    if not is_live and was_live:
+        return "stream is offline"
+
+
 def check_live_streams(
     channel_descriptions: list[ChannelDescription],
 ) -> list[ChannelDescription]:
@@ -30,10 +41,18 @@ def check_live_streams(
     """
     result: list[ChannelDescription] = []
 
-    ydl_opts: dict[str, Any] = {"quiet": True}
+    # opts работают только на скачку???
+    ydl_opts: dict[str, Any] = {
+        "quiet": True,
+        "match_filter": is_alive,
+        "load-pages": False,
+        "extract_flat": True,
+        "skip_download": True,
+        "geo_bypass": True,
+        "geo_bypass_country": "US",
+    }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         for channel_d in channel_descriptions:
-            logger.info(f"Started {channel_d.label} {channel_d.url}")
             try:
                 # Get basic streams info from YT
                 streams_info = ydl.extract_info(
@@ -42,16 +61,12 @@ def check_live_streams(
                     process=False,
                     force_generic_extractor=False,
                 )
-                logger.info(f"stream_info {channel_d.label} {channel_d.url}")
                 # get all stream entries
                 entries = streams_info.get("entries", None)
-
-                if entries:
-                    for i, entry in enumerate(entries):
-                        logger.info(i)
-                        try:
-                            # get info for using entry url
-                            if entry["live_status"] == "is_live":
+                if entries is not None:
+                    for entry in entries:
+                        if entry["live_status"] == "is_live":
+                            try:
                                 logger.info(f"Live {channel_d.label} {channel_d.url}")
                                 live_info = ydl.extract_info(
                                     url=entry["url"],
@@ -78,21 +93,15 @@ def check_live_streams(
                                 channel_d.url = url
                                 channel_d.like_count = like_count
                                 channel_d.duration = duration
-
                                 result.append(channel_d)
-                                logger.info(
-                                    f"Finished {channel_d.label} {channel_d.url}"
-                                )
+
                                 break
-                        except Exception as ex:
-                            logger.error(f"{channel_d.url} {ex}")
-                else:
-                    logger.error(f"Entries from {channel_d.url}/streams is empty")
+                            except Exception as ex:
+                                logger.error(f"{channel_d.url} {ex}")
 
             except Exception as ex:
                 logger.error(f"{channel_d.url} {ex}")
 
-    logger.info(f"Sort results")
     result = sorted(
         result, key=operator.attrgetter("concurrent_view_count"), reverse=True
     )
@@ -100,6 +109,29 @@ def check_live_streams(
 
 
 async_check_live_streams = wrap_sync_to_async(check_live_streams)
+
+
+async def check_if_need_send_instead_of_edit(
+    bot: Bot,
+    message_id: Optional[int],
+    delta: int = 3,
+) -> bool:
+    if not message_id:
+        return True
+
+    try:
+        for i in range(1, delta + 1, 1):
+            await bot.copy_message(
+                chat_id=773542466,
+                from_chat_id=1017113539,
+                message_id=message_id + i,
+            )
+
+        return True
+    except aiogram.exceptions.TelegramBadRequest as ex:
+        await logger.ainfo(f"{ex}")
+
+    return False
 
 
 async def send_report(
@@ -111,6 +143,11 @@ async def send_report(
     :param chat_id:
     :return:
     """
+
+    # live_list: list[ChannelDescription] = check_live_streams(
+    #     channel_descriptions=channel_descriptions
+    # )
+
     live_list: list[ChannelDescription] = await async_check_live_streams(
         channel_descriptions=channel_descriptions
     )
@@ -157,40 +194,63 @@ async def send_report(
 
         message_id = await pull_message_id()
 
-        # m = await bot.copy_message(
-        #     chat_id=773542466, from_chat_id=1017113539, message_id=message_id + 1
-        # )
-
         try:
-            msg = await bot.edit_message_text(
-                chat_id=chat_id,
-                text=message_text,
-                message_id=message_id,
-                parse_mode=SULGUK_PARSE_MODE,
-                disable_web_page_preview=True,
+            is_needed_send = await check_if_need_send_instead_of_edit(
+                message_id=message_id, delta=3, bot=bot
             )
 
-            message_id = msg.message_id
+            if not is_needed_send:
+                msg = await bot.edit_message_text(
+                    chat_id=chat_id,
+                    text=message_text,
+                    message_id=message_id,
+                    parse_mode=SULGUK_PARSE_MODE,
+                    disable_web_page_preview=True,
+                )
+                message_id = msg.message_id
+                await logger.ainfo(f"Msg: { message_id} edited")
+            else:
+                try:
+                    await bot.delete_message(chat_id=chat_id, message_id=message_id)
+                except TelegramBadRequest as ex:
+                    await logger.aerror(f"Msg: {message_id} cannot be deleted {ex}")
 
-            await logger.ainfo(f"Msg: { message_id} edited")
+                msg = await bot.send_message(
+                    text=message_text,
+                    chat_id=chat_id,
+                    parse_mode=SULGUK_PARSE_MODE,
+                    disable_web_page_preview=True,
+                )
+
+                message_id = msg.message_id
+
+                await logger.ainfo(f"Msg: {message_id} sent")
 
         except TelegramNetworkError as ex:
             await logger.aerror(f"Exc: TelegramNetworkError finish cycle: {ex}")
             return
 
-        except Exception as ex:
-            await logger.aerror(f"Editing: {ex}")
+        except TelegramBadRequest as ex:
+            if (
+                str(ex).find(
+                    "specified new message content and reply markup are exactly the same as a current content and reply markup of the message"
+                )
+                > -1
+            ):
+                await logger.aerror(f"Same message: {ex}")
+            else:
+                await logger.aerror(f"Editing: {ex}")
 
-            msg = await bot.send_message(
-                text=message_text,
-                chat_id=chat_id,
-                parse_mode=SULGUK_PARSE_MODE,
-                disable_web_page_preview=True,
-            )
+                msg = await bot.send_message(
+                    text=message_text,
+                    chat_id=chat_id,
+                    parse_mode=SULGUK_PARSE_MODE,
+                    disable_web_page_preview=True,
+                )
 
-            message_id = msg.message_id
+                message_id = msg.message_id
 
-            await logger.ainfo(f"Msg: { message_id} sent")
+                await logger.ainfo(f"Msg: { message_id} sent")
 
         if message_id:
             await push_message_id(message_id=message_id)

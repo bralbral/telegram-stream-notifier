@@ -1,6 +1,5 @@
 from aiogram import Bot
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.triggers.interval import IntervalTrigger
 from pydantic import TypeAdapter
 
 from src.config import Config
@@ -9,7 +8,7 @@ from src.youtube_notify import ChannelDescription
 from src.youtube_notify import send_report
 
 
-def setup_scheduler(conf: Config, bot: Bot) -> AsyncIOScheduler:
+async def setup_scheduler(conf: Config, bot: Bot) -> AsyncIOScheduler:
     logger.info("Setup Scheduler")
     # setup kwargs for notify
     channel_descriptions_adapter = TypeAdapter(list[ChannelDescription])
@@ -24,14 +23,17 @@ def setup_scheduler(conf: Config, bot: Bot) -> AsyncIOScheduler:
     }
 
     scheduler = AsyncIOScheduler(timezone=conf.timezone)
-    scheduler.add_job(
-        send_report,
-        trigger=IntervalTrigger(seconds=conf.interval_s),
-        kwargs=notify_kwargs,
-        replace_existing=True,
-        max_instances=1,
-        coalesce=True,
-    )
+    # scheduler.add_job(
+    #     send_report,
+    #     trigger=IntervalTrigger(seconds=conf.interval_s),
+    #     kwargs=notify_kwargs,
+    #     replace_existing=True,
+    #     max_instances=1,
+    #     coalesce=True,
+    # )
+
+    await send_report(**notify_kwargs)
+
     return scheduler
 
 

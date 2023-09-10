@@ -17,11 +17,11 @@ from src.scheduler import setup_scheduler
 async def main(conf: Config) -> None:
     bot: Bot = setup_bot(token=conf.bot.token.get_secret_value())
     dp: Dispatcher = setup_dispatcher()
-    scheduler = setup_scheduler(conf=conf, bot=bot)
+    scheduler = await setup_scheduler(conf=conf, bot=bot)
 
     try:
         scheduler.start()
-        await dp.start_polling(bot)
+        # await dp.start_polling(bot)
         await logger.aerror("Graceful start")
     finally:
         await dp.storage.close()
