@@ -4,8 +4,12 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message
 from aiogram.utils.markdown import hbold
 
+from src.logger import logger
+
 
 def setup_dispatcher():
+    logger.info("Setup Dispatcher")
+
     dp = Dispatcher()
 
     @dp.message(CommandStart())

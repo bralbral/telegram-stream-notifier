@@ -3,62 +3,25 @@ import os.path
 
 from aiogram import Bot
 from aiogram import Dispatcher
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.triggers.interval import IntervalTrigger
-from pydantic import TypeAdapter
 
 from src.bot import setup_bot
 from src.bot import setup_dispatcher
-from src.channel_description import ChannelDescription
 from src.config import Config
 from src.config import load_config
 from src.constants import PROJECT_ROOT_DIR
 from src.constants import VERSION
 from src.logger import logger
-from src.utils import send_report
+from src.scheduler import setup_scheduler
 
 
 async def main(conf: Config) -> None:
-    await logger.ainfo("Setup Bot")
-
     bot: Bot = setup_bot(token=conf.bot.token.get_secret_value())
-
-    await logger.ainfo("Setup Dispatcher")
-
     dp: Dispatcher = setup_dispatcher()
-
-    # setup kwargs for notify
-    channel_descriptions_adapter = TypeAdapter(list[ChannelDescription])
-    channel_descriptions = channel_descriptions_adapter.validate_python(
-        [channel.model_dump() for channel in conf.channels]
-    )
-
-    notify_kwargs = {
-        "bot": bot,
-        "channel_descriptions": channel_descriptions,
-        "chat_id": conf.bot.chat_id.get_secret_value(),
-    }
-
-    await logger.ainfo("Setup Scheduler")
-
-    # await send_report(**notify_kwargs)
-
-    scheduler = AsyncIOScheduler(timezone=conf.timezone)
-    scheduler.add_job(
-        send_report,
-        trigger=IntervalTrigger(seconds=conf.interval_s),
-        kwargs=notify_kwargs,
-        replace_existing=True,
-        max_instances=1,
-    )
+    scheduler = setup_scheduler(conf=conf, bot=bot)
 
     try:
         scheduler.start()
-
-        await logger.aerror("Scheduler starts")
-
         await dp.start_polling(bot)
-
         await logger.aerror("Graceful start")
     finally:
         await dp.storage.close()
