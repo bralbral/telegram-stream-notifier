@@ -117,22 +117,34 @@ async def check_if_need_send_instead_of_edit(
     from_chat_id: int,
     delta: int = 3,
 ) -> bool:
+
     if not message_id:
         return True
 
-    try:
-        for i in range(1, delta + 1, 1):
-            await bot.copy_message(
-                chat_id=773542466,
-                from_chat_id=from_chat_id,
-                message_id=message_id + i,
-            )
 
+    deep: int  = 20
+
+    result = []
+
+    for i in range(1, deep, 1):
+        try:
+                message_id_to_check = message_id+i
+                await bot.copy_message(
+                    chat_id=773542466,
+                    from_chat_id=from_chat_id,
+                    message_id=message_id_to_check,
+                    disable_notification=True,
+                    allow_sending_without_reply=True
+                )
+                result.append(1)
+        except aiogram.exceptions.TelegramBadRequest as ex:
+            await logger.ainfo(f"{ex}")
+            result.append(0)
+
+    if sum(result) >= delta:
         return True
-    except aiogram.exceptions.TelegramBadRequest as ex:
-        await logger.ainfo(f"{ex}")
-
-    return False
+    else:
+        return False
 
 
 async def send_report(
