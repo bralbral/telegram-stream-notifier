@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from typing import Any
 
@@ -7,6 +8,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 
 from src.config import Config
+from src.constants import PROJECT_ROOT_DIR
 from src.scheduler.jobs.youtube import send_report
 
 
@@ -20,7 +22,7 @@ async def setup_scheduler(conf: Config, bot: Bot) -> AsyncIOScheduler:
     scheduler = AsyncIOScheduler()
 
     ydl_opts: dict[str, Any] = {
-        "cookiefile": "/home/bral/PycharmProjects/youtube-tg-notifier/cookies.txt",
+        "cookiefile": os.path.join(PROJECT_ROOT_DIR, "cookies.txt"),
         "quiet": True,
         "load-pages": False,
         "extract_flat": True,

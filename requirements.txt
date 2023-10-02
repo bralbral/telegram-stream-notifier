@@ -3,7 +3,6 @@ APScheduler==3.10.4
 yt-dlp==2023.9.24
 sulguk==0.6.0
 pyyaml==6.0.1
-pydantic==2.4.2
 pydantic_settings==2.0.3
 structlog==23.1.0
 orjson==3.9.7
