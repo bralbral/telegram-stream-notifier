@@ -155,3 +155,5 @@ key
 deploy/data/*
 .env
 docker-compose.yml
+cookies.txt
+messages.dump

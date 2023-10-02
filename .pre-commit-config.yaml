@@ -6,7 +6,6 @@ repos:
         exclude: deprecated|deploy|venv
         args: [--python-version=3.11, --ignore-missing-imports,  --install-types, --non-interactive,]
 
-
   - repo: local
     hooks:
       # For reformatting code

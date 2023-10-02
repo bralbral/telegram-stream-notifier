@@ -1,10 +1,11 @@
 import operator
+import time
 from datetime import datetime
-from typing import Any
 from typing import Optional
 
 import aiofiles
 import aiogram
+import structlog
 import yt_dlp
 from aiogram import Bot
 from aiogram.exceptions import TelegramBadRequest
@@ -12,8 +13,10 @@ from aiogram.exceptions import TelegramNetworkError
 from sulguk import SULGUK_PARSE_MODE
 
 from .schemas import ChannelDescription
+from src.config import Channel
 from src.decorators import wrap_sync_to_async
-from src.logger import logger
+
+logger = structlog.stdlib.get_logger()
 
 
 def make_readable(seconds):
@@ -23,84 +26,67 @@ def make_readable(seconds):
     return f"{h:0>2d}:{m:0>2d}:{s:0>2d}"
 
 
-# https://github.com/yt-dlp/yt-dlp#filter-videos
-def is_alive(info, *, incomplete):
-    """Download only videos longer than a minute (or with unknown duration)"""
-    is_live = info.get("is_live")
-    was_live = info.get("was_live")
-    if not is_live and was_live:
-        return "stream is offline"
-
-
 def check_live_streams(
-    channel_descriptions: list[ChannelDescription],
+    channels: list[Channel], ydl: yt_dlp.YoutubeDL
 ) -> list[ChannelDescription]:
     """
-    :param channel_descriptions:
+    :param channels:
     :return:
     """
     result: list[ChannelDescription] = []
 
-    # opts работают только на скачку???
-    ydl_opts: dict[str, Any] = {
-        "quiet": True,
-        "match_filter": is_alive,
-        "load-pages": False,
-        "extract_flat": True,
-        "skip_download": True,
-        "geo_bypass": True,
-        "geo_bypass_country": "US",
-    }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        for channel_d in channel_descriptions:
-            try:
-                # Get basic streams info from YT
-                streams_info = ydl.extract_info(
-                    url=f"{channel_d.url}/streams",
-                    download=False,
-                    process=False,
-                    force_generic_extractor=False,
-                )
-                # get all stream entries
-                entries = streams_info.get("entries", None)
-                if entries is not None:
-                    for entry in entries:
-                        if entry["live_status"] == "is_live":
-                            try:
-                                logger.info(f"Live {channel_d.label} {channel_d.url}")
-                                live_info = ydl.extract_info(
-                                    url=entry["url"],
-                                    download=False,
-                                    process=False,
-                                    force_generic_extractor=False,
-                                )
+    for channel in channels:
+        logger.info(channel)
+        time.sleep(1)
+        try:
+            # Get basic streams info from YT
+            streams_info = ydl.extract_info(
+                url=f"{channel.url}/streams",
+                download=False,
+                process=False,
+                force_generic_extractor=False,
+            )
+            # get all stream entries
+            entries = streams_info.get("entries", None)
+            if entries is not None:
+                for entry in entries:
+                    if entry["live_status"] == "is_live":
+                        try:
+                            logger.info(f"Live {channel.label} {channel.url}")
 
-                                concurrent_view_count = live_info.get(
-                                    "concurrent_view_count", 0
-                                )
-                                like_count = live_info.get("like_count", 0)
-                                release_timestamp = live_info["release_timestamp"]
-                                duration = make_readable(
-                                    int(datetime.now().timestamp() - release_timestamp)
-                                )
-                                url = live_info["original_url"]
+                            live_info = ydl.extract_info(
+                                url=entry["url"],
+                                download=False,
+                                process=False,
+                                force_generic_extractor=False,
+                            )
 
-                                channel_d.concurrent_view_count = (
-                                    concurrent_view_count
-                                    if concurrent_view_count is not None
-                                    else 0
+                            concurrent_view_count = live_info.get(
+                                "concurrent_view_count", 0
+                            )
+                            like_count = live_info.get("like_count", 0)
+                            release_timestamp = live_info["release_timestamp"]
+                            duration = make_readable(
+                                int(datetime.now().timestamp() - release_timestamp)
+                            )
+                            url = live_info["original_url"]
+
+                            result.append(
+                                ChannelDescription(
+                                    url=url,
+                                    label=channel.label,
+                                    like_count=like_count,
+                                    concurrent_view_count=concurrent_view_count,
+                                    duration=duration,
                                 )
-                                channel_d.url = url
-                                channel_d.like_count = like_count
-                                channel_d.duration = duration
-                                result.append(channel_d)
+                            )
 
-                                break
-                            except Exception as ex:
-                                logger.error(f"{channel_d.url} {ex}")
+                            break
+                        except Exception as ex:
+                            logger.error(f"inner {channel.url} {ex}")
 
-            except Exception as ex:
-                logger.error(f"{channel_d.url} {ex}")
+        except Exception as ex:
+            logger.error(f"outer {channel.url} {ex}")
 
     result = sorted(
         result, key=operator.attrgetter("concurrent_view_count"), reverse=True
@@ -117,26 +103,24 @@ async def check_if_need_send_instead_of_edit(
     from_chat_id: int,
     delta: int = 3,
 ) -> bool:
-
     if not message_id:
         return True
 
-
-    deep: int  = 20
+    deep: int = 20
 
     result = []
 
     for i in range(1, deep, 1):
         try:
-                message_id_to_check = message_id+i
-                await bot.copy_message(
-                    chat_id=773542466,
-                    from_chat_id=from_chat_id,
-                    message_id=message_id_to_check,
-                    disable_notification=True,
-                    allow_sending_without_reply=True
-                )
-                result.append(1)
+            message_id_to_check = message_id + i
+            await bot.copy_message(
+                chat_id=773542466,
+                from_chat_id=from_chat_id,
+                message_id=message_id_to_check,
+                disable_notification=True,
+                allow_sending_without_reply=True,
+            )
+            result.append(1)
         except aiogram.exceptions.TelegramBadRequest as ex:
             await logger.ainfo(f"{ex}")
             result.append(0)
@@ -148,21 +132,21 @@ async def check_if_need_send_instead_of_edit(
 
 
 async def send_report(
-    bot: Bot, channel_descriptions: list[ChannelDescription], chat_id: str
+    bot: Bot,
+    channels: list[Channel],
+    chat_id: str,
+    ydl: yt_dlp.YoutubeDL,
 ):
     """
+    :param ydl:
     :param bot:
-    :param channel_descriptions:
+    :param channels:
     :param chat_id:
     :return:
     """
 
-    # live_list: list[ChannelDescription] = check_live_streams(
-    #     channel_descriptions=channel_descriptions
-    # )
-
     live_list: list[ChannelDescription] = await async_check_live_streams(
-        channel_descriptions=channel_descriptions
+        channels=channels, ydl=ydl
     )
 
     await logger.ainfo(f"Live list length {len(live_list)}")
@@ -221,7 +205,7 @@ async def send_report(
                         disable_web_page_preview=True,
                     )
                     message_id = msg.message_id
-                    await logger.ainfo(f"Msg: { message_id} edited")
+                    await logger.ainfo(f"Msg: {message_id} edited")
                 else:
                     try:
                         await bot.delete_message(chat_id=chat_id, message_id=message_id)
@@ -263,8 +247,7 @@ async def send_report(
 
                     message_id = msg.message_id
 
-                    await logger.ainfo(f"Msg: { message_id} sent")
-
+                    await logger.ainfo(f"Msg: {message_id} sent")
 
         else:
             await logger.ainfo(f"Message_id is None, sending")

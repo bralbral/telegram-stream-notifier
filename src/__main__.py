@@ -1,37 +1,47 @@
 import asyncio
-import os.path
+import os
 
+import structlog
+import uvloop
 from aiogram import Bot
 from aiogram import Dispatcher
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from src.bot import setup_bot
 from src.bot import setup_dispatcher
 from src.config import Config
 from src.config import load_config
 from src.constants import PROJECT_ROOT_DIR
-from src.constants import VERSION
-from src.logger import logger
 from src.scheduler import setup_scheduler
 
+logger = structlog.stdlib.get_logger()
 
-async def main(conf: Config) -> None:
-    bot: Bot = setup_bot(token=conf.bot.token.get_secret_value())
-    dp: Dispatcher = setup_dispatcher()
-    scheduler = await setup_scheduler(conf=conf, bot=bot)
 
-    try:
-        scheduler.start()
-        # await dp.start_polling(bot)
-        await logger.aerror("Graceful start")
-    finally:
-        await dp.storage.close()
-        await bot.session.close()
-        await logger.aerror("Graceful shutdown")
+uvloop.install()
+
+
+async def main() -> None:
+    config: Config = load_config(
+        config_path=os.path.join(PROJECT_ROOT_DIR, "config.yaml")
+    )
+
+    dp: Dispatcher = setup_dispatcher(
+        logger=logger,
+        chat_id=config.chat_id,
+    )
+
+    bot: Bot = await setup_bot(config=config.bot)
+
+    scheduler: AsyncIOScheduler = await setup_scheduler(bot=bot, conf=config)
+    await logger.ainfo("Starting scheduler")
+    scheduler.start()
+
+    await logger.ainfo("Starting bot")
+    await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
 
 
 if __name__ == "__main__":
-    logger.info(f"{VERSION}, Load config")
-
-    config: Config = load_config(filepath=os.path.join(PROJECT_ROOT_DIR, "config.yaml"))
-
-    asyncio.run(main(conf=config))
+    try:
+        asyncio.run(main())
+    except (KeyboardInterrupt, SystemExit):
+        logger.error("Bot stopped!")

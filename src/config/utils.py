@@ -1,20 +1,17 @@
 import yaml
 
-from .config import Config
+from .models import Config
 
 
-def load_config(filepath: str) -> Config:
+def load_config(config_path: str) -> Config:
     """
-    :param filepath:
+    :param config_path:
     :return:
     """
+    with open(file=config_path, mode="rb") as fh:
+        raw_data: dict = yaml.load(stream=fh, Loader=yaml.FullLoader)
+        config: Config = Config.model_validate(raw_data)
+        return config
 
-    with open(file=filepath, encoding="utf-8") as fh:
-        conf = Config(**yaml.safe_load(fh))
 
-    return conf
-
-
-__all__ = [
-    "load_config",
-]
+__all__ = ["load_config"]
