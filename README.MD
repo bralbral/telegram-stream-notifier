@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # telegram-feedback-bot
 
 Simple telegram-feedback bot based on [aiogram](https://github.com/aiogram/aiogram) and [sulguk](https://github.com/Tishka17/sulguk).
@@ -84,3 +85,36 @@ For development, you should install the requirements from [requirements_dev.txt]
 `pip intall -r requirements_dev.txt`
 
 Use [pre-commit.sh](./pre-commit.sh) before commit.
+=======
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+
+## Подготовка к запуску
+Скопировать [файл конфигурации](example.config.yaml) и заполнить его.
+
+```console
+$ cp example.config.yaml config.yaml
+```
+
+## Контрибьютинг
+
+  Установка зависимостей для разработки
+
+   ```console
+   $ pip install -r requirements_dev.txt
+   ```
+
+  Обязательно, перед коммитом нужно выполнять:
+  
+   ```console
+   $ bash pre-commit.sh
+   ```
+
+## Загрузить последний собранный DOCKER-IMAGE
+
+### Login
+docker login  registry.thunder.io/top/dev/seeker_bot -u docker -p glpat-acfx4W4xzhcsgWMMRBmb
+
+### Pull
+docker pull registry.thunder.io/top/dev/seeker_bot:latest
+>>>>>>> 3766c33 (merge)

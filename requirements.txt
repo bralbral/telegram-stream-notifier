@@ -6,4 +6,8 @@ pyyaml==6.0.1
 pydantic_settings==2.0.3
 structlog==23.1.0
 orjson==3.9.7
+<<<<<<< HEAD
 uvloop==0.17.0
+=======
+uvloop==0.17.0
+>>>>>>> 3766c33 (merge)
