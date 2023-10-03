@@ -1,9 +1,9 @@
 from typing import Optional
 
 import aiofiles
-import aiogram
 import structlog
 from aiogram import Bot
+from aiogram.exceptions import TelegramBadRequest
 
 logger = structlog.stdlib.get_logger()
 
@@ -71,7 +71,7 @@ async def check_if_need_send_instead_of_edit(
                 allow_sending_without_reply=True,
             )
             result.append(1)
-        except aiogram.exceptions.TelegramBadRequest as ex:
+        except TelegramBadRequest as ex:
             await logger.ainfo(f"{ex}")
             result.append(0)
 
