@@ -61,6 +61,14 @@ def check_live_streams(
                                 force_generic_extractor=False,
                             )
 
+                            # Try to get paused streams
+                            upload_date = live_info.get("upload_date", None)
+                            if upload_date:
+                                logger.info(
+                                    f"Pause or stuck {channel.label} {channel.url}"
+                                )
+                                break
+
                             concurrent_view_count = live_info.get(
                                 "concurrent_view_count", 0
                             )
