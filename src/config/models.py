@@ -22,6 +22,7 @@ class Config(BaseSettings):
 
     bot: BotConfig
     chat_id: int
+    temp_chat_id: int
     channels: list[Channel]
     interval_s: int
 

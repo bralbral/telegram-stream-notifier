@@ -9,7 +9,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 
 from src.config import Config
 from src.constants import PROJECT_ROOT_DIR
-from src.scheduler.jobs.youtube import send_report
+from src.telegram_notify_job import send_report
 
 
 async def setup_scheduler(conf: Config, bot: Bot) -> AsyncIOScheduler:
@@ -25,7 +25,7 @@ async def setup_scheduler(conf: Config, bot: Bot) -> AsyncIOScheduler:
         "cookiefile": os.path.join(PROJECT_ROOT_DIR, "cookies.txt"),
         "quiet": True,
         "load-pages": False,
-        "extract_flat": True,
+        "extract_flat": False,
         "skip_download": True,
         "getcomments": False,
     }
@@ -35,6 +35,7 @@ async def setup_scheduler(conf: Config, bot: Bot) -> AsyncIOScheduler:
         "bot": bot,
         "channels": conf.channels,
         "chat_id": conf.chat_id,
+        "temp_chat_id": conf.temp_chat_id,
         "ydl": ydl,
     }
 
@@ -47,8 +48,6 @@ async def setup_scheduler(conf: Config, bot: Bot) -> AsyncIOScheduler:
         coalesce=True,
         next_run_time=datetime.now(),
     )
-
-    # await send_report(**notify_kwargs)
 
     return scheduler
 
