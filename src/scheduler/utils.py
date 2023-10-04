@@ -37,6 +37,8 @@ async def setup_scheduler(conf: Config, bot: Bot) -> AsyncIOScheduler:
         "chat_id": conf.chat_id,
         "temp_chat_id": conf.temp_chat_id,
         "ydl": ydl,
+        "report_template": conf.report.template,
+        "empty_template": conf.report.empty,
     }
 
     scheduler.add_job(

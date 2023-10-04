@@ -8,7 +8,7 @@ from aiogram.exceptions import TelegramNetworkError
 from sulguk import SULGUK_PARSE_MODE
 
 from ..data_fetcher import async_fetch_livestreams
-from ..report_generator import generate_report
+from ..report_generator import generate_jinja_report
 from ..schemas import ChannelDescription
 from .utils import check_if_need_send_instead_of_edit
 from .utils import pull_message_id
@@ -24,8 +24,12 @@ async def send_report(
     chat_id: int,
     temp_chat_id: int,
     ydl: yt_dlp.YoutubeDL,
+    empty_template: Optional[str],
+    report_template: str,
 ) -> None:
     """
+    :param report_template:
+    :param empty_template:
     :param temp_chat_id:
     :param ydl:
     :param bot:
@@ -39,7 +43,9 @@ async def send_report(
     )
     await logger.ainfo(f"Live list length {len(live_list)}")
 
-    message_text: Optional[str] = generate_report(data=live_list)
+    message_text: Optional[str] = generate_jinja_report(
+        data=live_list, report_template=report_template, empty_template=empty_template
+    )
 
     if message_text:
         message_id = await pull_message_id()
