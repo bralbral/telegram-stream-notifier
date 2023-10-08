@@ -14,6 +14,7 @@ from .utils import check_if_need_send_instead_of_edit
 from .utils import pull_message_id
 from .utils import push_message_id
 from src.config import Channel
+from src.constants import MESSAGES_DUMP_FILE_PATH
 
 logger = structlog.stdlib.get_logger()
 
@@ -48,7 +49,9 @@ async def send_report(
     )
 
     if message_text:
-        message_id = await pull_message_id()
+        message_id: Optional[int] = await pull_message_id(
+            filepath=MESSAGES_DUMP_FILE_PATH
+        )
         if message_id is not None:
             try:
                 is_needed_send = await check_if_need_send_instead_of_edit(
@@ -93,7 +96,8 @@ async def send_report(
             except TelegramBadRequest as ex:
                 if (
                     str(ex).find(
-                        "specified new message content and reply markup are exactly the same as a current content and reply markup of the message"
+                        "specified new message content and reply markup are exactly the same as a current"
+                        " content and reply markup of the message"
                     )
                     > -1
                 ):
@@ -127,7 +131,9 @@ async def send_report(
             await logger.ainfo(f"Msg: {message_id} sent")
 
         if message_id:
-            await push_message_id(message_id=message_id)
+            await push_message_id(
+                message_id=message_id, filepath=MESSAGES_DUMP_FILE_PATH
+            )
 
 
 __all__ = ["send_report"]

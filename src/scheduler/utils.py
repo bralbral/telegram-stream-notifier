@@ -1,4 +1,3 @@
-import os
 from datetime import datetime
 from typing import Any
 
@@ -8,7 +7,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 
 from src.config import Config
-from src.constants import PROJECT_ROOT_DIR
+from src.constants import COOKIES_FILE_PATH
 from src.telegram_notify_job import send_report
 
 
@@ -22,13 +21,14 @@ async def setup_scheduler(conf: Config, bot: Bot) -> AsyncIOScheduler:
     scheduler = AsyncIOScheduler()
 
     ydl_opts: dict[str, Any] = {
-        "cookiefile": os.path.join(PROJECT_ROOT_DIR, "cookies.txt"),
+        "cookiefile": COOKIES_FILE_PATH,
         "quiet": True,
         "load-pages": False,
         "extract_flat": False,
         "skip_download": True,
         "getcomments": False,
     }
+
     ydl = yt_dlp.YoutubeDL(ydl_opts)
 
     notify_kwargs = {

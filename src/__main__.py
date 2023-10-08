@@ -1,8 +1,7 @@
 import asyncio
-import os
+import platform
 
 import structlog
-import uvloop
 from aiogram import Bot
 from aiogram import Dispatcher
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -11,19 +10,19 @@ from src.bot import setup_bot
 from src.bot import setup_dispatcher
 from src.config import Config
 from src.config import load_config
-from src.constants import PROJECT_ROOT_DIR
+from src.constants import CONFIG_FILE_PATH
 from src.scheduler import setup_scheduler
+
+if platform.system() == "linux":
+    import uvloop
+
+    uvloop.install()
 
 logger = structlog.stdlib.get_logger()
 
 
-uvloop.install()
-
-
 async def main() -> None:
-    config: Config = load_config(
-        config_path=os.path.join(PROJECT_ROOT_DIR, "config.yaml")
-    )
+    config: Config = load_config(config_path=CONFIG_FILE_PATH)
 
     dp: Dispatcher = setup_dispatcher(
         logger=logger,
@@ -32,8 +31,8 @@ async def main() -> None:
 
     bot: Bot = await setup_bot(config=config.bot)
 
-    scheduler: AsyncIOScheduler = await setup_scheduler(bot=bot, conf=config)
     await logger.ainfo("Starting scheduler")
+    scheduler: AsyncIOScheduler = await setup_scheduler(bot=bot, conf=config)
     scheduler.start()
 
     await logger.ainfo("Starting bot")

@@ -1,6 +1,6 @@
 aiogram==3.1.1
 APScheduler==3.10.4
-yt-dlp==2023.9.24
+yt-dlp==2023.10.7
 sulguk==0.6.0
 jinja2==3.1.2
 pyyaml==6.0.1

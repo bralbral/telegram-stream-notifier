@@ -9,11 +9,8 @@ from typing import Optional
 
 def wrap_sync_to_async(func: Callable) -> Callable:
     """
-    Декоратор, который принимает синхронную функцию и выполняет её в отдельном потоке,
-    которая запускает исходную функцию в отдельном потоке.
-
-    :param func: исходная асинхронная функция
-    :return: новая асинхронная функция, которая запускает исходную функцию в отдельном потоке
+    :param func:
+    :return:
     """
 
     @wraps(func)
@@ -24,13 +21,11 @@ def wrap_sync_to_async(func: Callable) -> Callable:
         **kwargs,
     ) -> Any:
         """
-        Функция, которая запускает исходную функцию в отдельном потоке.
-
-        :param args: Позиционные аргументы для исходной функции
-        :param loop: event loop, который будет использоваться для запуска исходной функции
-        :param executor: executor, который будет использоваться для запуска исходной функции
-        :param kwargs: именованные аргументы для исходной функции
-        :return: результат выполнения исходной функции
+        :param args:
+        :param loop:
+        :param executor:
+        :param kwargs:
+        :return:
         """
         if loop is None:
             loop = asyncio.get_running_loop()
