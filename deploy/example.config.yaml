@@ -1,13 +1,57 @@
 bot:
   token: 123456789:ABCDEFGHIJKLMOPRSTQYWZ
-  chat_id: 123456789
 
+# Chat with posts from bot
+chat_id: 123456789
 
+# garbage chat, needed for delta-posting
+temp_chat_id: 987654321
+
+# Report customization
+# With Jinja2 template you can access to ChanelDescription object via 'channel' variable
+#
+#class ChannelDescription(BaseModel):
+#    url: str
+#    label: str
+#    like_count: Optional[int] = None
+#    concurrent_view_count: Optional[int] = None
+#    duration: Optional[str] = None
+#
+report:
+  template: | 
+      <h1>✅ СЕЙЧАС В ЭФИРЕ:</h1>
+      <br/>
+      <ol type='1'>
+      {% for channel in channels %}
+          <li>
+              <b><a href='{{channel.url}}'>{{channel.label}}</a></b> <br/>
+              {% if channel.concurrent_view_count is not none %}
+                  <b>👀{{channel.concurrent_view_count}}</b>
+              {% endif %}
+              {% if channel.like_count is not none %}
+                  <b>👍{{channel.like_count}}</b>
+              {% endif %}
+              {% if channel.duration is not none %}
+                  <b>🕑{{channel.duration}}</b>
+              {% endif %}
+          </li>
+          <br/>
+      {% endfor %}
+      </ol>
+      <hr/>
+      <i>💬 Заходите в наш <a href='https://t.me/Discordovchat'>чат</a></i>
+
+  empty: | 
+    <b>🤷 Интересных стримов сейчас нет.</b>
+    <hr/>
+    <i>💬 Заходите в наш <a href='https://t.me/Discordovchat'>чат</a></i>
+
+# Channel lists
+# url must be ends with @user
 channels:
   - label: Your label 🎈
     url: https://www.youtube.com/@user
 
+# interval between checks in seconds
 interval_s: 60
-timezone: Europe/Moscow
-fire_when_starts: True
 
