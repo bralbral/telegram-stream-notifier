@@ -8,3 +8,4 @@ pydantic_settings==2.0.3
 structlog==23.1.0
 orjson==3.9.7
 uvloop==0.17.0
+SQLAlchemy==2.0.21
