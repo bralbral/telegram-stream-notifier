@@ -6,8 +6,8 @@ from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import UniqueConstraint
 
-from src.db.mixins import Base
-from src.db.mixins import TimestampsMixin
+from src.db.models.mixins import Base
+from src.db.models.mixins import TimestampsMixin
 
 
 class UserOrm(Base, TimestampsMixin):
@@ -17,9 +17,7 @@ class UserOrm(Base, TimestampsMixin):
 
     __tablename__ = "users"
 
-    __table_args__ = (
-        UniqueConstraint("telegram_user_id", name="ix_uniq_telegram_user_id"),
-    )
+    __table_args__ = (UniqueConstraint("user_id", name="ix_uniq_telegram_user_id"),)
     # some features with autoincrement
     # https://docs.sqlalchemy.org/en/20/dialects/sqlite.html#allowing-autoincrement-behavior-sqlalchemy-types-other-than-integer-integer
     id = Column(

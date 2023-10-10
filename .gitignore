@@ -157,3 +157,4 @@ deploy/data/*
 docker-compose.yml
 cookies.txt
 messages.dump
+youtube-notifier-bot.db

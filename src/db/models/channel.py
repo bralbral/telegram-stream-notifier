@@ -6,8 +6,8 @@ from sqlalchemy import String
 from sqlalchemy import UniqueConstraint
 
 from .user import UserOrmRelatedModel
-from src.db.mixins import Base
-from src.db.mixins import TimestampsMixin
+from src.db.models.mixins import Base
+from src.db.models.mixins import TimestampsMixin
 
 
 class ChannelOrm(Base, TimestampsMixin, UserOrmRelatedModel):

@@ -3,9 +3,9 @@ from sqlalchemy import Integer
 from sqlalchemy import UniqueConstraint
 
 from .channel import ChannelOrmRelatedModel
-from src.db.mixins import Base
-from src.db.mixins import CounterMixin
-from src.db.mixins import TimestampsMixin
+from src.db.models.mixins import Base
+from src.db.models.mixins import CounterMixin
+from src.db.models.mixins import TimestampsMixin
 
 
 class ChannelErrorOrm(Base, TimestampsMixin, CounterMixin, ChannelOrmRelatedModel):
