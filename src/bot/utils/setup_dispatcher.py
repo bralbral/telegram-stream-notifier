@@ -4,10 +4,7 @@ from aiogram.fsm.storage.memory import SimpleEventIsolation
 from structlog.stdlib import BoundLogger
 
 
-def setup_dispatcher(
-    logger: BoundLogger,
-    chat_id: int,
-) -> Dispatcher:
+def setup_dispatcher(logger: BoundLogger, chat_id: int) -> Dispatcher:
     """
     :param logger:
     :param chat_id:
@@ -19,11 +16,6 @@ def setup_dispatcher(
         chat_id=chat_id,
         events_isolation=SimpleEventIsolation(),
     )
-
-    # dp.message.middleware(LoggerMiddleware(logger=logger))
-    #
-    # register_handlers(dp)
-
     return dp
 
 

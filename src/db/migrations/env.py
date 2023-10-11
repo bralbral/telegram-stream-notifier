@@ -3,9 +3,8 @@ from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy.engine import Connection
-from sqlalchemy.ext.asyncio import create_async_engine
 
-from src.constants import SQLITE_DATABASE_FILE_PATH
+from src.db.session import engine
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -75,9 +74,7 @@ async def run_async_migrations() -> None:
     # )
 
     # edited
-    connectable = create_async_engine(
-        f"sqlite+aiosqlite:///{SQLITE_DATABASE_FILE_PATH}", future=True
-    )
+    connectable = engine
 
     async with connectable.connect() as connection:
         await connection.run_sync(do_run_migrations)

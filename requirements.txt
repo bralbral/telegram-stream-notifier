@@ -1,4 +1,5 @@
 aiogram==3.1.1
+pydantic
 APScheduler==3.10.4
 yt-dlp==2023.10.7
 sulguk==0.6.0
