@@ -12,7 +12,6 @@ from src.config import Config
 from src.config import load_config
 from src.constants import CONFIG_FILE_PATH
 from src.db.session import session_maker
-from src.middlewares import setup_middlewares
 from src.scheduler import setup_scheduler
 
 if platform.system() == "linux":
@@ -20,15 +19,14 @@ if platform.system() == "linux":
 
     uvloop.install()
 
-logger = structlog.stdlib.get_logger()
-
 
 async def main() -> None:
+    logger = structlog.stdlib.get_logger()
     config: Config = load_config(config_path=CONFIG_FILE_PATH)
 
-    dp: Dispatcher = setup_dispatcher(logger=logger, chat_id=config.chat_id)
-
-    setup_middlewares(dp=dp, session_maker=session_maker)
+    dp: Dispatcher = setup_dispatcher(
+        logger=logger, chat_id=config.chat_id, session_maker=session_maker
+    )
 
     bot: Bot = await setup_bot(config=config.bot)
 
@@ -37,11 +35,12 @@ async def main() -> None:
     scheduler.start()
 
     await logger.ainfo("Starting bot")
-    await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+
+    try:
+        await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+    except (KeyboardInterrupt, SystemExit):
+        await logger.error("Bot stopped!")
 
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except (KeyboardInterrupt, SystemExit):
-        logger.error("Bot stopped!")
+    asyncio.run(main())

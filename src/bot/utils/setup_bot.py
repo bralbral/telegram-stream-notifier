@@ -24,6 +24,7 @@ async def setup_bot(config: BotConfig) -> Bot:
 
     await bot.set_my_commands(user_commands, scope=BotCommandScopeDefault())
 
+    await bot.delete_webhook()
     return bot
 
 
