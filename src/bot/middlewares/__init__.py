@@ -1,14 +1,15 @@
 from aiogram import Dispatcher
-from sqlalchemy.ext.asyncio import async_sessionmaker
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from .db_session import DbSessionMiddleware
-
-
-def setup_middlewares(
-    dp: Dispatcher, session_maker: async_sessionmaker[AsyncSession]
-) -> None:
-    dp.message.outer_middleware(DbSessionMiddleware(session_pool=session_maker))
+from .dal import DataAccessLayerMiddleware
+from .logger import LoggerMiddleware
+from .role import RoleMiddleware
+from src.db import DataAccessLayer
 
 
-__all__ = ["setup_middlewares"]
+def register_middlewares(dp: Dispatcher, dal: DataAccessLayer) -> None:
+    dp.message.outer_middleware(LoggerMiddleware())
+    dp.message.outer_middleware(DataAccessLayerMiddleware(dal=dal))
+    dp.message.outer_middleware(RoleMiddleware())
+
+
+__all__ = ["register_middlewares"]

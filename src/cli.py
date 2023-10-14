@@ -14,7 +14,6 @@ from src.bot import setup_dispatcher
 from src.config import Config
 from src.config import load_config
 from src.constants import CONFIG_FILE_PATH
-from src.db import session_maker
 from src.scheduler import setup_scheduler
 
 if platform.system() == "linux":
@@ -28,7 +27,7 @@ async def create_super_user(telegram_id: int) -> None:
 
     user_dto = UserSchema(user_id=telegram_id, is_superuser=True, is_admin=True)
 
-    result = await dal.user_repo.create(user_schema=user_dto)
+    result = await dal.create_user(user_schema=user_dto)
 
     if isinstance(result, UserSchema) and result.id is not None:
         await logger.ainfo("User created.")
@@ -41,13 +40,11 @@ async def run_bot() -> None:
 
     dal: DataAccessLayer = DataAccessLayer()
 
-    if not await dal.check_superusers():
+    if not await dal.is_superusers_exists():
         await logger.aerror("You must to create superuser before start.")
         return
 
-    dp: Dispatcher = setup_dispatcher(
-        logger=logger, chat_id=config.chat_id, session_maker=session_maker
-    )
+    dp: Dispatcher = setup_dispatcher(chat_id=config.chat_id, dal=dal)
 
     bot: Bot = await setup_bot(config=config.bot)
 

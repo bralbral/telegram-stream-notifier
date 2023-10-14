@@ -4,13 +4,14 @@ from typing import Callable
 
 from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject
-from sqlalchemy.ext.asyncio import async_sessionmaker
+
+from src.db.dal import DataAccessLayer
 
 
-class DbSessionMiddleware(BaseMiddleware):
-    def __init__(self, session_pool: async_sessionmaker):
+class DataAccessLayerMiddleware(BaseMiddleware):
+    def __init__(self, dal: DataAccessLayer):
         super().__init__()
-        self.session_pool = session_pool
+        self.dal = dal
 
     async def __call__(
         self,
@@ -18,9 +19,9 @@ class DbSessionMiddleware(BaseMiddleware):
         event: TelegramObject,
         data: dict[str, Any],
     ) -> Any:
-        async with self.session_pool() as session:
-            data["session"] = session
-            return await handler(event, data)
+        data["dal"] = self.dal
+
+        return await handler(event, data)
 
 
-__all__ = ["DbSessionMiddleware"]
+__all__ = ["DataAccessLayerMiddleware"]
