@@ -10,6 +10,10 @@ from src.logger import logger
 
 
 class LoggerMiddleware(BaseMiddleware):
+    """
+    Logging events
+    """
+
     async def __call__(
         self,
         handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],

@@ -10,12 +10,21 @@ router = Router(name="superusers")
 
 
 @router.message(
-    Command("add_admin"),
+    Command("promote"),
     RoleFilter(role=[UserRole.SUPERUSER]),
     State(state="*"),
-)  # type: ignore
-async def add_user(message: Message, **kwargs):
+)
+async def promote_user_to_admin(message: Message, **kwargs):
     await message.answer("Added.")
+
+
+@router.message(
+    Command("revoke"),
+    RoleFilter(role=[UserRole.SUPERUSER]),
+    State(state="*"),
+)
+async def revoke_user(message: Message, **kwargs):
+    await message.answer("Deleted.")
 
 
 __all__ = ["router"]

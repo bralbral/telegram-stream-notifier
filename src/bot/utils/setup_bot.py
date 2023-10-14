@@ -1,12 +1,14 @@
 from aiogram import Bot
-from aiogram.types import BotCommand
-from aiogram.types import BotCommandScopeDefault
+from aiogram.types import BotCommandScopeChat
 from sulguk import AiogramSulgukMiddleware
 
+from ..commands import superuser_commands
 from src.config import BotConfig
 
 
-async def setup_bot(config: BotConfig) -> Bot:
+async def setup_bot(
+    config: BotConfig, superusers_id: list[int], admins_id: list[int]
+) -> Bot:
     """
     :param config:
     :return:
@@ -18,11 +20,12 @@ async def setup_bot(config: BotConfig) -> Bot:
     # https://github.com/Tishka17/sulguk#example-for-aiogram-users
     bot.session.middleware(AiogramSulgukMiddleware())
 
-    user_commands = [
-        BotCommand(command="help", description="How to use bot"),
-    ]
+    await bot.delete_my_commands()
 
-    await bot.set_my_commands(user_commands, scope=BotCommandScopeDefault())
+    for _id in superusers_id:
+        await bot.set_my_commands(
+            superuser_commands(), scope=BotCommandScopeChat(chat_id=_id)
+        )
 
     await bot.delete_webhook()
     return bot

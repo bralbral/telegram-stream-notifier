@@ -9,6 +9,10 @@ from src.db.dal import DataAccessLayer
 
 
 class DataAccessLayerMiddleware(BaseMiddleware):
+    """
+    Access to DAL from handlers
+    """
+
     def __init__(self, dal: DataAccessLayer):
         super().__init__()
         self.dal = dal

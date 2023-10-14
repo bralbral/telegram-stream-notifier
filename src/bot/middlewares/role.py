@@ -14,6 +14,10 @@ from src.schemas import UserSchema
 
 
 class RoleMiddleware(BaseMiddleware):
+    """
+    Set UserRole for events
+    """
+
     def __init__(self):
         super().__init__()
         self.cache = Cache(cache_class=Cache.MEMORY, ttl=60)

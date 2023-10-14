@@ -4,7 +4,6 @@ from pydantic import TypeAdapter
 from sqlalchemy import CursorResult
 from sqlalchemy import ScalarResult
 from sqlalchemy import Select
-from sqlalchemy import true
 
 from ..exceptions import ColumnDoesNotExist
 from ..models import UserOrm
@@ -15,6 +14,10 @@ from src.schemas import UserSchema
 
 class UserRepo(Repo):
     async def create(self, user_schema: UserSchema) -> Optional[UserSchema]:
+        """
+        :param user_schema:
+        :return:
+        """
         result: CursorResult = await sqlite_async_upsert(
             session=self.session,
             model=UserOrm,
@@ -31,7 +34,11 @@ class UserRepo(Repo):
 
         return user_dto
 
-    async def get_by_attr(self, **kwargs) -> Optional[UserSchema]:
+    async def __get_by_attrs(self, **kwargs) -> ScalarResult:
+        """
+        :param kwargs:
+        :return:
+        """
         where_clause: list = []
 
         for key in kwargs.keys():
@@ -42,8 +49,15 @@ class UserRepo(Repo):
                 where_clause.append(col == kwargs[key])
 
         stm = Select(UserOrm).where(*where_clause)
-
         result: ScalarResult = await self.session.scalars(stm)
+        return result
+
+    async def get_by_attr(self, **kwargs) -> Optional[UserSchema]:
+        """
+        :param kwargs:
+        :return:
+        """
+        result: ScalarResult = await self.__get_by_attrs(**kwargs)
         user: Optional[UserOrm] = result.first()
 
         if user:
@@ -53,6 +67,10 @@ class UserRepo(Repo):
         return None
 
     async def get_by_pk(self, pk: int) -> Optional[UserSchema]:
+        """
+        :param pk:
+        :return:
+        """
         stm = Select(UserOrm).where(UserOrm.id == pk)
 
         result: ScalarResult = await self.session.scalars(stm)
@@ -64,11 +82,12 @@ class UserRepo(Repo):
 
         return None
 
-    async def get_superusers(self) -> list[UserSchema]:
-        stm = Select(UserOrm).where(UserOrm.is_superuser == true()).order_by(UserOrm.id)
-
-        result = await self.session.scalars(stm)
-
+    async def list_by_attrs(self, **kwargs) -> list[UserSchema]:
+        """
+        :param kwargs:
+        :return:
+        """
+        result: ScalarResult = await self.__get_by_attrs(**kwargs)
         ta = TypeAdapter(list[UserSchema])
         users = ta.validate_python(result.all())
 
