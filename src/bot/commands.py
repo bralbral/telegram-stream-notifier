@@ -9,4 +9,13 @@ def superuser_commands() -> list[BotCommand]:
     return commands
 
 
-__all__ = ["superuser_commands"]
+def admin_commands() -> list[BotCommand]:
+    commands = [
+        BotCommand(command="add", description="Add Youtube channel."),
+        BotCommand(command="delete", description="Delete Youtube channel."),
+        BotCommand(command="list", description="List Youtube channels"),
+    ]
+    return commands
+
+
+__all__ = ["admin_commands", "superuser_commands"]

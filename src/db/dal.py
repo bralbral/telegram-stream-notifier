@@ -76,6 +76,7 @@ class DataAccessLayer:
 
     async def get_admins_or_superusers(self, superusers: bool = False) -> list[int]:
         """
+        :param superusers:
         :return:
         """
         users: list[UserSchema]
