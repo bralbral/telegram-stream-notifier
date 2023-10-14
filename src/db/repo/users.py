@@ -4,7 +4,7 @@ from pydantic import TypeAdapter
 from sqlalchemy import CursorResult
 from sqlalchemy import ScalarResult
 from sqlalchemy import Select
-from sqlalchemy.sql.expression import false
+from sqlalchemy import true
 
 from ..exceptions import ColumnDoesNotExist
 from ..models import UserOrm
@@ -65,14 +65,12 @@ class UserRepo(Repo):
         return None
 
     async def get_superusers(self) -> list[UserSchema]:
-        stm = (
-            Select(UserOrm).where(UserOrm.is_superuser == false()).order_by(UserOrm.id)
-        )
+        stm = Select(UserOrm).where(UserOrm.is_superuser == true()).order_by(UserOrm.id)
 
-        result = await self.session.execute(stm)
+        result = await self.session.scalars(stm)
 
         ta = TypeAdapter(list[UserSchema])
-        users = ta.validate_python(result)
+        users = ta.validate_python(result.all())
 
         return users
 
