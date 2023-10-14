@@ -1,16 +1,18 @@
+from typing import Optional
+
 from pydantic import BaseModel
+from pydantic import ConfigDict
 from pydantic import Field
 from pydantic import field_validator
 
 
 class ChannelSchema(BaseModel):
-    id: int
+    id: Optional[int]
     url: str = Field(max_length=255)
     label: str = Field(max_length=255)
     enabled: bool
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
     @field_validator("url")
     def name_must_contain_space(cls, v: str) -> str:

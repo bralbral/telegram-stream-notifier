@@ -10,7 +10,7 @@ class ChannelRepo(Repo):
             session=self.session,
             model=ChannelOrm,
             data=channel_schema.model_dump(),
-            index_col="id",
+            index_col="url",
         )
         return channel
 

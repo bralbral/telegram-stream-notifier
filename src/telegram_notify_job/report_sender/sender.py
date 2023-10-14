@@ -1,6 +1,5 @@
 from typing import Optional
 
-import structlog
 import yt_dlp
 from aiogram import Bot
 from aiogram.exceptions import TelegramBadRequest
@@ -15,8 +14,7 @@ from .utils import pull_message_id
 from .utils import push_message_id
 from src.config import Channel
 from src.constants import MESSAGES_DUMP_FILE_PATH
-
-logger = structlog.stdlib.get_logger()
+from src.logger import logger
 
 
 async def send_report(

@@ -1,5 +1,4 @@
-from channels import ChannelRepo
-
+from .channels import ChannelRepo
 from .users import UserRepo
 
 

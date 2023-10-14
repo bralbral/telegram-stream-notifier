@@ -12,7 +12,7 @@ from src.db.models.mixins import TimestampsMixin
 
 class ChannelOrm(Base, TimestampsMixin, UserOrmRelatedModel):
     """
-    Base
+    Model for storing YT channels
     """
 
     __tablename__ = "channels"

@@ -12,7 +12,7 @@ from src.db.models.mixins import TimestampsMixin
 
 class UserOrm(Base, TimestampsMixin):
     """
-    Base
+    Model for storing TG users
     """
 
     __tablename__ = "users"
