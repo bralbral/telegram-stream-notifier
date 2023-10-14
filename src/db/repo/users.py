@@ -1,10 +1,10 @@
 from ..models import UserOrm
-from ..schemas import UserSchema
-from .base import Query
+from .base import Repo
 from .utils import sqlite_async_upsert
+from src.schemas import UserSchema
 
 
-class UserQuery(Query):
+class UserRepo(Repo):
     async def create(self, user_schema: UserSchema) -> UserOrm:
         user = await sqlite_async_upsert(
             session=self.session,
@@ -15,4 +15,4 @@ class UserQuery(Query):
         return user
 
 
-__all__ = ["UserQuery"]
+__all__ = ["UserRepo"]

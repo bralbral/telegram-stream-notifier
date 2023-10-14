@@ -1,10 +1,10 @@
 from ..models import ChannelOrm
-from ..schemas import ChannelSchema
-from .base import Query
+from .base import Repo
 from .utils import sqlite_async_upsert
+from src.schemas import ChannelSchema
 
 
-class ChannelQuery(Query):
+class ChannelRepo(Repo):
     async def create(self, channel_schema: ChannelSchema) -> ChannelOrm:
         channel = await sqlite_async_upsert(
             session=self.session,
@@ -15,4 +15,4 @@ class ChannelQuery(Query):
         return channel
 
 
-__all__ = ["ChannelQuery"]
+__all__ = ["ChannelRepo"]
