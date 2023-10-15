@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  dry-run:
+    container_name: dry-run
+    stdin_open: true
+    tty: true
+    image: bral1488/telegram-youtube-notifier:develop
+    restart: no
+    command: bash -c "bash alembic-upgrade.bash && python3"

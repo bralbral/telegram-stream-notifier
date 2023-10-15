@@ -1,12 +1,15 @@
 import asyncio
+import os
 from typing import cast
 from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ..constants import SQLITE_DATABASE_FILE_PATH
 from ..schemas import ChannelSchema
 from ..schemas import MessageLogSchema
 from ..schemas import UserSchema
+from .exceptions import DatabaseDoesNotExist
 from .models import ChannelOrm
 from .models import MessageLogOrm
 from .models import UserOrm
@@ -23,7 +26,12 @@ class DataAccessLayer:
         else:
             self.__session = session
 
+        self.__sqlite_exists()
         self.__init_repo()
+
+    def __sqlite_exists(self):
+        if not os.path.exists(SQLITE_DATABASE_FILE_PATH):
+            raise DatabaseDoesNotExist()
 
     def __create_session(self):
         """
