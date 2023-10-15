@@ -1,12 +1,13 @@
 from typing import Optional
 
-from pydantic import BaseModel
 from pydantic import ConfigDict
 from pydantic import Field
 from pydantic import field_validator
 
+from .base import Schema
 
-class ChannelSchema(BaseModel):
+
+class ChannelSchema(Schema):
     id: Optional[int]
     url: str = Field(max_length=255)
     label: str = Field(max_length=255)
@@ -15,7 +16,7 @@ class ChannelSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     @field_validator("url")
-    def name_must_contain_space(cls, v: str) -> str:
+    def url_in_username(cls, v: str) -> str:
         if "/@" not in v:
             raise ValueError(
                 "Url must be contain @username: https://www.youtube.com/@username"

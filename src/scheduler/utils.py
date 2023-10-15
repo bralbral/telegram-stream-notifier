@@ -8,11 +8,15 @@ from apscheduler.triggers.interval import IntervalTrigger
 
 from src.config import Config
 from src.constants import COOKIES_FILE_PATH
+from src.db import DataAccessLayer
 from src.telegram_notify_job import send_report
 
 
-async def setup_scheduler(conf: Config, bot: Bot) -> AsyncIOScheduler:
+async def setup_scheduler(
+    conf: Config, bot: Bot, dal: DataAccessLayer
+) -> AsyncIOScheduler:
     """
+    :param dal:
     :param conf:
     :param bot:
     :return:
@@ -39,6 +43,7 @@ async def setup_scheduler(conf: Config, bot: Bot) -> AsyncIOScheduler:
         "ydl": ydl,
         "report_template": conf.report.template,
         "empty_template": conf.report.empty,
+        "dal": dal,
     }
 
     scheduler.add_job(

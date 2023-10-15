@@ -6,11 +6,11 @@ from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import UniqueConstraint
 
-from src.db.models.mixins import Base
+from src.db.models.mixins import ModelOrm
 from src.db.models.mixins import TimestampsMixin
 
 
-class UserOrm(Base, TimestampsMixin):
+class UserOrm(ModelOrm, TimestampsMixin):
     """
     Model for storing TG users
     """

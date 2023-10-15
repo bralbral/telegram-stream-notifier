@@ -1,10 +1,17 @@
 import asyncio
+from typing import cast
 from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ..schemas import ChannelSchema
+from ..schemas import MessageLogSchema
 from ..schemas import UserSchema
+from .models import ChannelOrm
+from .models import MessageLogOrm
+from .models import UserOrm
 from .repo import ChannelRepo
+from .repo import MessageLogRepo
 from .repo import UserRepo
 from .session import session_maker
 
@@ -36,8 +43,19 @@ class DataAccessLayer:
         """
         :return:
         """
-        self.__user_repo = UserRepo(session=self.__session)
-        self.__channel_repo = ChannelRepo(session=self.__session)
+        self.__user_repo = UserRepo(
+            session=self.__session, schema=UserSchema, model_orm=UserOrm
+        )
+        self.__channel_repo = ChannelRepo(
+            session=self.__session,
+            schema=ChannelSchema,
+            model_orm=ChannelOrm,
+        )
+        self.__message_log_repo = MessageLogRepo(
+            session=self.__session,
+            schema=MessageLogSchema,
+            model_orm=MessageLogOrm,
+        )
 
     async def create_user(self, user_schema: UserSchema) -> Optional[UserSchema]:
         """
@@ -65,7 +83,10 @@ class DataAccessLayer:
         :param kwargs:
         :return:
         """
-        return await self.__user_repo.list_by_attrs(**kwargs)
+        users: list[UserSchema] = cast(
+            list[UserSchema], await self.__user_repo.list_by_attrs(**kwargs)
+        )
+        return users
 
     async def is_superusers_exists(self) -> bool:
         """
@@ -87,6 +108,22 @@ class DataAccessLayer:
 
         user_ids: list[int] = [user.user_id for user in users]
         return user_ids
+
+    async def get_last_published_message_id(self) -> Optional[int]:
+        message_log_dto: Optional[
+            MessageLogSchema
+        ] = await self.__message_log_repo.get_by_attr()
+        if message_log_dto:
+            return message_log_dto.message_id
+
+        return None
+
+    async def create_message(
+        self, message_log_schema: MessageLogSchema
+    ) -> Optional[MessageLogSchema]:
+        return await self.__message_log_repo.create(
+            message_log_schema=message_log_schema
+        )
 
 
 __all__ = ["DataAccessLayer"]

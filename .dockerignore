@@ -171,5 +171,4 @@ deploy/data/*
 .env
 docker-compose.yml
 cookies.txt
-messages.dump
 youtube-notifier-bot.db

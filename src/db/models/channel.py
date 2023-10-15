@@ -6,11 +6,11 @@ from sqlalchemy import String
 from sqlalchemy import UniqueConstraint
 
 from .user import UserOrmRelatedModel
-from src.db.models.mixins import Base
+from src.db.models.mixins import ModelOrm
 from src.db.models.mixins import TimestampsMixin
 
 
-class ChannelOrm(Base, TimestampsMixin, UserOrmRelatedModel):
+class ChannelOrm(ModelOrm, TimestampsMixin, UserOrmRelatedModel):
     """
     Model for storing YT channels
     """

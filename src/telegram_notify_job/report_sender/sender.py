@@ -6,14 +6,13 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.exceptions import TelegramNetworkError
 from sulguk import SULGUK_PARSE_MODE
 
+from ...db import DataAccessLayer
+from ...schemas import MessageLogSchema
 from ..data_fetcher import async_fetch_livestreams
 from ..report_generator import generate_jinja_report
 from ..schemas import ChannelDescription
 from .utils import check_if_need_send_instead_of_edit
-from .utils import pull_message_id
-from .utils import push_message_id
 from src.config import Channel
-from src.constants import MESSAGES_DUMP_FILE_PATH
 from src.logger import logger
 
 
@@ -25,8 +24,10 @@ async def send_report(
     ydl: yt_dlp.YoutubeDL,
     empty_template: Optional[str],
     report_template: str,
+    dal: DataAccessLayer,
 ) -> None:
     """
+    :param dal:
     :param report_template:
     :param empty_template:
     :param temp_chat_id:
@@ -47,9 +48,12 @@ async def send_report(
     )
 
     if message_text:
-        message_id: Optional[int] = await pull_message_id(
-            filepath=MESSAGES_DUMP_FILE_PATH
-        )
+        message_id: Optional[int] = await dal.get_last_published_message_id()
+
+        # message_id: Optional[int] = await pull_message_id(
+        #     filepath=MESSAGES_DUMP_FILE_PATH
+        # )
+
         if message_id is not None:
             try:
                 is_needed_send = await check_if_need_send_instead_of_edit(
@@ -129,9 +133,15 @@ async def send_report(
             await logger.ainfo(f"Msg: {message_id} sent")
 
         if message_id:
-            await push_message_id(
-                message_id=message_id, filepath=MESSAGES_DUMP_FILE_PATH
+            await dal.create_message(
+                message_log_schema=MessageLogSchema(
+                    message_id=message_id, text=message_text
+                )
             )
+
+            # await push_message_id(
+            #     message_id=message_id, filepath=MESSAGES_DUMP_FILE_PATH
+            # )
 
 
 __all__ = ["send_report"]

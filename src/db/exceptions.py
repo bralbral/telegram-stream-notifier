@@ -25,4 +25,4 @@ class ColumnDoesNotExist(BaseDatabaseException):
         )
 
 
-__all__ = ["DatabaseDoesNotExist"]
+__all__ = ["ColumnDoesNotExist", "DatabaseDoesNotExist"]

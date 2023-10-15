@@ -1,10 +1,11 @@
 from typing import Optional
 
-from pydantic import BaseModel
 from pydantic import ConfigDict
 
+from .base import Schema
 
-class UserSchema(BaseModel):
+
+class UserSchema(Schema):
     id: Optional[int] = None
     user_id: int
     username: Optional[str] = None

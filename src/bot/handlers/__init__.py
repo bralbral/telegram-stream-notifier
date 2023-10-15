@@ -1,6 +1,6 @@
 from aiogram import Dispatcher
 
-from .super_user import router as super_user_router
+from .superuser import router as super_user_router
 
 
 def register_handlers(dp: Dispatcher) -> None:

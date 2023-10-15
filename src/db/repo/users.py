@@ -1,11 +1,7 @@
 from typing import Optional
 
-from pydantic import TypeAdapter
 from sqlalchemy import CursorResult
-from sqlalchemy import ScalarResult
-from sqlalchemy import Select
 
-from ..exceptions import ColumnDoesNotExist
 from ..models import UserOrm
 from .base import Repo
 from .utils import sqlite_async_upsert
@@ -33,65 +29,6 @@ class UserRepo(Repo):
             user_dto = await self.get_by_attr(user_id=user_schema.user_id)
 
         return user_dto
-
-    async def __get_by_attrs(self, **kwargs) -> ScalarResult:
-        """
-        :param kwargs:
-        :return:
-        """
-        where_clause: list = []
-
-        for key in kwargs.keys():
-            if not hasattr(UserOrm, key):
-                raise ColumnDoesNotExist(column=key, table=UserOrm.__tablename__)
-            else:
-                col = getattr(UserOrm, key)
-                where_clause.append(col == kwargs[key])
-
-        stm = Select(UserOrm).where(*where_clause)
-        result: ScalarResult = await self.session.scalars(stm)
-        return result
-
-    async def get_by_attr(self, **kwargs) -> Optional[UserSchema]:
-        """
-        :param kwargs:
-        :return:
-        """
-        result: ScalarResult = await self.__get_by_attrs(**kwargs)
-        user: Optional[UserOrm] = result.first()
-
-        if user:
-            user_dto = UserSchema.model_validate(user)
-            return user_dto
-
-        return None
-
-    async def get_by_pk(self, pk: int) -> Optional[UserSchema]:
-        """
-        :param pk:
-        :return:
-        """
-        stm = Select(UserOrm).where(UserOrm.id == pk)
-
-        result: ScalarResult = await self.session.scalars(stm)
-        user: Optional[UserOrm] = result.first()
-
-        if user:
-            user_dto = UserSchema.model_validate(user)
-            return user_dto
-
-        return None
-
-    async def list_by_attrs(self, **kwargs) -> list[UserSchema]:
-        """
-        :param kwargs:
-        :return:
-        """
-        result: ScalarResult = await self.__get_by_attrs(**kwargs)
-        ta = TypeAdapter(list[UserSchema])
-        users = ta.validate_python(result.all())
-
-        return users
 
 
 __all__ = ["UserRepo"]
