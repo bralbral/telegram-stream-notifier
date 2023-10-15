@@ -29,7 +29,6 @@ class Config(BaseSettings):
 
     bot: BotConfig
     chat_id: int
-    superuser_id: int
     temp_chat_id: int
     report: Report
     channels: list[Channel]
