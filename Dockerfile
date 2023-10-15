@@ -10,6 +10,9 @@ RUN apt-get update && \
 COPY ./requirements.txt /app/requirements.txt
 COPY ./src /app/src
 
+# Copy alembic files
+COPY alembic.ini alembic-upgrade.bash /app/
+
 WORKDIR /app
 
 # Install Python dependencies

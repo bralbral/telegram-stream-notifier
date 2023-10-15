@@ -1,15 +1,24 @@
-version: '2.2'
+version: '3'
 
 services:
+  dry-run:
+    image: bral1488/telegram-youtube-notifier:develop
+    volumes:
+      - ./config.yaml:/app/config.yaml
+      - ./youtube-notifier-bot.db:/app/youtube-notifier-bot.db
+    command: bash -c "alembic upgrade head"
+    profiles:
+      - dry_run
+
   yt-notifier:
-    image: bral1488/telegram-youtube-notifier:main
+    image: bral1488/telegram-youtube-notifier:develop
     container_name: telegram-youtube-notifier
     restart: always
     volumes:
       - ./config.yaml:/app/config.yaml
-      - ./messages.dump:/app/messages.dump
-      - ./cookies.txt://app/cookies.txt
+      - ./cookies.txt:/app/cookies.txt:touch
+      - ./youtube-notifier-bot.db:/app/youtube-notifier-bot.db
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    command: bash -c "python -m src"
+    command: bash -c "alembic upgrade head && python -m src"
 
