@@ -142,7 +142,7 @@ class DataAccessLayer:
 
     async def create_channel(
         self, channel_schema: ChannelSchema
-    ) -> Optional[MessageLogSchema]:
+    ) -> Optional[ChannelSchema]:
         """
         :param channel_schema:
         :return:

@@ -30,7 +30,7 @@ async def start_channels_dialog(message: Message, **kwargs):
 
         result = await dal.create_channel(channel_schema=channel_schema)
 
-    await message.answer("Started.")
+    await message.answer("Created.")
 
 
 __all__ = ["router"]
