@@ -8,9 +8,10 @@ from .base import Schema
 
 
 class ChannelSchema(Schema):
-    id: Optional[int]
+    id: Optional[int] = None
     url: str = Field(max_length=255)
     label: str = Field(max_length=255)
+    user_id: int
     enabled: bool
 
     model_config = ConfigDict(from_attributes=True)

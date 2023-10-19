@@ -118,6 +118,9 @@ class DataAccessLayer:
         return user_ids
 
     async def get_last_published_message_id(self) -> Optional[int]:
+        """
+        :return:
+        """
         message_log_dto: Optional[
             MessageLogSchema
         ] = await self.__message_log_repo.get_by_attr()
@@ -129,9 +132,22 @@ class DataAccessLayer:
     async def create_message(
         self, message_log_schema: MessageLogSchema
     ) -> Optional[MessageLogSchema]:
+        """
+        :param message_log_schema:
+        :return:
+        """
         return await self.__message_log_repo.create(
             message_log_schema=message_log_schema
         )
+
+    async def create_channel(
+        self, channel_schema: ChannelSchema
+    ) -> Optional[MessageLogSchema]:
+        """
+        :param channel_schema:
+        :return:
+        """
+        return await self.__channel_repo.create(channel_schema=channel_schema)
 
 
 __all__ = ["DataAccessLayer"]

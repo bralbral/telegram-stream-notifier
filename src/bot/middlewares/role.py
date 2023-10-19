@@ -1,7 +1,6 @@
 from typing import Any
 from typing import Awaitable
 from typing import Callable
-from typing import Dict
 from typing import Optional
 
 from aiocache import Cache
@@ -25,9 +24,9 @@ class RoleMiddleware(BaseMiddleware):
 
     async def __call__(
         self,
-        handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
+        handler: Callable[[Message, dict[str, Any]], Awaitable[Any]],
         event: Message,
-        data: Dict[str, Any],
+        data: dict[str, Any],
     ) -> Any:
         user = event.from_user
         dal: DataAccessLayer = data["dal"]
