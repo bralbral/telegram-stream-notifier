@@ -1,5 +1,7 @@
 from datetime import datetime
 from typing import Any
+from typing import Optional
+from typing import TextIO
 
 import yt_dlp
 from aiogram import Bot
@@ -12,9 +14,7 @@ from src.db import DataAccessLayer
 from src.telegram_notify_job import send_report
 
 
-async def setup_scheduler(
-    conf: Config, bot: Bot, dal: DataAccessLayer
-) -> AsyncIOScheduler:
+def setup_scheduler(conf: Config, bot: Bot, dal: DataAccessLayer) -> AsyncIOScheduler:
     """
     :param dal:
     :param conf:
@@ -24,8 +24,14 @@ async def setup_scheduler(
 
     scheduler = AsyncIOScheduler()
 
+    cookiefile: Optional[TextIO]
+    try:
+        cookiefile = open(file=COOKIES_FILE_PATH, encoding="utf-8")
+    except FileNotFoundError:
+        cookiefile = None
+
     ydl_opts: dict[str, Any] = {
-        "cookiefile": COOKIES_FILE_PATH,
+        "cookiefile": cookiefile,
         "quiet": True,
         "load-pages": False,
         "extract_flat": False,

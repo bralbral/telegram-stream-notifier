@@ -46,6 +46,19 @@ and build docker image:
 
 And use this image with [docker-compose.yml](./deploy/example.docker-compose.yml) from `deploy` dir.
 
+## Setup Cookies
+
+You can use own cookies for yt-dlp extractors.
+
+> `yt-dlp` does not read cookies from the browser when the browser is open. Just close it before then.
+
+First extract the cookies to a file using the command below:
+
+`yt-dlp --cookies-from-browser [chrome/firefox/etc]`
+
+Just rename it to `cookies.txt`, and use it in [docker-compose.yml](/deploy/example.docker-compose.yml) or place in root dir (parent to `src` dir).
+It will be load automatically after launch.
+
 ## Hosting
 You can rent a server from various hosters, for example from [Aeza](https://aeza.net/?ref=380831).
 
