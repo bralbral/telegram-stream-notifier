@@ -9,6 +9,7 @@ class ChannelDialogSG(StatesGroup):
     delete = State()
     turn_on = State()
     turn_off = State()
+    bulk_channels = State()
 
 
 __all__ = ["ChannelDialogSG"]
