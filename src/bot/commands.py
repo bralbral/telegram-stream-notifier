@@ -11,7 +11,9 @@ def superuser_commands() -> list[BotCommand]:
 
 def admin_commands() -> list[BotCommand]:
     commands = [
-        BotCommand(command="channels", description="Start Channels Administration"),
+        BotCommand(command="add_channel", description="Add channel."),
+        BotCommand(command="channels", description="Start Channels Administration."),
+        BotCommand(command="cancel", description="Clear current state."),
     ]
     return commands
 

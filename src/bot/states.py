@@ -2,13 +2,13 @@ from aiogram.fsm.state import State
 from aiogram.fsm.state import StatesGroup
 
 
-class DialogSG(StatesGroup):
-    MAIN = State()
-    DEFAULT_PAGER = State()
-    PAGERS = State()
-    LIST = State()
-    TEXT = State()
-    STUB = State()
+class ChannelDialogSG(StatesGroup):
+    input_url = State()
+    input_label = State()
+    scrolling = State()
+    delete = State()
+    turn_on = State()
+    turn_off = State()
 
 
-__all__ = ["DialogSG"]
+__all__ = ["ChannelDialogSG"]

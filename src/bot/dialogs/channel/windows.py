@@ -1,50 +1,94 @@
-import calendar
-
-from aiogram_dialog import Dialog
-from aiogram_dialog import DialogManager
+from aiogram import F
 from aiogram_dialog import Window
-from aiogram_dialog.widgets.kbd import NumberedPager
+from aiogram_dialog.widgets.kbd import Button
+from aiogram_dialog.widgets.kbd import CurrentPage
+from aiogram_dialog.widgets.kbd import FirstPage
+from aiogram_dialog.widgets.kbd import Group
+from aiogram_dialog.widgets.kbd import LastPage
+from aiogram_dialog.widgets.kbd import NextPage
+from aiogram_dialog.widgets.kbd import PrevPage
+from aiogram_dialog.widgets.kbd import Row
+from aiogram_dialog.widgets.kbd import StubScroll
 from aiogram_dialog.widgets.kbd import SwitchTo
 from aiogram_dialog.widgets.text import Const
 from aiogram_dialog.widgets.text import Format
-from aiogram_dialog.widgets.text import List
+from sulguk import SULGUK_PARSE_MODE
 
-from src.bot.states import DialogSG
-
-
-async def product_getter(**_kwargs):
-    return {
-        "products": [(f"Product {i}", i) for i in range(1, 30)],
-    }
-
-
-async def paging_getter(dialog_manager: DialogManager, **_kwargs):
-    current_page = await dialog_manager.find("stub_scroll").get_page()
-    return {
-        "pages": 7,
-        "current_page": current_page + 1,
-        "day": calendar.day_name[current_page],
-    }
+from .constants import ID_STUB_SCROLL
+from .getters import scroll_getter
+from .on_click import on_delete
+from .on_click import on_finish
+from .on_click import on_perform_delete
+from .on_click import on_turn_off
+from .on_click import on_turn_on
+from src.bot.states import ChannelDialogSG
 
 
-MAIN_MENU_BTN = SwitchTo(Const("Main menu"), id="main", state=DialogSG.MAIN)
-dialog = Dialog(
-    Window(
-        Const("Text list scrolling:\n"),
-        List(
-            Format("{pos}. {item[0]}"),
-            items="products",
-            id="list_scroll",
-            page_size=10,
+def scroll_window():
+    return Window(
+        Const(
+            "⚠️ Channels list is <b>empty</b>.<br/> Add new with <b>/add_channel</b> command.",
+            when=F["is_empty"],
         ),
-        NumberedPager(
-            scroll="list_scroll",
+        Const("✅ Available channels:", when=~F["is_empty"]),
+        Group(
+            Row(StubScroll(id=ID_STUB_SCROLL, pages="pages")),
+            Row(
+                FirstPage(
+                    scroll=ID_STUB_SCROLL,
+                    text=Format("⏮️ {target_page1}"),
+                ),
+                PrevPage(
+                    scroll=ID_STUB_SCROLL,
+                    text=Format("◀️"),
+                ),
+                CurrentPage(
+                    scroll=ID_STUB_SCROLL,
+                    text=Format("{current_page1}"),
+                ),
+                NextPage(
+                    scroll=ID_STUB_SCROLL,
+                    text=Format("▶️"),
+                ),
+                LastPage(
+                    scroll=ID_STUB_SCROLL,
+                    text=Format("{target_page1} ⏭️"),
+                ),
+            ),
+            Row(
+                Button(Const("🗑️ Delete"), id="delete", on_click=on_delete),
+                Button(Const("✏️ Turn on"), id="off", on_click=on_turn_on),
+                Button(Const("✏️ Turn off"), id="on", on_click=on_turn_off),
+            ),
+            Button(Const("❌ Exit"), id="finish", on_click=on_finish),
+            when=~F["is_empty"],
         ),
-        MAIN_MENU_BTN,
-        getter=product_getter,
-        state=DialogSG.LIST,
+        state=ChannelDialogSG.scrolling,
+        getter=scroll_getter,
+        parse_mode=SULGUK_PARSE_MODE,
     )
+
+
+SWITCH_TO_SCROLLING = SwitchTo(
+    text=Const("🔙 No, return me back."), state=ChannelDialogSG.scrolling, id="back"
 )
 
 
-__all__ = ["dialog"]
+def delete_window():
+    return Window(
+        Const("Are you sure?"),
+        Row(
+            Button(
+                Const("✅ Yes, delete this channel."),
+                id="off",
+                on_click=on_perform_delete,
+            ),
+            SWITCH_TO_SCROLLING,
+        ),
+        Button(Const("❌ Exit"), id="finish", on_click=on_finish),
+        state=ChannelDialogSG.delete,
+        getter=scroll_getter,
+    )
+
+
+__all__ = ["delete_window", "scroll_window"]

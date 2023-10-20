@@ -4,6 +4,7 @@ from typing import Optional
 from typing import Type
 
 from pydantic import TypeAdapter
+from sqlalchemy import Delete
 from sqlalchemy import ScalarResult
 from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -86,6 +87,18 @@ class Repo(ABC):
             return dto
 
         return None
+
+    async def delete_by_pk(self, pk: int) -> Optional[int]:
+        stm = (
+            Delete(self.model_orm)
+            .where(self.model_orm.id == pk)
+            .returning(self.model_orm.id)
+        )
+        result: ScalarResult = await self.session.scalars(stm)
+        deleted_id = result.first()
+
+        await self.session.commit()
+        return deleted_id
 
 
 __all__ = ["Repo"]

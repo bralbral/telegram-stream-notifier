@@ -55,7 +55,7 @@ async def run_bot() -> None:
 
     await logger.ainfo("Starting scheduler")
     scheduler: AsyncIOScheduler = setup_scheduler(bot=bot, conf=config, dal=dal)
-    scheduler.start()
+    # scheduler.start()
 
     await logger.ainfo("Starting bot")
 

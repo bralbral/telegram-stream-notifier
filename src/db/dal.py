@@ -149,5 +149,23 @@ class DataAccessLayer:
         """
         return await self.__channel_repo.create(channel_schema=channel_schema)
 
+    async def get_channels(self, **kwargs) -> list[ChannelSchema]:
+        """
+        :param kwargs:
+        :return:
+        """
+        channels: list[ChannelSchema] = cast(
+            list[ChannelSchema], await self.__channel_repo.list_by_attrs(**kwargs)
+        )
+
+        return channels
+
+    async def delete_channel_by_id(self, _id: int) -> Optional[int]:
+        """
+        :param _id:
+        :return:
+        """
+        return await self.__channel_repo.delete_by_pk(pk=_id)
+
 
 __all__ = ["DataAccessLayer"]
