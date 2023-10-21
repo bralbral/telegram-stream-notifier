@@ -7,6 +7,7 @@ from pydantic import TypeAdapter
 from sqlalchemy import Delete
 from sqlalchemy import ScalarResult
 from sqlalchemy import Select
+from sqlalchemy import Update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db.exceptions import ColumnDoesNotExist
@@ -99,6 +100,19 @@ class Repo(ABC):
 
         await self.session.commit()
         return deleted_id
+
+    async def update_by_pk(self, pk: int, data: dict) -> Optional[int]:
+        stm = (
+            Update(self.model_orm)
+            .where(self.model_orm.id == pk)
+            .values(**data)
+            .returning(self.model_orm.id)
+        )
+        result: ScalarResult = await self.session.scalars(stm)
+        updated_id = result.first()
+
+        await self.session.commit()
+        return updated_id
 
 
 __all__ = ["Repo"]

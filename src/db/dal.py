@@ -29,7 +29,8 @@ class DataAccessLayer:
         self.__sqlite_exists()
         self.__init_repo()
 
-    def __sqlite_exists(self):
+    @staticmethod
+    def __sqlite_exists():
         if not os.path.exists(SQLITE_DATABASE_FILE_PATH):
             raise DatabaseDoesNotExist()
 
@@ -166,6 +167,14 @@ class DataAccessLayer:
         :return:
         """
         return await self.__channel_repo.delete_by_pk(pk=_id)
+
+    async def update_channel_by_id(self, _id: int, data: dict) -> Optional[int]:
+        """
+        :param data:
+        :param _id:
+        :return:
+        """
+        return await self.__channel_repo.update_by_pk(pk=_id, data=data)
 
 
 __all__ = ["DataAccessLayer"]

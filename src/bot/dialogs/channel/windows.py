@@ -20,6 +20,7 @@ from .getters import scroll_getter
 from .on_click import on_delete
 from .on_click import on_finish
 from .on_click import on_perform_delete
+from .on_click import on_perform_update
 from .on_click import on_turn_off
 from .on_click import on_turn_on
 from .widgets import Viewer
@@ -85,7 +86,7 @@ def delete_window():
         Row(
             Button(
                 Const("✅ Yes, delete this channel."),
-                id="off",
+                id="delete",
                 on_click=on_perform_delete,
             ),
             SWITCH_TO_SCROLLING,
@@ -96,4 +97,38 @@ def delete_window():
     )
 
 
-__all__ = ["delete_window", "scroll_window"]
+def turn_on_window():
+    return Window(
+        Const("Are you sure?"),
+        Row(
+            Button(
+                Const("✅ Yes, turn on this channel."),
+                id="on",
+                on_click=on_perform_update,
+            ),
+            SWITCH_TO_SCROLLING,
+        ),
+        Button(Const("❌ Exit"), id="finish", on_click=on_finish),
+        state=ChannelsSG.turn_on,
+        getter=scroll_getter,
+    )
+
+
+def turn_off_window():
+    return Window(
+        Const("Are you sure?"),
+        Row(
+            Button(
+                Const("✅ Yes, turn off this channel."),
+                id="off",
+                on_click=on_perform_update,
+            ),
+            SWITCH_TO_SCROLLING,
+        ),
+        Button(Const("❌ Exit"), id="finish", on_click=on_finish),
+        state=ChannelsSG.turn_off,
+        getter=scroll_getter,
+    )
+
+
+__all__ = ["delete_window", "scroll_window", "turn_off_window", "turn_on_window"]

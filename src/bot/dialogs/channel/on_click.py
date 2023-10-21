@@ -56,4 +56,43 @@ async def on_turn_on(callback: CallbackQuery, button: Button, manager: DialogMan
     await manager.switch_to(ChannelsSG.turn_on)
 
 
-__all__ = ["on_delete", "on_finish", "on_perform_delete", "on_turn_off", "on_turn_on"]
+async def on_perform_update(
+    callback: CallbackQuery, button: Button, manager: DialogManager
+):
+    index = manager.dialog_data["current_page"]
+    channel: ChannelSchema = manager.dialog_data["channels"][index]
+
+    if channel.id:
+        dal: DataAccessLayer = manager.start_data["dal"]
+
+        data = callback.data
+        if data == "on":
+            enabled = True
+        elif data == "off":
+            enabled = False
+        else:
+            await callback.answer("Unknown callback data")
+            return
+
+        result = await dal.update_channel_by_id(
+            _id=channel.id, data={"enabled": enabled}
+        )
+
+        if result:
+            await callback.answer("Success.")
+        else:
+            await callback.answer("Cannot update row.")
+    else:
+        await callback.answer("Cannot update row.")
+
+    await manager.switch_to(state=ChannelsSG.scrolling)
+
+
+__all__ = [
+    "on_delete",
+    "on_finish",
+    "on_perform_delete",
+    "on_perform_update",
+    "on_turn_off",
+    "on_turn_on",
+]
