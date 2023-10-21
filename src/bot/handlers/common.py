@@ -7,7 +7,7 @@ from aiogram.types import Message
 from ..filters import RoleFilter
 from ..filters import UserRole
 
-router = Router(name="core")
+router = Router(name="common")
 
 
 @router.message(

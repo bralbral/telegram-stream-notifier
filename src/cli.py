@@ -47,15 +47,19 @@ async def run_bot() -> None:
         await logger.aerror("You must to create superuser before start.")
         return
 
-    dp: Dispatcher = setup_dispatcher(chat_id=config.chat_id, dal=dal)
-
     bot: Bot = await setup_bot(
         config=config.bot, admins_id=admins, superusers_id=superusers
     )
 
-    await logger.ainfo("Starting scheduler")
+    await logger.ainfo("Setup scheduler")
     scheduler: AsyncIOScheduler = setup_scheduler(bot=bot, conf=config, dal=dal)
-    # scheduler.start()
+    if config.start_scheduler:
+        await logger.ainfo("Starting scheduler")
+        scheduler.start()
+
+    dp: Dispatcher = setup_dispatcher(
+        chat_id=config.chat_id, dal=dal, scheduler=scheduler
+    )
 
     await logger.ainfo("Starting bot")
 

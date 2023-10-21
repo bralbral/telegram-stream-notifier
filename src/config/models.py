@@ -17,11 +17,6 @@ class BotConfig(BaseSettings):
     token: SecretStr
 
 
-class Channel(BaseSettings):
-    url: str
-    label: str
-
-
 class Config(BaseSettings):
     """
     All in one config
@@ -31,8 +26,8 @@ class Config(BaseSettings):
     chat_id: int
     temp_chat_id: int
     report: Report
-    channels: list[Channel]
+    start_scheduler: bool
     interval_s: int
 
 
-__all__ = ["BotConfig", "Channel", "Config"]
+__all__ = ["BotConfig", "Config"]

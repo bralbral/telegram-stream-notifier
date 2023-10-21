@@ -43,7 +43,6 @@ def setup_scheduler(conf: Config, bot: Bot, dal: DataAccessLayer) -> AsyncIOSche
 
     notify_kwargs = {
         "bot": bot,
-        "channels": conf.channels,
         "chat_id": conf.chat_id,
         "temp_chat_id": conf.temp_chat_id,
         "ydl": ydl,

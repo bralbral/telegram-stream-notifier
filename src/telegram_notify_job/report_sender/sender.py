@@ -12,13 +12,11 @@ from ..data_fetcher import async_fetch_livestreams
 from ..report_generator import generate_jinja_report
 from ..schemas import ChannelDescription
 from .utils import check_if_need_send_instead_of_edit
-from src.config import Channel
 from src.logger import logger
 
 
 async def send_report(
     bot: Bot,
-    channels: list[Channel],
     chat_id: int,
     temp_chat_id: int,
     ydl: yt_dlp.YoutubeDL,
@@ -33,10 +31,11 @@ async def send_report(
     :param temp_chat_id:
     :param ydl:
     :param bot:
-    :param channels:
     :param chat_id:
     :return:
     """
+
+    channels = await dal.get_channels(enabled=True)
 
     live_list: list[ChannelDescription] = await async_fetch_livestreams(
         channels=channels, ydl=ydl

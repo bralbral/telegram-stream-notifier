@@ -6,16 +6,16 @@ from typing import Optional
 import structlog
 import yt_dlp
 
+from ...schemas import ChannelSchema
 from ..schemas import ChannelDescription
 from .utils import make_time_readable
-from src.config import Channel
 from src.decorators import wrap_sync_to_async
 
 logger = structlog.stdlib.get_logger()
 
 
 def fetch_live_stream(
-    channel: Channel, ydl: yt_dlp.YoutubeDL
+    channel: ChannelSchema, ydl: yt_dlp.YoutubeDL
 ) -> Optional[ChannelDescription]:
     """
     :param ydl:
@@ -81,7 +81,7 @@ async_fetch_livestream = wrap_sync_to_async(fetch_live_stream)
 
 
 async def async_fetch_livestreams(
-    channels: list[Channel], ydl: yt_dlp.YoutubeDL
+    channels: list[ChannelSchema], ydl: yt_dlp.YoutubeDL
 ) -> list[ChannelDescription]:
     """
     :param ydl:
