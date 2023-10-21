@@ -18,7 +18,7 @@ from ....db import DataAccessLayer
 from ....schemas import ChannelSchema
 from ...filters import RoleFilter
 from ...filters import UserRole
-from ...states import ChannelDialogSG
+from ...states import ChannelsSG
 
 
 add_channels_router = Router(name="add_channels")
@@ -36,13 +36,13 @@ async def add_channels(message: Message, state: FSMContext, **kwargs) -> None:
         "every single line == channel to insert.",
         parse_mode=SULGUK_PARSE_MODE,
     )
-    await state.set_state(ChannelDialogSG.bulk_channels)
+    await state.set_state(ChannelsSG.bulk_channels)
 
 
 @add_channels_router.message(
     F.content_type == ContentType.DOCUMENT,
     RoleFilter(role=[UserRole.SUPERUSER]),
-    StateFilter(ChannelDialogSG.bulk_channels),
+    StateFilter(ChannelsSG.bulk_channels),
 )
 async def channel_file_handler(
     message: Message, state: FSMContext, bot: Bot, dal: DataAccessLayer, **kwargs

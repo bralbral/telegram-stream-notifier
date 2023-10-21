@@ -8,7 +8,7 @@ from aiogram_dialog import StartMode
 from ....db import DataAccessLayer
 from ...filters import RoleFilter
 from ...filters import UserRole
-from ...states import ChannelDialogSG
+from ...states import ChannelsSG
 
 scroll_channel_router = Router(name="scroll_channel")
 
@@ -22,7 +22,7 @@ async def start_channels_dialog(
     message: Message, dialog_manager: DialogManager, dal: DataAccessLayer, **kwargs
 ):
     await dialog_manager.start(
-        ChannelDialogSG.scrolling, mode=StartMode.RESET_STACK, data={"dal": dal}
+        ChannelsSG.scrolling, mode=StartMode.RESET_STACK, data={"dal": dal}
     )
 
 

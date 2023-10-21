@@ -12,6 +12,7 @@ from aiogram_dialog.widgets.kbd import StubScroll
 from aiogram_dialog.widgets.kbd import SwitchTo
 from aiogram_dialog.widgets.text import Const
 from aiogram_dialog.widgets.text import Format
+from aiogram_dialog.widgets.text import Multi
 from sulguk import SULGUK_PARSE_MODE
 
 from .constants import ID_STUB_SCROLL
@@ -21,7 +22,8 @@ from .on_click import on_finish
 from .on_click import on_perform_delete
 from .on_click import on_turn_off
 from .on_click import on_turn_on
-from src.bot.states import ChannelDialogSG
+from .widgets import Viewer
+from src.bot.states import ChannelsSG
 
 
 def scroll_window():
@@ -30,13 +32,16 @@ def scroll_window():
             "⚠️ Channels list is <b>empty</b>.<br/> Add new with <b>/add_channel</b> command.",
             when=F["is_empty"],
         ),
-        Const("✅ Available channels:", when=~F["is_empty"]),
+        Multi(
+            Viewer("{channels[{current_page}]}"),
+            when=~F["is_empty"],
+        ),
         Group(
             Row(StubScroll(id=ID_STUB_SCROLL, pages="pages")),
             Row(
                 FirstPage(
                     scroll=ID_STUB_SCROLL,
-                    text=Format("⏮️ {target_page1}"),
+                    text=Format("⏮️ {target_page}"),
                 ),
                 PrevPage(
                     scroll=ID_STUB_SCROLL,
@@ -44,7 +49,7 @@ def scroll_window():
                 ),
                 CurrentPage(
                     scroll=ID_STUB_SCROLL,
-                    text=Format("{current_page1}"),
+                    text=Format("{current_page}"),
                 ),
                 NextPage(
                     scroll=ID_STUB_SCROLL,
@@ -52,7 +57,7 @@ def scroll_window():
                 ),
                 LastPage(
                     scroll=ID_STUB_SCROLL,
-                    text=Format("{target_page1} ⏭️"),
+                    text=Format("{target_page} ⏭️"),
                 ),
             ),
             Row(
@@ -63,14 +68,14 @@ def scroll_window():
             Button(Const("❌ Exit"), id="finish", on_click=on_finish),
             when=~F["is_empty"],
         ),
-        state=ChannelDialogSG.scrolling,
+        state=ChannelsSG.scrolling,
         getter=scroll_getter,
         parse_mode=SULGUK_PARSE_MODE,
     )
 
 
 SWITCH_TO_SCROLLING = SwitchTo(
-    text=Const("🔙 No, return me back."), state=ChannelDialogSG.scrolling, id="back"
+    text=Const("🔙 No, return me back."), state=ChannelsSG.scrolling, id="back"
 )
 
 
@@ -86,7 +91,7 @@ def delete_window():
             SWITCH_TO_SCROLLING,
         ),
         Button(Const("❌ Exit"), id="finish", on_click=on_finish),
-        state=ChannelDialogSG.delete,
+        state=ChannelsSG.delete,
         getter=scroll_getter,
     )
 

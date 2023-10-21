@@ -2,7 +2,7 @@ from aiogram.fsm.state import State
 from aiogram.fsm.state import StatesGroup
 
 
-class ChannelDialogSG(StatesGroup):
+class ChannelsSG(StatesGroup):
     input_url = State()
     input_label = State()
     scrolling = State()
@@ -12,4 +12,4 @@ class ChannelDialogSG(StatesGroup):
     bulk_channels = State()
 
 
-__all__ = ["ChannelDialogSG"]
+__all__ = ["ChannelsSG"]

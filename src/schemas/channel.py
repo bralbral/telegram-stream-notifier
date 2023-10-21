@@ -25,5 +25,13 @@ class ChannelSchema(Schema):
 
         return v.lower()
 
+    def to_html(self) -> str:
+        return (
+            f"<b>id</b>:{self.id}<br/>"
+            f"<b>label</b>:{self.label}<br/>"
+            f"<b>url</b>:{self.url}<br/>"
+            f"<b>enabled</b>:{self.enabled}<br/>"
+        )
+
 
 __all__ = ["ChannelSchema"]

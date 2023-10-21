@@ -14,7 +14,12 @@ async def scroll_getter(dialog_manager: DialogManager, **_kwargs):
     dialog_manager.dialog_data["channels"] = channels
     dialog_manager.dialog_data["current_page"] = current_page
 
-    return {"is_empty": True if len(channels) == 0 else False, "pages": len(channels)}
+    return {
+        "is_empty": True if len(channels) == 0 else False,
+        "pages": len(channels),
+        "channels": [channel.to_html() for channel in channels],
+        "current_page": current_page,
+    }
 
 
 __all__ = ["scroll_getter"]

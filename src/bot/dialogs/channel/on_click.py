@@ -9,7 +9,7 @@ from aiogram_dialog.widgets.kbd import (
     Button,
 )
 
-from src.bot.states import ChannelDialogSG
+from src.bot.states import ChannelsSG
 from src.db import DataAccessLayer
 from src.schemas import ChannelSchema
 
@@ -25,7 +25,7 @@ async def on_finish(
 
 
 async def on_delete(callback: CallbackQuery, button: Button, manager: DialogManager):
-    await manager.switch_to(ChannelDialogSG.delete)
+    await manager.switch_to(ChannelsSG.delete)
 
 
 async def on_perform_delete(
@@ -45,15 +45,15 @@ async def on_perform_delete(
     else:
         await callback.answer("Cannot delete row.")
 
-    await manager.switch_to(state=ChannelDialogSG.scrolling)
+    await manager.switch_to(state=ChannelsSG.scrolling)
 
 
 async def on_turn_off(callback: CallbackQuery, button: Button, manager: DialogManager):
-    await manager.switch_to(ChannelDialogSG.turn_off)
+    await manager.switch_to(ChannelsSG.turn_off)
 
 
 async def on_turn_on(callback: CallbackQuery, button: Button, manager: DialogManager):
-    await manager.switch_to(ChannelDialogSG.turn_on)
+    await manager.switch_to(ChannelsSG.turn_on)
 
 
 __all__ = ["on_delete", "on_finish", "on_perform_delete", "on_turn_off", "on_turn_on"]

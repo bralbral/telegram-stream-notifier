@@ -12,7 +12,7 @@ from ....db import DataAccessLayer
 from ....schemas import ChannelSchema
 from ...filters import RoleFilter
 from ...filters import UserRole
-from ...states import ChannelDialogSG
+from ...states import ChannelsSG
 from .utils import url_validator
 from src.logger import logger
 
@@ -30,11 +30,11 @@ async def add_channel(message: Message, state: FSMContext, **kwargs) -> None:
         text="Set channel url in format: <code>https://www.youtube.com/@username</code>",
         parse_mode=SULGUK_PARSE_MODE,
     )
-    await state.set_state(ChannelDialogSG.input_url)
+    await state.set_state(ChannelsSG.input_url)
 
 
 @add_channel_router.message(
-    StateFilter(ChannelDialogSG.input_url),
+    StateFilter(ChannelsSG.input_url),
     RoleFilter(role=[UserRole.ADMIN, UserRole.SUPERUSER]),
     F.text,
 )
@@ -46,7 +46,7 @@ async def url_handler(message: Message, state: FSMContext, **kwargs) -> None:
             f"URL set to <b>{url}</b>, enter display name or <b>/cancel</b> for reject",
             parse_mode=SULGUK_PARSE_MODE,
         )
-        await state.set_state(ChannelDialogSG.input_label)
+        await state.set_state(ChannelsSG.input_label)
     else:
         await message.answer(
             text="Set channel url in format: <b>https://www.youtube.com/@username</b>",
@@ -55,7 +55,7 @@ async def url_handler(message: Message, state: FSMContext, **kwargs) -> None:
 
 
 @add_channel_router.message(
-    StateFilter(ChannelDialogSG.input_label),
+    StateFilter(ChannelsSG.input_label),
     RoleFilter(role=[UserRole.ADMIN, UserRole.SUPERUSER]),
     F.text,
 )
