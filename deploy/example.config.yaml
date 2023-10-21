@@ -46,12 +46,8 @@ report:
     <hr/>
     <i>💬 Заходите в наш <a href='https://t.me/Discordovchat'>чат</a></i>
 
-# Channel lists
-# url must be ends with @user
-channels:
-  - label: Your label 🎈
-    url: https://www.youtube.com/@user
-
+# start scheduler when start or do it after
+start_scheduler: False
 # interval between checks in seconds
 interval_s: 60
 
