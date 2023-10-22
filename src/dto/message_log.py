@@ -4,10 +4,10 @@ from typing import Optional
 from pydantic import ConfigDict
 from pydantic import Field
 
-from .base import Schema
+from .base import DTO
 
 
-class MessageLogSchema(Schema):
+class MessageLogDTO(DTO):
     id: Optional[int] = None
     message_id: int
     text: str
@@ -16,4 +16,4 @@ class MessageLogSchema(Schema):
     model_config = ConfigDict(from_attributes=True)
 
 
-__all__ = ["MessageLogSchema"]
+__all__ = ["MessageLogDTO"]

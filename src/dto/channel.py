@@ -4,10 +4,10 @@ from pydantic import ConfigDict
 from pydantic import Field
 from pydantic import field_validator
 
-from .base import Schema
+from .base import DTO
 
 
-class ChannelSchema(Schema):
+class ChannelDTO(DTO):
     id: Optional[int] = None
     url: str = Field(max_length=255)
     label: str = Field(max_length=255)
@@ -34,4 +34,4 @@ class ChannelSchema(Schema):
         )
 
 
-__all__ = ["ChannelSchema"]
+__all__ = ["ChannelDTO"]

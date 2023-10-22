@@ -9,11 +9,11 @@ from aiogram.utils.chat_action import ChatActionSender
 from sulguk import SULGUK_PARSE_MODE
 
 from ...db import DataAccessLayer
-from ...schemas import MessageLogSchema
+from ...dto import MessageLogDTO
 from ..data_fetcher import async_fetch_livestreams
 from ..report_generator import generate_jinja_report
-from ..schemas import ChannelDescription
 from .utils import check_if_need_send_instead_of_edit
+from src.dto import YoutubeVideoInfoDTO
 from src.logger import logger
 
 
@@ -39,7 +39,7 @@ async def send_report(
 
     channels = await dal.get_channels(enabled=True)
 
-    live_list: list[ChannelDescription] = await async_fetch_livestreams(
+    live_list: list[YoutubeVideoInfoDTO] = await async_fetch_livestreams(
         channels=channels, ydl=ydl
     )
     await logger.ainfo(f"Live list length {len(live_list)}")
@@ -138,7 +138,7 @@ async def send_report(
 
         if message_id:
             await dal.create_message(
-                message_log_schema=MessageLogSchema(
+                message_log_schema=MessageLogDTO(
                     message_id=message_id, text=message_text
                 )
             )

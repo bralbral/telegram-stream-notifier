@@ -5,11 +5,11 @@ from sqlalchemy import CursorResult
 from ..models import ChannelOrm
 from .base import Repo
 from .utils import sqlite_async_upsert
-from src.schemas import ChannelSchema
+from src.dto import ChannelDTO
 
 
 class ChannelRepo(Repo):
-    async def create(self, channel_schema: ChannelSchema) -> Optional[ChannelSchema]:
+    async def create(self, channel_schema: ChannelDTO) -> Optional[ChannelDTO]:
         result: CursorResult = await sqlite_async_upsert(
             session=self.session,
             model=ChannelOrm,
@@ -17,7 +17,7 @@ class ChannelRepo(Repo):
             index_col="url",
         )
 
-        channel_dto: Optional[ChannelSchema]
+        channel_dto: Optional[ChannelDTO]
 
         if result.lastrowid:
             channel_dto = await self.get_by_pk(pk=result.lastrowid)

@@ -1,9 +1,9 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from .base import DTO
 
 
-class ChannelDescription(BaseModel):
+class YoutubeVideoInfoDTO(DTO):
     url: str
     label: str
     like_count: Optional[int] = None
@@ -11,4 +11,4 @@ class ChannelDescription(BaseModel):
     duration: Optional[str] = None
 
 
-__all__ = ["ChannelDescription"]
+__all__ = ["YoutubeVideoInfoDTO"]

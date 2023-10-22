@@ -6,9 +6,9 @@ from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..constants import SQLITE_DATABASE_FILE_PATH
-from ..schemas import ChannelSchema
-from ..schemas import MessageLogSchema
-from ..schemas import UserSchema
+from ..dto import ChannelDTO
+from ..dto import MessageLogDTO
+from ..dto import UserDTO
 from .exceptions import DatabaseDoesNotExist
 from .models import ChannelOrm
 from .models import MessageLogOrm
@@ -53,47 +53,47 @@ class DataAccessLayer:
         :return:
         """
         self.__user_repo = UserRepo(
-            session=self.__session, schema=UserSchema, model_orm=UserOrm
+            session=self.__session, schema=UserDTO, model_orm=UserOrm
         )
         self.__channel_repo = ChannelRepo(
             session=self.__session,
-            schema=ChannelSchema,
+            schema=ChannelDTO,
             model_orm=ChannelOrm,
         )
         self.__message_log_repo = MessageLogRepo(
             session=self.__session,
-            schema=MessageLogSchema,
+            schema=MessageLogDTO,
             model_orm=MessageLogOrm,
         )
 
-    async def create_user(self, user_schema: UserSchema) -> Optional[UserSchema]:
+    async def create_user(self, user_schema: UserDTO) -> Optional[UserDTO]:
         """
         :param user_schema:
         :return:
         """
         return await self.__user_repo.create(user_schema=user_schema)
 
-    async def get_user_by_pk(self, pk: int) -> Optional[UserSchema]:
+    async def get_user_by_pk(self, pk: int) -> Optional[UserDTO]:
         """
         :param pk:
         :return:
         """
         return await self.__user_repo.get_by_pk(pk=pk)
 
-    async def get_user_by_attr(self, **kwargs) -> Optional[UserSchema]:
+    async def get_user_by_attr(self, **kwargs) -> Optional[UserDTO]:
         """
         :param kwargs:
         :return:
         """
         return await self.__user_repo.get_by_attr(**kwargs)
 
-    async def list_users_by_attr(self, **kwargs) -> list[UserSchema]:
+    async def list_users_by_attr(self, **kwargs) -> list[UserDTO]:
         """
         :param kwargs:
         :return:
         """
-        users: list[UserSchema] = cast(
-            list[UserSchema], await self.__user_repo.list_by_attrs(**kwargs)
+        users: list[UserDTO] = cast(
+            list[UserDTO], await self.__user_repo.list_by_attrs(**kwargs)
         )
         return users
 
@@ -109,7 +109,7 @@ class DataAccessLayer:
         :param superusers:
         :return:
         """
-        users: list[UserSchema]
+        users: list[UserDTO]
         if superusers:
             users = await self.list_users_by_attr(**{"is_superuser": True})
         else:
@@ -123,7 +123,7 @@ class DataAccessLayer:
         :return:
         """
         message_log_dto: Optional[
-            MessageLogSchema
+            MessageLogDTO
         ] = await self.__message_log_repo.get_by_attr()
         if message_log_dto:
             return message_log_dto.message_id
@@ -131,8 +131,8 @@ class DataAccessLayer:
         return None
 
     async def create_message(
-        self, message_log_schema: MessageLogSchema
-    ) -> Optional[MessageLogSchema]:
+        self, message_log_schema: MessageLogDTO
+    ) -> Optional[MessageLogDTO]:
         """
         :param message_log_schema:
         :return:
@@ -141,22 +141,20 @@ class DataAccessLayer:
             message_log_schema=message_log_schema
         )
 
-    async def create_channel(
-        self, channel_schema: ChannelSchema
-    ) -> Optional[ChannelSchema]:
+    async def create_channel(self, channel_schema: ChannelDTO) -> Optional[ChannelDTO]:
         """
         :param channel_schema:
         :return:
         """
         return await self.__channel_repo.create(channel_schema=channel_schema)
 
-    async def get_channels(self, **kwargs) -> list[ChannelSchema]:
+    async def get_channels(self, **kwargs) -> list[ChannelDTO]:
         """
         :param kwargs:
         :return:
         """
-        channels: list[ChannelSchema] = cast(
-            list[ChannelSchema], await self.__channel_repo.list_by_attrs(**kwargs)
+        channels: list[ChannelDTO] = cast(
+            list[ChannelDTO], await self.__channel_repo.list_by_attrs(**kwargs)
         )
 
         return channels

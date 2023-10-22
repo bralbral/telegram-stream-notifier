@@ -6,17 +6,17 @@ from typing import Optional
 import structlog
 import yt_dlp
 
-from ...schemas import ChannelSchema
-from ..schemas import ChannelDescription
+from ...dto import ChannelDTO
 from .utils import make_time_readable
 from src.decorators import wrap_sync_to_async
+from src.dto import YoutubeVideoInfoDTO
 
 logger = structlog.stdlib.get_logger()
 
 
 def fetch_live_stream(
-    channel: ChannelSchema, ydl: yt_dlp.YoutubeDL
-) -> Optional[ChannelDescription]:
+    channel: ChannelDTO, ydl: yt_dlp.YoutubeDL
+) -> Optional[YoutubeVideoInfoDTO]:
     """
     :param ydl:
     :param channel:
@@ -58,7 +58,7 @@ def fetch_live_stream(
                             int(datetime.now().timestamp() - release_timestamp)
                         )
                         url = live_info["original_url"]
-                        live_stream = ChannelDescription(
+                        live_stream = YoutubeVideoInfoDTO(
                             url=url,
                             label=channel.label,
                             like_count=like_count,
@@ -81,8 +81,8 @@ async_fetch_livestream = wrap_sync_to_async(fetch_live_stream)
 
 
 async def async_fetch_livestreams(
-    channels: list[ChannelSchema], ydl: yt_dlp.YoutubeDL
-) -> list[ChannelDescription]:
+    channels: list[ChannelDTO], ydl: yt_dlp.YoutubeDL
+) -> list[YoutubeVideoInfoDTO]:
     """
     :param ydl:
     :param channels:
@@ -92,7 +92,7 @@ async def async_fetch_livestreams(
 
     live_streams = await asyncio.gather(*tasks)
     live_streams = [
-        stream for stream in live_streams if isinstance(stream, ChannelDescription)
+        stream for stream in live_streams if isinstance(stream, YoutubeVideoInfoDTO)
     ]
     live_streams = sorted(
         live_streams, key=operator.attrgetter("concurrent_view_count"), reverse=True

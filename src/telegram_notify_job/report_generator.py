@@ -2,11 +2,11 @@ from typing import Optional
 
 from jinja2 import Template
 
-from .schemas import ChannelDescription
+from src.dto import YoutubeVideoInfoDTO
 
 
 def generate_jinja_report(
-    data: list[ChannelDescription], report_template: str, empty_template: Optional[str]
+    data: list[YoutubeVideoInfoDTO], report_template: str, empty_template: Optional[str]
 ) -> Optional[str]:
     """
     :param empty_template:

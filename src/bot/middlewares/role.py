@@ -9,7 +9,7 @@ from aiogram.types import Message
 
 from src.bot.filters.role import UserRole
 from src.db import DataAccessLayer
-from src.schemas import UserSchema
+from src.dto import UserDTO
 
 
 class RoleMiddleware(BaseMiddleware):
@@ -40,7 +40,7 @@ class RoleMiddleware(BaseMiddleware):
             else:
                 user_id = user.id
 
-                _user: Optional[UserSchema] = await dal.get_user_by_attr(
+                _user: Optional[UserDTO] = await dal.get_user_by_attr(
                     **{"user_id": user_id}
                 )
                 if _user:

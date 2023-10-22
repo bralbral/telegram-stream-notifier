@@ -5,13 +5,13 @@ from sqlalchemy import CursorResult
 from ..models import MessageLogOrm
 from .base import Repo
 from .utils import sqlite_async_upsert
-from src.schemas import MessageLogSchema
+from src.dto import MessageLogDTO
 
 
 class MessageLogRepo(Repo):
     async def create(
-        self, message_log_schema: MessageLogSchema
-    ) -> Optional[MessageLogSchema]:
+        self, message_log_schema: MessageLogDTO
+    ) -> Optional[MessageLogDTO]:
         """
         :param message_log_schema:
         :return:
@@ -24,7 +24,7 @@ class MessageLogRepo(Repo):
             index_col="message_id",
         )
 
-        message_log_dto: Optional[MessageLogSchema]
+        message_log_dto: Optional[MessageLogDTO]
 
         if result.lastrowid:
             message_log_dto = await self.get_by_pk(pk=result.lastrowid)

@@ -2,10 +2,10 @@ from typing import Optional
 
 from pydantic import ConfigDict
 
-from .base import Schema
+from .base import DTO
 
 
-class UserSchema(Schema):
+class UserDTO(DTO):
     id: Optional[int] = None
     user_id: int
     username: Optional[str] = None
@@ -17,4 +17,4 @@ class UserSchema(Schema):
     model_config = ConfigDict(from_attributes=True)
 
 
-__all__ = ["UserSchema"]
+__all__ = ["UserDTO"]

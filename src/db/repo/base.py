@@ -12,12 +12,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db.exceptions import ColumnDoesNotExist
 from src.db.models import ModelOrm
-from src.schemas import Schema
+from src.dto import DTO
 
 
 class Repo(ABC):
     def __init__(
-        self, session: AsyncSession, model_orm: Type[ModelOrm], schema: Type[Schema]
+        self, session: AsyncSession, model_orm: Type[ModelOrm], schema: Type[DTO]
     ) -> None:
         self.session = session
         self.model_orm = model_orm
@@ -48,7 +48,7 @@ class Repo(ABC):
         result: ScalarResult = await self.session.scalars(stm)
         return result
 
-    async def list_by_attrs(self, **kwargs) -> list[Schema]:
+    async def list_by_attrs(self, **kwargs) -> list[DTO]:
         """
         :param kwargs:
         :return:
@@ -59,7 +59,7 @@ class Repo(ABC):
 
         return dto_objects
 
-    async def get_by_pk(self, pk: int) -> Optional[Schema]:
+    async def get_by_pk(self, pk: int) -> Optional[DTO]:
         """
         :param pk:
         :return:
@@ -75,7 +75,7 @@ class Repo(ABC):
 
         return None
 
-    async def get_by_attr(self, **kwargs) -> Optional[Schema]:
+    async def get_by_attr(self, **kwargs) -> Optional[DTO]:
         """
         :param kwargs:
         :return:

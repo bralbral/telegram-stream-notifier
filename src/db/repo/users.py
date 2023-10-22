@@ -5,11 +5,11 @@ from sqlalchemy import CursorResult
 from ..models import UserOrm
 from .base import Repo
 from .utils import sqlite_async_upsert
-from src.schemas import UserSchema
+from src.dto import UserDTO
 
 
 class UserRepo(Repo):
-    async def create(self, user_schema: UserSchema) -> Optional[UserSchema]:
+    async def create(self, user_schema: UserDTO) -> Optional[UserDTO]:
         """
         :param user_schema:
         :return:
@@ -21,7 +21,7 @@ class UserRepo(Repo):
             index_col="user_id",
         )
 
-        user_dto: Optional[UserSchema]
+        user_dto: Optional[UserDTO]
 
         if result.lastrowid:
             user_dto = await self.get_by_pk(pk=result.lastrowid)
