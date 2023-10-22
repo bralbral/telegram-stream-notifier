@@ -1,5 +1,7 @@
 # source
 # https://github.com/absent1706/sqlalchemy-mixins/blob/master/sqlalchemy_mixins/timestamp.py
+import datetime
+
 import sqlalchemy as sa
 
 
@@ -10,7 +12,7 @@ class TimestampsMixin:
 
     __created_at_name__ = "created_at"
     __updated_at_name__ = "updated_at"
-    __datetime_func__ = sa.func.now()
+    __datetime_func__ = datetime.datetime.utcnow
 
     created_at = sa.Column(
         __created_at_name__,
