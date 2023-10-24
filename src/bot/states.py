@@ -12,4 +12,8 @@ class ChannelsSG(StatesGroup):
     bulk_channels = State()
 
 
-__all__ = ["ChannelsSG"]
+class UsersSG(StatesGroup):
+    promote = State()
+
+
+__all__ = ["ChannelsSG", "UsersSG"]

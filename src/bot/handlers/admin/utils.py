@@ -1,12 +1,11 @@
-from urllib.parse import urlparse
+import re
+
+YOUTUBE_USERNAME_CHANNEL_LINK_PATTERN = re.compile(r"https://www\.youtube\.com/@(\w+)")
 
 
-def url_validator(x):
-    try:
-        result = urlparse(x)
-        return all([result.scheme, result.netloc])
-    except:
-        return False
+def url_validator(link: str):
+    match = re.match(YOUTUBE_USERNAME_CHANNEL_LINK_PATTERN, link)
+    return bool(match)
 
 
 __all__ = ["url_validator"]
