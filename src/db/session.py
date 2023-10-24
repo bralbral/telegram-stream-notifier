@@ -10,6 +10,7 @@ engine = create_async_engine(
 )
 
 
+# https://docs.sqlalchemy.org/en/20/orm/extensions/asyncio.html#using-events-with-the-asyncio-extension
 # ================  Sqlite Speedup ==============================
 # Event listener function to set performance-related settings
 def set_sqlite_pragma(dbapi_connection, connection_record):

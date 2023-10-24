@@ -19,12 +19,13 @@ from ...filters import UserRole
 from ...states import UsersSG
 from src.db import DataAccessLayer
 from src.dto import UserDTO
+from src.logger import logger
 
 acl_router = Router(name="acl")
 
 
 @acl_router.message(
-    Command("promote"),
+    Command("add_admin"),
     RoleFilter(role=[UserRole.SUPERUSER]),
     State(state="*"),
 )
@@ -76,23 +77,16 @@ async def handle_user(
                 admin_commands(), scope=BotCommandScopeChat(chat_id=user_dto.user_id)
             )
 
-            await message.answer(text="Success")
+            await message.answer(text="Success. User added.")
         else:
-            await message.answer(text="Error")
-    except Exception as ex:
-        print(ex)
+            await message.answer(text="Error during create. Try again.")
+
+    except (Exception,) as ex:
+        await logger.aerror(str(ex))
+        await message.reply(text=f"❌ UnknownError. Notify administrators. Thank you!")
     finally:
         await state.clear()
         await message.answer(text="Finished", reply_markup=ReplyKeyboardRemove())
-
-
-@acl_router.message(
-    Command("revoke"),
-    RoleFilter(role=[UserRole.SUPERUSER]),
-    State(state="*"),
-)
-async def revoke_user(message: Message, **kwargs):
-    await message.answer("Deleted.")
 
 
 __all__ = ["acl_router"]

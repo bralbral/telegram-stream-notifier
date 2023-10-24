@@ -99,7 +99,7 @@ async def label_handler(
         except TelegramAPIError as ex:
             await logger.aerror(ex.message)
             await message.reply(
-                text=f"❌ UnknownError. Notify administrators. Thank you!"
+                text=f"❌ TelegramAPIError. Notify administrators. Thank you!"
             )
         finally:
             await state.clear()

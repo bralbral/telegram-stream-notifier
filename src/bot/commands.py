@@ -3,8 +3,8 @@ from aiogram.types import BotCommand
 
 def superuser_commands() -> list[BotCommand]:
     commands = [
-        BotCommand(command="promote", description="Promote user to admin."),
-        BotCommand(command="revoke", description="Revoke admin rights."),
+        BotCommand(command="add_admin", description="Promote user to admin."),
+        BotCommand(command="users", description="Start Users Administration Dialog."),
         BotCommand(command="add_channels", description="Add channels from file."),
         BotCommand(command="scheduler_start", description="Start scheduler"),
         BotCommand(command="scheduler_pause", description="Stop scheduler"),
