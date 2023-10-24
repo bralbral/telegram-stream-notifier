@@ -12,3 +12,5 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     command: bash -c "bash alembic-upgrade.bash && python -m src"
+
+

@@ -1,8 +1,8 @@
-FROM python:3.11-slim-bullseye
+FROM python:3.11-slim-bookworm
 
 # Update the package list and install required packages
 RUN apt-get update && \
-    apt-get install -y git sqlite3  && \
+    apt-get install -y git && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
