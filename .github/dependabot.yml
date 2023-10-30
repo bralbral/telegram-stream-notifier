@@ -8,4 +8,15 @@ updates:
   - package-ecosystem: "pip" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
-      interval: "weekly"
+      interval: weekly
+      time: "03:00"
+      timezone: Europe/Moscow
+    target-branch: "main"
+    
+  - package-ecosystem: "pip" # See documentation for possible values
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: daily
+      time: "03:00"
+      timezone: Europe/Moscow
+    target-branch: "develop"
