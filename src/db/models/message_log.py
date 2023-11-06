@@ -4,11 +4,12 @@ from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import UniqueConstraint
 
-from src.db.models.mixins import ModelOrm
-from src.db.models.mixins import TimestampsMixin
+from .mixins import ModelOrm
+from .mixins import RepresentationMixin
+from .mixins import TimestampsMixin
 
 
-class MessageLogOrm(ModelOrm, TimestampsMixin):
+class MessageLogOrm(ModelOrm, TimestampsMixin, RepresentationMixin):
     """
     Model for storing id of actual post message
     """
@@ -26,9 +27,6 @@ class MessageLogOrm(ModelOrm, TimestampsMixin):
     )
     message_id = Column(BigInteger, nullable=False, index=True)
     text = Column(String, nullable=False, index=False)
-
-    def __str__(self) -> str:
-        return f"{self.__class__.__name__}<id={self.id}, url={self.message_id}>"
 
 
 __all__ = ["MessageLogOrm"]

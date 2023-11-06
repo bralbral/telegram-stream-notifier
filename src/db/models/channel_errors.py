@@ -3,12 +3,15 @@ from sqlalchemy import Integer
 from sqlalchemy import UniqueConstraint
 
 from .channel import ChannelOrmRelatedModel
-from src.db.models.mixins import CounterMixin
-from src.db.models.mixins import ModelOrm
-from src.db.models.mixins import TimestampsMixin
+from .mixins import CounterMixin
+from .mixins import ModelOrm
+from .mixins import RepresentationMixin
+from .mixins import TimestampsMixin
 
 
-class ChannelErrorOrm(ModelOrm, TimestampsMixin, CounterMixin, ChannelOrmRelatedModel):
+class ChannelErrorOrm(
+    ModelOrm, TimestampsMixin, CounterMixin, ChannelOrmRelatedModel, RepresentationMixin
+):
     """
     Base
     """
@@ -23,9 +26,6 @@ class ChannelErrorOrm(ModelOrm, TimestampsMixin, CounterMixin, ChannelOrmRelated
         primary_key=True,
         autoincrement=True,
     )
-
-    def __str__(self) -> str:
-        return f"{self.__class__.__name__}<id={self.id}"
 
 
 __all__ = ["ChannelErrorOrm"]

@@ -5,12 +5,13 @@ from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import UniqueConstraint
 
+from .mixins import ModelOrm
+from .mixins import RepresentationMixin
+from .mixins import TimestampsMixin
 from .user import UserOrmRelatedModel
-from src.db.models.mixins import ModelOrm
-from src.db.models.mixins import TimestampsMixin
 
 
-class ChannelOrm(ModelOrm, TimestampsMixin, UserOrmRelatedModel):
+class ChannelOrm(ModelOrm, TimestampsMixin, UserOrmRelatedModel, RepresentationMixin):
     """
     Model for storing YT channels
     """
@@ -28,9 +29,6 @@ class ChannelOrm(ModelOrm, TimestampsMixin, UserOrmRelatedModel):
     url = Column(String(length=255), nullable=False, index=True)
     label = Column(String(length=255), nullable=False, index=True)
     enabled = Column(Boolean, default=True, index=True)
-
-    def __str__(self) -> str:
-        return f"{self.__class__.__name__}<id={self.id}, url={self.url}>"
 
 
 class ChannelOrmRelatedModel:
