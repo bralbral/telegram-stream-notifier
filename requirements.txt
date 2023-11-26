@@ -1,5 +1,5 @@
 aiogram==3.2.0
-aiogram-dialog==2.1.0b2
+aiogram-dialog==2.1.0b3
 pydantic==2.5.2
 APScheduler==3.10.4
 yt-dlp==2023.11.16
