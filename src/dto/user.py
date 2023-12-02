@@ -5,8 +5,7 @@ from pydantic import ConfigDict
 from .base import DTO
 
 
-class UserDTO(DTO):
-    id: Optional[int] = None
+class UserBaseDTO(DTO):
     user_id: int
     username: Optional[str] = None
     firstname: Optional[str] = None
@@ -17,4 +16,12 @@ class UserDTO(DTO):
     model_config = ConfigDict(from_attributes=True)
 
 
-__all__ = ["UserDTO"]
+class UserCreateDTO(UserBaseDTO):
+    ...
+
+
+class UserRetrieveDTO(UserCreateDTO):
+    id: int
+
+
+__all__ = ["UserCreateDTO", "UserRetrieveDTO"]

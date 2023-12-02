@@ -9,7 +9,7 @@ from aiogram.types import Message
 from sulguk import SULGUK_PARSE_MODE
 
 from ....db import DataAccessLayer
-from ....dto import ChannelDTO
+from ....dto import ChannelCreateDTO
 from ...filters import RoleFilter
 from ...filters import UserRole
 from ...states import ChannelsSG
@@ -72,7 +72,7 @@ async def label_handler(
                     **{"user_id": message.from_user.id}
                 )
                 if user_schema:
-                    channel_schema = ChannelDTO(
+                    channel_schema = ChannelCreateDTO(
                         url=url,
                         label=label,
                         enabled=True,

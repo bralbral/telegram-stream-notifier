@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 
 from pydantic import ConfigDict
 from pydantic import Field
@@ -7,8 +6,7 @@ from pydantic import Field
 from .base import DTO
 
 
-class MessageLogDTO(DTO):
-    id: Optional[int] = None
+class MessageLogBaseDTO(DTO):
     message_id: int
     text: str
     updated_at: datetime = Field(default=datetime.utcnow())
@@ -16,4 +14,12 @@ class MessageLogDTO(DTO):
     model_config = ConfigDict(from_attributes=True)
 
 
-__all__ = ["MessageLogDTO"]
+class MessageLogCreateDTO(DTO):
+    ...
+
+
+class MessageLogRetrieveDTO(MessageLogCreateDTO):
+    id: int
+
+
+__all__ = ["MessageLogCreateDTO", "MessageLogRetrieveDTO"]

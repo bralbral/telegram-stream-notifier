@@ -1,3 +1,3 @@
-pip freeze > .temp
-pip uninstall -r .temp -y
-rm .temp
+pip freeze > temp
+pip uninstall -r temp -y
+rm temp

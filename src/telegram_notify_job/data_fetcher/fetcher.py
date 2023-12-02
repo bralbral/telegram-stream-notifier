@@ -3,19 +3,17 @@ import operator
 from datetime import datetime
 from typing import Optional
 
-import structlog
 import yt_dlp
 
-from ...dto import ChannelDTO
 from .utils import make_time_readable
 from src.decorators import wrap_sync_to_async
+from src.dto import ChannelRetrieveDTO
 from src.dto import YoutubeVideoInfoDTO
-
-logger = structlog.stdlib.get_logger()
+from src.logger import logger
 
 
 def fetch_live_stream(
-    channel: ChannelDTO, ydl: yt_dlp.YoutubeDL
+    channel: ChannelRetrieveDTO, ydl: yt_dlp.YoutubeDL
 ) -> Optional[YoutubeVideoInfoDTO]:
     """
     :param ydl:
@@ -81,7 +79,7 @@ async_fetch_livestream = wrap_sync_to_async(fetch_live_stream)
 
 
 async def async_fetch_livestreams(
-    channels: list[ChannelDTO], ydl: yt_dlp.YoutubeDL
+    channels: list[ChannelRetrieveDTO], ydl: yt_dlp.YoutubeDL
 ) -> list[YoutubeVideoInfoDTO]:
     """
     :param ydl:

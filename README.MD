@@ -59,6 +59,10 @@ First extract the cookies to a file using the command below:
 Just rename it to `cookies.txt`, and use it in [docker-compose.yml](/deploy/example.docker-compose.yml) or place in root dir (parent to `src` dir).
 It will be load automatically after launch.
 
+## Database schema
+
+<img src="src/db/svg_schema/db-schema.svg">
+
 ## Hosting
 You can rent a server from various hosters, for example from [Aeza](https://aeza.net/?ref=380831).
 

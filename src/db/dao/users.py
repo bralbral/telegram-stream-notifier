@@ -3,13 +3,13 @@ from typing import Optional
 from sqlalchemy import CursorResult
 
 from ..models import UserOrm
-from .base import Repo
+from .base import DAO
 from .utils import sqlite_async_upsert
-from src.dto import UserDTO
+from src.dto import UserCreateDTO
 
 
-class UserRepo(Repo):
-    async def create(self, user_schema: UserDTO) -> Optional[UserDTO]:
+class UserRepo(DAO):
+    async def create(self, user_schema: UserCreateDTO) -> Optional[UserCreateDTO]:
         """
         :param user_schema:
         :return:
@@ -21,7 +21,7 @@ class UserRepo(Repo):
             index_col="user_id",
         )
 
-        user_dto: Optional[UserDTO]
+        user_dto: Optional[UserCreateDTO]
 
         if result.lastrowid:
             user_dto = await self.get_by_pk(pk=result.lastrowid)

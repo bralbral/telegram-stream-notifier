@@ -9,7 +9,7 @@ from aiogram.utils.chat_action import ChatActionSender
 from sulguk import SULGUK_PARSE_MODE
 
 from ...db import DataAccessLayer
-from ...dto import MessageLogDTO
+from ...dto import MessageLogCreateDTO
 from ..data_fetcher import async_fetch_livestreams
 from ..report_generator import generate_jinja_report
 from .utils import check_if_need_send_instead_of_edit
@@ -138,7 +138,7 @@ async def send_report(
 
         if message_id:
             await dal.create_message(
-                message_log_schema=MessageLogDTO(
+                message_log_schema=MessageLogCreateDTO(
                     message_id=message_id, text=message_text
                 )
             )

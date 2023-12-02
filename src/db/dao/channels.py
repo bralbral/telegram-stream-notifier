@@ -3,13 +3,15 @@ from typing import Optional
 from sqlalchemy import CursorResult
 
 from ..models import ChannelOrm
-from .base import Repo
+from .base import DAO
 from .utils import sqlite_async_upsert
-from src.dto import ChannelDTO
+from src.dto import ChannelCreateDTO
 
 
-class ChannelRepo(Repo):
-    async def create(self, channel_schema: ChannelDTO) -> Optional[ChannelDTO]:
+class ChannelDAO(DAO):
+    async def create(
+        self, channel_schema: ChannelCreateDTO
+    ) -> Optional[ChannelCreateDTO]:
         result: CursorResult = await sqlite_async_upsert(
             session=self.session,
             model=ChannelOrm,
@@ -17,7 +19,7 @@ class ChannelRepo(Repo):
             index_col="url",
         )
 
-        channel_dto: Optional[ChannelDTO]
+        channel_dto: Optional[ChannelCreateDTO]
 
         if result.lastrowid:
             channel_dto = await self.get_by_pk(pk=result.lastrowid)
@@ -27,4 +29,4 @@ class ChannelRepo(Repo):
         return channel_dto
 
 
-__all__ = ["ChannelRepo"]
+__all__ = ["ChannelDAO"]

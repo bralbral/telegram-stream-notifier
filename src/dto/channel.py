@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic import ConfigDict
 from pydantic import Field
 from pydantic import field_validator
@@ -7,8 +5,7 @@ from pydantic import field_validator
 from .base import DTO
 
 
-class ChannelDTO(DTO):
-    id: Optional[int] = None
+class ChannelBaseDTO(DTO):
     url: str = Field(max_length=255)
     label: str = Field(max_length=255)
     user_id: int
@@ -25,6 +22,14 @@ class ChannelDTO(DTO):
 
         return v.lower()
 
+
+class ChannelCreateDTO(ChannelBaseDTO):
+    ...
+
+
+class ChannelRetrieveDTO(ChannelCreateDTO):
+    id: int
+
     def to_html(self) -> str:
         return (
             f"<b>id</b>:{self.id}<br/>"
@@ -34,4 +39,4 @@ class ChannelDTO(DTO):
         )
 
 
-__all__ = ["ChannelDTO"]
+__all__ = ["ChannelCreateDTO", "ChannelRetrieveDTO"]

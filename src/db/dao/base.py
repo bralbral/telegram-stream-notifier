@@ -15,7 +15,7 @@ from src.db.models import ModelOrm
 from src.dto import DTO
 
 
-class Repo(ABC):
+class DAO(ABC):
     def __init__(
         self, session: AsyncSession, model_orm: Type[ModelOrm], schema: Type[DTO]
     ) -> None:
@@ -115,4 +115,4 @@ class Repo(ABC):
         return updated_id
 
 
-__all__ = ["Repo"]
+__all__ = ["DAO"]

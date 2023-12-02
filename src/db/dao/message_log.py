@@ -3,15 +3,15 @@ from typing import Optional
 from sqlalchemy import CursorResult
 
 from ..models import MessageLogOrm
-from .base import Repo
+from .base import DAO
 from .utils import sqlite_async_upsert
-from src.dto import MessageLogDTO
+from src.dto import MessageLogCreateDTO
 
 
-class MessageLogRepo(Repo):
+class MessageLogDAO(DAO):
     async def create(
-        self, message_log_schema: MessageLogDTO
-    ) -> Optional[MessageLogDTO]:
+        self, message_log_schema: MessageLogCreateDTO
+    ) -> Optional[MessageLogCreateDTO]:
         """
         :param message_log_schema:
         :return:
@@ -24,7 +24,7 @@ class MessageLogRepo(Repo):
             index_col="message_id",
         )
 
-        message_log_dto: Optional[MessageLogDTO]
+        message_log_dto: Optional[MessageLogCreateDTO]
 
         if result.lastrowid:
             message_log_dto = await self.get_by_pk(pk=result.lastrowid)
@@ -36,4 +36,4 @@ class MessageLogRepo(Repo):
         return message_log_dto
 
 
-__all__ = ["MessageLogRepo"]
+__all__ = ["MessageLogDAO"]
