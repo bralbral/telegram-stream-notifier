@@ -10,13 +10,13 @@ The current version of the bot works in the telegram channel [ДИСКОРДОВ
 
 ## Features
 
-1. Generating a custom report using [jinja](https://github.com/pallets/jinja)
+1. Generating a custom report using [jinja](https://github.com/pallets/jinja).
 
-2. Administration of channels (adding/disabling/deleting) through telegram windows using [aiogram-dialog](https://github.com/Tishka17/aiogram_dialog)
+2. Administration of channels (adding/disabling/deleting) through telegram windows using [aiogram-dialog](https://github.com/Tishka17/aiogram_dialog).
 
-3. Regularly checking active channels using [aps-schedule](https://github.com/agronholm/apscheduler)
+3. Regularly checking active channels using [aps-schedule](https://github.com/agronholm/apscheduler).
 
-4. Getting information about streams using [youtube-dlp](https://github.com/yt-dlp/yt-dlp)
+4. Getting information about streams using [youtube-dlp](https://github.com/yt-dlp/yt-dlp).
 
 ## Commands
 
