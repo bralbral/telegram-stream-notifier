@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  yt-notifier:
+    image: bral1488/telegram-youtube-notifier:develop
+    container_name: telegram-youtube-notifier
+    restart: always
+    volumes:
+      - ./config.yaml:/app/config.yaml
+      - ./cookies.txt:/app/cookies.txt:touch
+      - ./youtube-notifier-bot.db:/app/youtube-notifier-bot.db
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    command: bash -c "bash alembic-upgrade.bash && python -m src"
+
+
