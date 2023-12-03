@@ -1,8 +1,34 @@
 # telegram-youtube-notifier-bot
 
+> ⚠️ Warning: project is still under development, use with caution.
+
 Simple Youtube LiveStreams notifier in telegram based on [youtube-dlp](https://github.com/yt-dlp/yt-dlp) and  [aiogram](https://github.com/aiogram/aiogram) .
 
 Use this bot to receive periodic reports on live broadcasts on YouTube and generate and send the report to telegram. 
+
+The current version of the bot works in the telegram channel [ДИСКОРДОВО СЕЛО](https://t.me/diskordovoselo).
+
+## Features
+
+1. Generating a custom report using [jinja](https://github.com/pallets/jinja)
+
+2. Administration of channels (adding/disabling/deleting) through telegram windows using [aiogram-dialog](https://github.com/Tishka17/aiogram_dialog)
+
+3. Regularly checking active channels using [aps-schedule](https://github.com/agronholm/apscheduler)
+
+4. Getting information about streams using [youtube-dlp](https://github.com/yt-dlp/yt-dlp)
+
+## Commands
+
+| Command | Scope     | Description                                                           |
+|---------|-----------|-----------------------------------------------------------------------|
+| add_channel   | Admin     | Add youtube channel                                                   |
+| channels   | Admin     | Channels Administration                                               |
+| cancel   | Admin     | Clear current fsm-state (if error)                                    |
+| add_admin   | Superuser | Promote to admin                                                      |
+| add_channels   | Superuser   | Bulk channels importing from file                                     |
+| scheduler_start   | Superuser     | Start scheduling periodic tasks of fetching information about streams |
+| scheduler_pause   | Superuser     | Pause scheduling periodic tasks of fetching information about streams |
 
 ## Deploy
 

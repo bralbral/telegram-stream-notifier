@@ -1,11 +1,10 @@
 from typing import Optional
 
 import aiofiles
-import structlog
 from aiogram import Bot
 from aiogram.exceptions import TelegramBadRequest
 
-logger = structlog.stdlib.get_logger()
+from src.logger import logger
 
 
 async def pull_message_id(filepath: str = "messages.dump") -> Optional[int]:
