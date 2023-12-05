@@ -30,11 +30,12 @@ def setup_scheduler(conf: Config, bot: Bot, dal: DataAccessLayer) -> AsyncIOSche
     except FileNotFoundError:
         cookiefile = None
 
+    # https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/YoutubeDL.py#L128-L278
     ydl_opts: dict[str, Any] = {
         "cookiefile": cookiefile,
         "quiet": True,
         "load-pages": False,
-        "extract_flat": False,
+        "extract_flat": True,
         "skip_download": True,
         "getcomments": False,
     }

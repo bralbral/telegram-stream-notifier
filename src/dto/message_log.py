@@ -14,7 +14,7 @@ class MessageLogBaseDTO(DTO):
     model_config = ConfigDict(from_attributes=True)
 
 
-class MessageLogCreateDTO(DTO):
+class MessageLogCreateDTO(MessageLogBaseDTO):
     ...
 
 
