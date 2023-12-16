@@ -4,6 +4,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import UniqueConstraint
+from sqlalchemy.orm import relationship
 
 from .mixins import ModelOrm
 from .mixins import RepresentationMixin
@@ -29,6 +30,13 @@ class ChannelOrm(ModelOrm, TimestampsMixin, UserOrmRelatedModel, RepresentationM
     url = Column(String(length=255), nullable=False, index=True)
     label = Column(String(length=255), nullable=False, index=True)
     enabled = Column(Boolean, default=True, index=True)
+    user = relationship(
+        "UserOrm",
+        backref="channels",
+        foreign_keys="ChannelOrm.user_id",
+        uselist=False,
+        lazy="selectin",
+    )
 
 
 class ChannelOrmRelatedModel:

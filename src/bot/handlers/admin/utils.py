@@ -1,6 +1,8 @@
 import re
 
-YOUTUBE_USERNAME_CHANNEL_LINK_PATTERN = re.compile(r"https://www\.youtube\.com/@(\w+)")
+YOUTUBE_USERNAME_CHANNEL_LINK_PATTERN = re.compile(
+    r"^https?://(?:www\.)?youtube\.com/@[\w-]+/?$"
+)
 
 
 def url_validator(link: str):

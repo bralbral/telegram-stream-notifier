@@ -45,3 +45,10 @@ repos:
         entry: sort-all
         language: python
         types: [ python ]
+
+      - id: pytest-check
+        name: pytest-check
+        entry: pytest --cov=src tests/
+        language: system
+        pass_filenames: false
+        fail_fast: true
