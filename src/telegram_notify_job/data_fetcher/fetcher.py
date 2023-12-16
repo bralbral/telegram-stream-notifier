@@ -51,7 +51,6 @@ def fetch_live_stream(
                             "concurrent_view_count", 0
                         )
                         like_count = live_info.get("like_count", 0)
-                        dislike_count = live_info.get("dislike_count", 0)
                         release_timestamp = live_info["release_timestamp"]
                         duration = make_time_readable(
                             int(datetime.now().timestamp() - release_timestamp)

@@ -1,6 +1,7 @@
 from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import UniqueConstraint
+from sqlalchemy.orm import relationship
 
 from .channel import ChannelOrmRelatedModel
 from .mixins import CounterMixin
@@ -25,6 +26,13 @@ class ChannelErrorOrm(
         Integer,
         primary_key=True,
         autoincrement=True,
+    )
+    channel = relationship(
+        "ChannelOrm",
+        backref="errors",
+        foreign_keys="ChannelErrorOrm.channel_id",
+        uselist=False,
+        lazy="selectin",
     )
 
 

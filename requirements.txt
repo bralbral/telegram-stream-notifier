@@ -2,8 +2,10 @@ aiogram==3.2.0
 aiogram-dialog==2.2.0a2
 pydantic==2.5.2
 APScheduler==3.10.4
-yt-dlp==2023.11.16
-#git+https://github.com/yt-dlp/yt-dlp.git
+#yt-dlp==2023.11.16
+# bleeding edge for fix like extraction
+# https://github.com/yt-dlp/yt-dlp/issues/8759
+git+https://github.com/yt-dlp/yt-dlp.git
 sulguk==0.6.0
 jinja2==3.1.2
 pyyaml==6.0.1
