@@ -13,6 +13,10 @@ class UserBaseDTO(DTO):
     is_admin: bool
     is_superuser: bool
 
+    @property
+    def get_url_generated_by_id(self) -> str:
+        return f"tg://openmessage?user_id={self.user_id}"
+
     model_config = ConfigDict(from_attributes=True)
 
 

@@ -15,6 +15,7 @@ from aiogram_dialog.widgets.text import Format
 from aiogram_dialog.widgets.text import Multi
 from sulguk import SULGUK_PARSE_MODE
 
+from ...filters import UserRole
 from .constants import ID_STUB_SCROLL
 from .getters import scroll_getter
 from .on_click import on_delete
@@ -65,6 +66,11 @@ def scroll_window():
                 Button(Const("🗑️ Delete"), id="delete", on_click=on_delete),
                 Button(Const("✏️ Turn on"), id="off", on_click=on_turn_on),
                 Button(Const("✏️ Turn off"), id="on", on_click=on_turn_off),
+                when=F["role"] == UserRole.SUPERUSER,
+            ),
+            Row(
+                Button(Const("✏️ Turn off"), id="on", on_click=on_turn_off),
+                when=F["role"] == UserRole.ADMIN,
             ),
             Button(Const("❌ Exit"), id="finish", on_click=on_finish),
             when=~F["is_empty"],

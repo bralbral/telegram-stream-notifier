@@ -13,8 +13,8 @@ from ....dto import ChannelCreateDTO
 from ...filters import RoleFilter
 from ...filters import UserRole
 from ...states import ChannelsSG
-from .utils import url_validator
 from src.logger import logger
+from src.utils import youtube_channel_url_validator
 
 
 add_channel_router = Router(name="add_channel")
@@ -40,7 +40,7 @@ async def add_channel(message: Message, state: FSMContext, **kwargs) -> None:
 )
 async def url_handler(message: Message, state: FSMContext, **kwargs) -> None:
     url = message.text.lower().strip()
-    if url_validator(url):
+    if youtube_channel_url_validator(url):
         await state.update_data(url=url)
         await message.answer(
             f"URL set to <b>{url}</b>, enter display name or <b>/cancel</b> for reject",
@@ -76,7 +76,7 @@ async def label_handler(
                         url=url,
                         label=label,
                         enabled=True,
-                        user_id=user_schema.user_id,
+                        user_id=user_schema.id,
                     )
 
                     result = await dal.create_channel(channel_schema=channel_schema)

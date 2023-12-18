@@ -20,7 +20,7 @@ from ....dto import ChannelRetrieveDTO
 from ...filters import RoleFilter
 from ...filters import UserRole
 from ...states import ChannelsSG
-
+from src.utils import youtube_channel_url_validator
 
 add_channels_router = Router(name="add_channels")
 
@@ -34,7 +34,9 @@ async def add_channels(message: Message, state: FSMContext, **kwargs) -> None:
     await message.answer(
         text="Upload a file with format: <br/>"
         "<code>url[TAB]label[END_ROW]</code><br/>"
-        "every single line == channel to insert.",
+        "every single line == channel to insert.<br/>"
+        "Set channel url in format: <b>https://www.youtube.com/@username</b>"
+        "Enter /cancel for exit <br/>",
         parse_mode=SULGUK_PARSE_MODE,
     )
     await state.set_state(ChannelsSG.bulk_channels)
@@ -61,7 +63,7 @@ async def channel_file_handler(
     user_schema = await dal.get_user_by_attr(**{"user_id": message.from_user.id})
     if user_schema:
         _: BinaryIO = await bot.download_file(file.file_path)
-
+        channels: list[ChannelCreateDTO] = []
         with TextIOWrapper(_, encoding="utf-8") as text_io:
             for line in text_io:
                 line = line.strip()
@@ -73,17 +75,27 @@ async def channel_file_handler(
                     )
                     return
 
+                if not youtube_channel_url_validator(splitted_line[0]):
+                    await message.answer(
+                        text=f"Error url validation: {splitted_line[0]} <br/>"
+                        "Set channel url in format: <b>https://www.youtube.com/@username</b>",
+                        parse_mode=SULGUK_PARSE_MODE,
+                    )
+                    return
+
                 channel = ChannelCreateDTO(
                     url=splitted_line[0],
                     label=splitted_line[1],
                     enabled=True,
-                    user_id=user_schema.user_id,
+                    user_id=user_schema.id,
                 )
+                channels.append(channel)
 
-                result: Optional[ChannelRetrieveDTO] = await dal.create_channel(
-                    channel_schema=channel
-                )
-                await message.answer(f"{line} {str(result)}")
+        for channel in channels:
+            result: Optional[ChannelRetrieveDTO] = await dal.create_channel(
+                channel_schema=channel
+            )
+            await message.answer(f"{str(result)}")
 
     await state.clear()
 

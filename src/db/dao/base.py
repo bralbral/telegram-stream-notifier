@@ -5,10 +5,12 @@ from typing import Type
 
 from pydantic import TypeAdapter
 from sqlalchemy import Delete
+from sqlalchemy import inspect
 from sqlalchemy import ScalarResult
 from sqlalchemy import Select
 from sqlalchemy import Update
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from src.db.exceptions import ColumnDoesNotExist
 from src.db.models import ModelOrm
@@ -22,6 +24,27 @@ class DAO(ABC):
         self.session = session
         self.model_orm = model_orm
         self.schema = schema
+
+    @property
+    def relations(self):
+        """
+        Get all relations
+        :return:
+        """
+        return {
+            tuple_name_column[0]: tuple_name_column[1]
+            for tuple_name_column in inspect(self.model_orm).relationships.items()
+        }
+
+    async def scalars(self, statement):
+        """
+        :param statement: sqlalchemy statement, например sqlalchemy.select
+        :return:
+        """
+        for relation in self.relations.values():
+            statement = statement.options(selectinload(relation))
+
+        return await self.session.scalars(statement)
 
     async def create(self, *args, **kwargs) -> Any:
         raise NotImplementedError()
@@ -45,7 +68,7 @@ class DAO(ABC):
             .where(*where_clause)
             .order_by(self.model_orm.id.desc())
         )
-        result: ScalarResult = await self.session.scalars(stm)
+        result: ScalarResult = await self.scalars(statement=stm)
         return result
 
     async def list_by_attrs(self, **kwargs) -> list[DTO]:
@@ -54,8 +77,9 @@ class DAO(ABC):
         :return:
         """
         result: ScalarResult = await self.__get_by_attrs(**kwargs)
+        all_results = result.all()
         ta = TypeAdapter(list[self.schema])  # type: ignore
-        dto_objects = ta.validate_python(result.all())
+        dto_objects = ta.validate_python(all_results)
 
         return dto_objects
 
@@ -66,7 +90,7 @@ class DAO(ABC):
         """
         stm = Select(self.model_orm).where(self.model_orm.id == pk)
 
-        result: ScalarResult = await self.session.scalars(stm)
+        result: ScalarResult = await self.scalars(statement=stm)
         model: Optional[ModelOrm] = result.first()
 
         if model:
@@ -95,7 +119,7 @@ class DAO(ABC):
             .where(self.model_orm.id == pk)
             .returning(self.model_orm.id)
         )
-        result: ScalarResult = await self.session.scalars(stm)
+        result: ScalarResult = await self.scalars(statement=stm)
         deleted_id = result.first()
 
         await self.session.commit()
@@ -108,7 +132,7 @@ class DAO(ABC):
             .values(**data)
             .returning(self.model_orm.id)
         )
-        result: ScalarResult = await self.session.scalars(stm)
+        result: ScalarResult = await self.scalars(statement=stm)
         updated_id = result.first()
 
         await self.session.commit()

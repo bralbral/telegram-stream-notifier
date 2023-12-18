@@ -19,10 +19,16 @@ scroll_channel_router = Router(name="scroll_channel")
     State(state="*"),
 )
 async def start_channels_dialog(
-    message: Message, dialog_manager: DialogManager, dal: DataAccessLayer, **kwargs
+    message: Message,
+    dialog_manager: DialogManager,
+    dal: DataAccessLayer,
+    role: UserRole,
+    **kwargs,
 ):
     await dialog_manager.start(
-        ChannelsSG.scrolling, mode=StartMode.RESET_STACK, data={"dal": dal}
+        ChannelsSG.scrolling,
+        mode=StartMode.RESET_STACK,
+        data={"dal": dal, "role": role},
     )
 
 

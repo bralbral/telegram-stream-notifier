@@ -5,9 +5,9 @@ YOUTUBE_USERNAME_CHANNEL_LINK_PATTERN = re.compile(
 )
 
 
-def url_validator(link: str):
+def youtube_channel_url_validator(link: str):
     match = re.match(YOUTUBE_USERNAME_CHANNEL_LINK_PATTERN, link)
     return bool(match)
 
 
-__all__ = ["url_validator"]
+__all__ = ["youtube_channel_url_validator"]
