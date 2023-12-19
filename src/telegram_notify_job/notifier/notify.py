@@ -17,7 +17,7 @@ from src.dto import YoutubeVideoInfoDTO
 from src.logger import logger
 
 
-async def send_report(
+async def notify(
     bot: Bot,
     chat_id: int,
     temp_chat_id: int,
@@ -37,11 +37,13 @@ async def send_report(
     :return:
     """
 
+    # get channels
     channels = await dal.get_channels(enabled=True)
 
     live_list: list[YoutubeVideoInfoDTO] = await async_fetch_livestreams(
         channels=channels, ydl=ydl
     )
+
     await logger.ainfo(f"Live list length {len(live_list)}")
 
     message_text: Optional[str] = generate_jinja_report(
@@ -144,4 +146,4 @@ async def send_report(
             )
 
 
-__all__ = ["send_report"]
+__all__ = ["notify"]

@@ -1,4 +1,4 @@
-from .report_sender import send_report
+from .notifier import notify
 
 
-__all__ = ["send_report"]
+__all__ = ["notify"]
