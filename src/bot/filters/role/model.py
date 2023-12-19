@@ -3,7 +3,7 @@ from enum import Enum
 
 class UserRole(Enum):
     SUPERUSER = "superuser"
-    ADMIN = "admin"
+    USER = "user"
     UNKNOWN = "unknown"
 
     def __repr__(self) -> str:

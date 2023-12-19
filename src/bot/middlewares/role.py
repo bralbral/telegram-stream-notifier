@@ -44,10 +44,10 @@ class RoleMiddleware(BaseMiddleware):
                     **{"user_id": user_id}
                 )
                 if _user:
-                    if _user.is_admin:
-                        data["role"] = UserRole.ADMIN
                     if _user.is_superuser:
                         data["role"] = UserRole.SUPERUSER
+                    else:
+                        data["role"] = UserRole.USER
 
             result = await handler(event, data)
             return result

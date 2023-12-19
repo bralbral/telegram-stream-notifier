@@ -13,7 +13,7 @@ from aiogram.types import Message
 from aiogram.types import ReplyKeyboardMarkup
 from aiogram.types import ReplyKeyboardRemove
 
-from ...commands import admin_commands
+from ...commands import user_commands
 from ...filters import RoleFilter
 from ...filters import UserRole
 from ...states import UsersSG
@@ -21,15 +21,15 @@ from src.db import DataAccessLayer
 from src.dto import UserCreateDTO
 from src.logger import logger
 
-acl_router = Router(name="acl")
+add_user_router = Router(name="acl")
 
 
-@acl_router.message(
-    Command("add_admin"),
+@add_user_router.message(
+    Command("add_user"),
     RoleFilter(role=[UserRole.SUPERUSER]),
     State(state="*"),
 )
-async def promote_user_to_admin(message: Message, state: FSMContext, **kwargs):
+async def add_user(message: Message, state: FSMContext, **kwargs):
     await message.answer(
         "See keyboard below. Select User for add.",
         reply_markup=ReplyKeyboardMarkup(
@@ -50,7 +50,7 @@ async def promote_user_to_admin(message: Message, state: FSMContext, **kwargs):
     await state.set_state(UsersSG.promote)
 
 
-@acl_router.message(
+@add_user_router.message(
     F.user_shared,
     RoleFilter(role=[UserRole.SUPERUSER]),
     StateFilter(UsersSG.promote),
@@ -67,14 +67,13 @@ async def handle_user(
             username=chat.username,
             firstname=chat.first_name,
             lastname=chat.last_name,
-            is_admin=True,
             is_superuser=False,
         )
 
         result = await dal.create_user(user_schema=user_dto)
         if result:
             await bot.set_my_commands(
-                admin_commands(), scope=BotCommandScopeChat(chat_id=user_dto.user_id)
+                user_commands(), scope=BotCommandScopeChat(chat_id=user_dto.user_id)
             )
 
             await message.answer(text="Success. User added.")
@@ -89,4 +88,4 @@ async def handle_user(
         await message.answer(text="Finished", reply_markup=ReplyKeyboardRemove())
 
 
-__all__ = ["acl_router"]
+__all__ = ["add_user_router"]

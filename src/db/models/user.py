@@ -6,12 +6,12 @@ from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import UniqueConstraint
 
-from .mixins import ModelOrm
+from .mixins import ModelORM
 from .mixins import RepresentationMixin
 from .mixins import TimestampsMixin
 
 
-class UserOrm(ModelOrm, TimestampsMixin, RepresentationMixin):
+class UserORM(ModelORM, TimestampsMixin, RepresentationMixin):
     """
     Model for storing TG users
     """
@@ -30,19 +30,18 @@ class UserOrm(ModelOrm, TimestampsMixin, RepresentationMixin):
     username = Column(String(length=255), nullable=True, index=True)
     firstname = Column(String(length=255), nullable=True, index=True)
     lastname = Column(String(length=255), nullable=True, index=True)
-    is_admin = Column(Boolean, default=False, index=True)
     is_superuser = Column(Boolean, default=False, index=True)
 
 
-class UserOrmRelatedModel:
+class UserORMRelatedModel:
     __abstract__ = True
 
     user_id = Column(
         ForeignKey(
-            f"{UserOrm.__tablename__}.id", ondelete="CASCADE", onupdate="CASCADE"
+            f"{UserORM.__tablename__}.id", ondelete="CASCADE", onupdate="CASCADE"
         ),
         nullable=False,
     )
 
 
-__all__ = ["UserOrm", "UserOrmRelatedModel"]
+__all__ = ["UserORM", "UserORMRelatedModel"]

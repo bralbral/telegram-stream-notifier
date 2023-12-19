@@ -1,6 +1,7 @@
 from typing import Optional
 
 from .base import DTO
+from .channel import ChannelRetrieveDTO
 
 
 class YoutubeVideoInfoDTO(DTO):
@@ -11,4 +12,9 @@ class YoutubeVideoInfoDTO(DTO):
     duration: Optional[str] = None
 
 
-__all__ = ["YoutubeVideoInfoDTO"]
+class YoutubeErrorInfoDTO(DTO):
+    channel: ChannelRetrieveDTO
+    ex_message: str
+
+
+__all__ = ["YoutubeErrorInfoDTO", "YoutubeVideoInfoDTO"]

@@ -13,13 +13,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from src.db.exceptions import ColumnDoesNotExist
-from src.db.models import ModelOrm
+from src.db.models import ModelORM
 from src.dto import DTO
 
 
 class DAO(ABC):
     def __init__(
-        self, session: AsyncSession, model_orm: Type[ModelOrm], schema: Type[DTO]
+        self, session: AsyncSession, model_orm: Type[ModelORM], schema: Type[DTO]
     ) -> None:
         self.session = session
         self.model_orm = model_orm
@@ -38,7 +38,7 @@ class DAO(ABC):
 
     async def scalars(self, statement):
         """
-        :param statement: sqlalchemy statement, например sqlalchemy.select
+        :param statement: sqlalchemy statement, for example sqlalchemy.select
         :return:
         """
         for relation in self.relations.values():
@@ -49,11 +49,7 @@ class DAO(ABC):
     async def create(self, *args, **kwargs) -> Any:
         raise NotImplementedError()
 
-    async def __get_by_attrs(self, **kwargs) -> ScalarResult:
-        """
-        :param kwargs:
-        :return:
-        """
+    def __generate_predicate(self, **kwargs) -> list:
         where_clause: list = []
 
         for key in kwargs.keys():
@@ -63,9 +59,16 @@ class DAO(ABC):
                 col = getattr(self.model_orm, key)
                 where_clause.append(col == kwargs[key])
 
+        return where_clause
+
+    async def __get_by_attrs(self, **kwargs) -> ScalarResult:
+        """
+        :param kwargs:
+        :return:
+        """
         stm = (
             Select(self.model_orm)
-            .where(*where_clause)
+            .where(*self.__generate_predicate(**kwargs))
             .order_by(self.model_orm.id.desc())
         )
         result: ScalarResult = await self.scalars(statement=stm)
@@ -91,7 +94,7 @@ class DAO(ABC):
         stm = Select(self.model_orm).where(self.model_orm.id == pk)
 
         result: ScalarResult = await self.scalars(statement=stm)
-        model: Optional[ModelOrm] = result.first()
+        model: Optional[ModelORM] = result.first()
 
         if model:
             dto = self.schema.model_validate(model)
@@ -105,7 +108,7 @@ class DAO(ABC):
         :return:
         """
         result: ScalarResult = await self.__get_by_attrs(**kwargs)
-        model: Optional[ModelOrm] = result.first()
+        model: Optional[ModelORM] = result.first()
 
         if model:
             dto = self.schema.model_validate(model)
@@ -119,11 +122,27 @@ class DAO(ABC):
             .where(self.model_orm.id == pk)
             .returning(self.model_orm.id)
         )
-        result: ScalarResult = await self.scalars(statement=stm)
+        result: ScalarResult = await self.session.scalars(statement=stm)
         deleted_id = result.first()
 
         await self.session.commit()
         return deleted_id
+
+    async def delete_by_attr(self, **kwargs) -> list[int]:
+        """
+        :param kwargs:
+        :return:
+        """
+        stm = (
+            Delete(self.model_orm)
+            .where(*self.__generate_predicate(**kwargs))
+            .returning(self.model_orm.id)
+        )
+
+        result: ScalarResult = await self.session.scalars(statement=stm)
+
+        await self.session.commit()
+        return list(result.all())
 
     async def update_by_pk(self, pk: int, data: dict) -> Optional[int]:
         stm = (
@@ -132,7 +151,7 @@ class DAO(ABC):
             .values(**data)
             .returning(self.model_orm.id)
         )
-        result: ScalarResult = await self.scalars(statement=stm)
+        result: ScalarResult = await self.session.scalars(statement=stm)
         updated_id = result.first()
 
         await self.session.commit()

@@ -10,7 +10,6 @@ class UserBaseDTO(DTO):
     username: Optional[str] = None
     firstname: Optional[str] = None
     lastname: Optional[str] = None
-    is_admin: bool
     is_superuser: bool
 
     @property

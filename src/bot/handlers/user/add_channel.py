@@ -22,7 +22,7 @@ add_channel_router = Router(name="add_channel")
 
 @add_channel_router.message(
     Command("add_channel"),
-    RoleFilter(role=[UserRole.ADMIN, UserRole.SUPERUSER]),
+    RoleFilter(role=[UserRole.USER, UserRole.SUPERUSER]),
     State(state="*"),
 )
 async def add_channel(message: Message, state: FSMContext, **kwargs) -> None:
@@ -35,7 +35,7 @@ async def add_channel(message: Message, state: FSMContext, **kwargs) -> None:
 
 @add_channel_router.message(
     StateFilter(ChannelsSG.input_url),
-    RoleFilter(role=[UserRole.ADMIN, UserRole.SUPERUSER]),
+    RoleFilter(role=[UserRole.USER, UserRole.SUPERUSER]),
     F.text,
 )
 async def url_handler(message: Message, state: FSMContext, **kwargs) -> None:
@@ -56,7 +56,7 @@ async def url_handler(message: Message, state: FSMContext, **kwargs) -> None:
 
 @add_channel_router.message(
     StateFilter(ChannelsSG.input_label),
-    RoleFilter(role=[UserRole.ADMIN, UserRole.SUPERUSER]),
+    RoleFilter(role=[UserRole.USER, UserRole.SUPERUSER]),
     F.text,
 )
 async def label_handler(
