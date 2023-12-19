@@ -7,18 +7,22 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..constants import SQLITE_DATABASE_FILE_PATH
 from ..dto import ChannelCreateDTO
+from ..dto import ChannelErrorCreateDTO
+from ..dto import ChannelErrorRetrieveDTO
 from ..dto import ChannelRetrieveDTO
 from ..dto import MessageLogCreateDTO
 from ..dto import MessageLogRetrieveDTO
 from ..dto import UserCreateDTO
 from ..dto import UserRetrieveDTO
 from .dao import ChannelDAO
+from .dao import ChannelErrorDAO
 from .dao import MessageLogDAO
 from .dao import UserRepo
 from .exceptions import DatabaseDoesNotExist
-from .models import ChannelOrm
-from .models import MessageLogOrm
-from .models import UserOrm
+from .models import ChannelErrorORM
+from .models import ChannelORM
+from .models import MessageLogORM
+from .models import UserORM
 from .session import session_maker
 
 
@@ -56,17 +60,22 @@ class DataAccessLayer:
         :return:
         """
         self.__user_repo = UserRepo(
-            session=self.__session, schema=UserRetrieveDTO, model_orm=UserOrm
+            session=self.__session, schema=UserRetrieveDTO, model_orm=UserORM
         )
         self.__channel_repo = ChannelDAO(
             session=self.__session,
             schema=ChannelRetrieveDTO,
-            model_orm=ChannelOrm,
+            model_orm=ChannelORM,
+        )
+        self.__channel_error_repo = ChannelErrorDAO(
+            session=self.__session,
+            schema=ChannelErrorRetrieveDTO,
+            model_orm=ChannelErrorORM,
         )
         self.__message_log_repo = MessageLogDAO(
             session=self.__session,
             schema=MessageLogRetrieveDTO,
-            model_orm=MessageLogOrm,
+            model_orm=MessageLogORM,
         )
 
     async def create_user(
@@ -155,6 +164,17 @@ class DataAccessLayer:
         """
         return await self.__channel_repo.create(channel_schema=channel_schema)
 
+    async def create_channel_error(
+        self, channel_error_schema: ChannelErrorCreateDTO
+    ) -> int:
+        """
+        :param channel_error_schema:
+        :return:
+        """
+        return await self.__channel_error_repo.create(
+            channel_error_schema=channel_error_schema
+        )
+
     async def get_channels(self, **kwargs) -> list[ChannelRetrieveDTO]:
         """
         :param kwargs:
@@ -180,6 +200,24 @@ class DataAccessLayer:
         :return:
         """
         return await self.__channel_repo.update_by_pk(pk=_id, data=data)
+
+    async def auto_turn_off_channels(self, errors_limit: int) -> None:
+        """
+        :return:
+        """
+        channel_ids = await self.__channel_error_repo.get_channel_ids_with_errors_upper_then_limit(
+            limit=errors_limit
+        )
+
+        for channel_id in channel_ids:
+            await self.update_channel_by_id(_id=channel_id, data={"enabled": False})
+
+        return
+
+    async def clear_channel_errors(self, channel_id: int) -> list[int]:
+        return await self.__channel_error_repo.delete_by_attr(
+            **{"channel_id": channel_id}
+        )
 
 
 __all__ = ["DataAccessLayer"]

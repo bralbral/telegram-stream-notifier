@@ -1,17 +1,16 @@
 from sqlalchemy import Column
 from sqlalchemy import Integer
-from sqlalchemy import UniqueConstraint
+from sqlalchemy import String
 from sqlalchemy.orm import relationship
 
-from .channel import ChannelOrmRelatedModel
-from .mixins import CounterMixin
-from .mixins import ModelOrm
+from .channel import ChannelORMRelatedModel
+from .mixins import ModelORM
 from .mixins import RepresentationMixin
 from .mixins import TimestampsMixin
 
 
-class ChannelErrorOrm(
-    ModelOrm, TimestampsMixin, CounterMixin, ChannelOrmRelatedModel, RepresentationMixin
+class ChannelErrorORM(
+    ModelORM, TimestampsMixin, ChannelORMRelatedModel, RepresentationMixin
 ):
     """
     Base
@@ -19,7 +18,6 @@ class ChannelErrorOrm(
 
     __tablename__ = "channel_errors"
 
-    __table_args__ = (UniqueConstraint("channel_id", name="ix_uniq_channel_id"),)
     # some features with autoincrement
     # https://docs.sqlalchemy.org/en/20/dialects/sqlite.html#allowing-autoincrement-behavior-sqlalchemy-types-other-than-integer-integer
     id = Column(
@@ -27,13 +25,14 @@ class ChannelErrorOrm(
         primary_key=True,
         autoincrement=True,
     )
+    error = Column(String(length=512), nullable=False, index=True)
     channel = relationship(
-        "ChannelOrm",
+        "ChannelORM",
         backref="errors",
-        foreign_keys="ChannelErrorOrm.channel_id",
+        foreign_keys="ChannelErrorORM.channel_id",
         uselist=False,
         lazy="selectin",
     )
 
 
-__all__ = ["ChannelErrorOrm"]
+__all__ = ["ChannelErrorORM"]

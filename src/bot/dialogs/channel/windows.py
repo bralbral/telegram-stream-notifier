@@ -22,6 +22,7 @@ from .on_click import on_delete
 from .on_click import on_finish
 from .on_click import on_perform_delete
 from .on_click import on_perform_update
+from .on_click import on_turn_delete_errors
 from .on_click import on_turn_off
 from .on_click import on_turn_on
 from .widgets import Viewer
@@ -62,10 +63,19 @@ def scroll_window():
                     text=Format("{target_page} ⏭️"),
                 ),
             ),
-            Row(
+            Group(
                 Button(Const("🗑️ Delete"), id="delete", on_click=on_delete),
-                Button(Const("✏️ Turn on"), id="off", on_click=on_turn_on),
-                Button(Const("✏️ Turn off"), id="on", on_click=on_turn_off),
+                Row(
+                    Button(Const("✏️ Turn on"), id="off", on_click=on_turn_on),
+                    Button(Const("✏️ Turn off"), id="on", on_click=on_turn_off),
+                ),
+                Row(
+                    Button(
+                        Const("🧽 Delete errors"),
+                        id="errors",
+                        on_click=on_turn_delete_errors,
+                    )
+                ),
                 when=F["role"] == UserRole.SUPERUSER,
             ),
             Row(

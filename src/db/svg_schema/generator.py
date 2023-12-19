@@ -1,14 +1,14 @@
 from sqlalchemy_data_model_visualizer import add_web_font_and_interactivity
 from sqlalchemy_data_model_visualizer import generate_data_model_diagram
 
-from src.db.models import ChannelErrorOrm
-from src.db.models import ChannelOrm
-from src.db.models import MessageLogOrm
-from src.db.models import UserOrm
+from src.db.models import ChannelErrorORM
+from src.db.models import ChannelORM
+from src.db.models import MessageLogORM
+from src.db.models import UserORM
 
 
 def generate():
-    models = [UserOrm, MessageLogOrm, ChannelOrm, ChannelErrorOrm]
+    models = [UserORM, MessageLogORM, ChannelORM, ChannelErrorORM]
     generate_data_model_diagram(models=models, output_file="db-schema", add_labels=True)
     add_web_font_and_interactivity(
         input_svg_file="db-schema.svg", output_svg_file="db-schema"

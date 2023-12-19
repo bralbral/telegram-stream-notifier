@@ -8,11 +8,13 @@ from aiogram.exceptions import TelegramNetworkError
 from aiogram.utils.chat_action import ChatActionSender
 from sulguk import SULGUK_PARSE_MODE
 
-from ...db import DataAccessLayer
-from ...dto import MessageLogCreateDTO
 from ..data_fetcher import async_fetch_livestreams
 from ..report_generator import generate_jinja_report
 from .utils import check_if_need_send_instead_of_edit
+from src.db import DataAccessLayer
+from src.dto import ChannelErrorCreateDTO
+from src.dto import MessageLogCreateDTO
+from src.dto import YoutubeErrorInfoDTO
 from src.dto import YoutubeVideoInfoDTO
 from src.logger import logger
 
@@ -40,9 +42,17 @@ async def notify(
     # get channels
     channels = await dal.get_channels(enabled=True)
 
-    live_list: list[YoutubeVideoInfoDTO] = await async_fetch_livestreams(
-        channels=channels, ydl=ydl
-    )
+    data: tuple[
+        list[YoutubeVideoInfoDTO], list[YoutubeErrorInfoDTO]
+    ] = await async_fetch_livestreams(channels=channels, ydl=ydl)
+
+    live_list, errors = data
+
+    # logging errors
+    for error in errors:
+        await dal.create_channel_error(
+            ChannelErrorCreateDTO(channel_id=error.channel.id, error=error.ex_message)
+        )
 
     await logger.ainfo(f"Live list length {len(live_list)}")
 

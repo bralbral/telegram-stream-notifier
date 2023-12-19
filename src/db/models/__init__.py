@@ -1,17 +1,17 @@
-from .channel import ChannelOrm
-from .channel import ChannelOrmRelatedModel
-from .channel_errors import ChannelErrorOrm
-from .message_log import MessageLogOrm
-from .mixins.base import ModelOrm
-from .user import UserOrm
-from .user import UserOrmRelatedModel
+from .channel import ChannelORM
+from .channel import ChannelORMRelatedModel
+from .channel_errors import ChannelErrorORM
+from .message_log import MessageLogORM
+from .mixins.base import ModelORM
+from .user import UserORM
+from .user import UserORMRelatedModel
 
 __all__ = [
-    "ChannelErrorOrm",
-    "ChannelOrm",
-    "ChannelOrmRelatedModel",
-    "MessageLogOrm",
-    "ModelOrm",
-    "UserOrm",
-    "UserOrmRelatedModel",
+    "ChannelErrorORM",
+    "ChannelORM",
+    "ChannelORMRelatedModel",
+    "MessageLogORM",
+    "ModelORM",
+    "UserORM",
+    "UserORMRelatedModel",
 ]
