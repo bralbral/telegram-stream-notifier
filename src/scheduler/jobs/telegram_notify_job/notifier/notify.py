@@ -50,6 +50,11 @@ async def notify(
 
     # logging errors
     for error in errors:
+        # TODO temp stub
+        # skip errors like this
+        if error.ex_message.find("This channel does not have a streams tab") > -1:
+            continue
+
         await dal.create_channel_error(
             ChannelErrorCreateDTO(channel_id=error.channel.id, error=error.ex_message)
         )
