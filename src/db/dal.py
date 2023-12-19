@@ -109,7 +109,7 @@ class DataAccessLayer:
 
         return bool(await self.list_users_by_attr(**{"is_superuser": True}))
 
-    async def get_admins_or_superusers(self, superusers: bool = False) -> list[int]:
+    async def get_users(self, superusers: bool = False) -> list[int]:
         """
         :param superusers:
         :return:
@@ -118,7 +118,7 @@ class DataAccessLayer:
         if superusers:
             users = await self.list_users_by_attr(**{"is_superuser": True})
         else:
-            users = await self.list_users_by_attr(**{"is_admin": True})
+            users = await self.list_users_by_attr(**{"is_superuser": False})
 
         user_ids: list[int] = [user.user_id for user in users]
         return user_ids

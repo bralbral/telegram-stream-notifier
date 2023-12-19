@@ -15,7 +15,7 @@ scroll_channel_router = Router(name="scroll_channel")
 
 @scroll_channel_router.message(
     Command("channels"),
-    RoleFilter(role=[UserRole.ADMIN, UserRole.SUPERUSER]),
+    RoleFilter(role=[UserRole.USER, UserRole.SUPERUSER]),
     State(state="*"),
 )
 async def start_channels_dialog(

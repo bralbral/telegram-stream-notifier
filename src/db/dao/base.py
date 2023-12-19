@@ -38,7 +38,7 @@ class DAO(ABC):
 
     async def scalars(self, statement):
         """
-        :param statement: sqlalchemy statement, например sqlalchemy.select
+        :param statement: sqlalchemy statement, for example sqlalchemy.select
         :return:
         """
         for relation in self.relations.values():

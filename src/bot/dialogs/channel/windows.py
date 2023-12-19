@@ -70,7 +70,7 @@ def scroll_window():
             ),
             Row(
                 Button(Const("✏️ Turn off"), id="on", on_click=on_turn_off),
-                when=F["role"] == UserRole.ADMIN,
+                when=F["role"] == UserRole.USER,
             ),
             Button(Const("❌ Exit"), id="finish", on_click=on_finish),
             when=~F["is_empty"],

@@ -1,40 +1,9 @@
 from typing import Optional
 
-import aiofiles
 from aiogram import Bot
 from aiogram.exceptions import TelegramBadRequest
 
 from src.logger import logger
-
-
-async def pull_message_id(filepath: str = "messages.dump") -> Optional[int]:
-    """
-    :param filepath:
-    :return:
-    """
-    message_id: Optional[int] = None
-    try:
-        async with aiofiles.open(file=filepath, mode="r") as fh:
-            message_id = int(await fh.readline())
-    except Exception as ex:
-        await logger.aerror(f"Pull: {ex}")
-
-    return message_id
-
-
-async def push_message_id(message_id: int, filepath: str = "messages.dump") -> int:
-    """
-    :param message_id:
-    :param filepath:
-    :return:
-    """
-    try:
-        async with aiofiles.open(file=filepath, mode="w") as fh:
-            await fh.write(str(message_id))
-    except Exception as ex:
-        await logger.aerror(f"Push: {ex}")
-
-    return message_id
 
 
 async def check_if_need_send_instead_of_edit(
@@ -80,4 +49,4 @@ async def check_if_need_send_instead_of_edit(
         return False
 
 
-__all__ = ["check_if_need_send_instead_of_edit", "pull_message_id", "push_message_id"]
+__all__ = ["check_if_need_send_instead_of_edit"]

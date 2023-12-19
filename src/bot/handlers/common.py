@@ -13,7 +13,7 @@ router = Router(name="common")
 
 @router.message(
     Command("cancel"),
-    RoleFilter(role=[UserRole.ADMIN, UserRole.SUPERUSER]),
+    RoleFilter(role=[UserRole.USER, UserRole.SUPERUSER]),
     State(state="*"),
 )
 async def cancel_handler(message: Message, state: FSMContext, **kwargs) -> None:

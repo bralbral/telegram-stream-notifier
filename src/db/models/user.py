@@ -30,7 +30,6 @@ class UserOrm(ModelOrm, TimestampsMixin, RepresentationMixin):
     username = Column(String(length=255), nullable=True, index=True)
     firstname = Column(String(length=255), nullable=True, index=True)
     lastname = Column(String(length=255), nullable=True, index=True)
-    is_admin = Column(Boolean, default=False, index=True)
     is_superuser = Column(Boolean, default=False, index=True)
 
 

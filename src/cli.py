@@ -41,15 +41,15 @@ async def run_bot() -> None:
 
     dal: DataAccessLayer = DataAccessLayer()
 
-    admins: list[int] = await dal.get_admins_or_superusers(superusers=False)
-    superusers: list[int] = await dal.get_admins_or_superusers(superusers=True)
+    users: list[int] = await dal.get_users(superusers=False)
+    superusers: list[int] = await dal.get_users(superusers=True)
 
     if not await dal.is_superusers_exists():
         await logger.aerror("You must to create superuser before start.")
         return
 
     bot: Bot = await setup_bot(
-        config=config.bot, admins_id=admins, superusers_id=superusers
+        config=config.bot, users_id=users, superusers_id=superusers
     )
 
     await logger.ainfo("Setup scheduler")

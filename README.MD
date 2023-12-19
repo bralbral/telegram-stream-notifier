@@ -20,15 +20,15 @@ The current version of the bot works in the telegram channel [ДИСКОРДОВ
 
 ## Commands
 
-| Command | Scope     | Description                                                           |
-|---------|-----------|-----------------------------------------------------------------------|
-| add_channel   | Admin     | Add youtube channel                                                   |
-| channels   | Admin     | Channels Administration                                               |
-| cancel   | Admin     | Clear current fsm-state (if error)                                    |
-| add_admin   | Superuser | Promote to admin                                                      |
-| add_channels   | Superuser   | Bulk channels importing from file                                     |
-| scheduler_start   | Superuser     | Start scheduling periodic tasks of fetching information about streams |
-| scheduler_pause   | Superuser     | Pause scheduling periodic tasks of fetching information about streams |
+| Command         | Scope     | Description                                                          |
+|-----------------|-----------|----------------------------------------------------------------------|
+| add_channel     | User      | Add youtube channel                                                  |
+| channels        | User      | Channels Administration                                              |
+| cancel          | User      | Clear current fsm-state (if error)                                   |
+| add_user        | Superuser | Add user                                                             |
+| add_channels    | Superuser | Bulk channels importing from file                                    |
+| scheduler_start | Superuser | Start scheduling periodic tasks of fetching information about streams |
+| scheduler_pause | Superuser | Pause scheduling periodic tasks of fetching information about streams |
 
 ## Database schema
 
