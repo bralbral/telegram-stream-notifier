@@ -48,16 +48,15 @@ class ChannelRetrieveDTO(ChannelCreateDTO):
         user_link = f'<a href="{self.user.get_url_generated_by_id}">{attribute}</a>'
 
         return (
-            f"<b>enabled</b>: <b>{self.enabled}</b><br/>"
-            f"<b>id</b>: {self.id}<br/>"
-            f"<b>label</b>: {self.label}<br/>"
-            f"<b>url</b>: {self.url}<br/>"
-            f"<b>added by</b>: {user_link}<br/>"
-            f"<b>added at</b>: {self.created_at}<br/>"
-            f"<b>last modified at</b>: {self.updated_at}<br/>"
-            "<br/>"
-            "<br/>"
-            f"<b>Errors:</b>: {self.errors} <br/>"
+            f"📺 <b>Selected channel</b>: <br/>"
+            f"├──<b>enabled</b>: <b>{self.enabled}</b><br/>"
+            f"├──<b>id</b>: {self.id}<br/>"
+            f"├──<b>label</b>: {self.label}<br/>"
+            f"├──<b>url</b>: {self.url}<br/>"
+            f"├──<b>added by</b>: {user_link}<br/>"
+            f"├──<b>added at</b>: {self.created_at}<br/>"
+            f"├──<b>last modified at</b>: {self.updated_at}<br/>"
+            f"└──<b>Errors count</b>: {len(self.errors)} <br/>"
         )
 
 
