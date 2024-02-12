@@ -1,6 +1,6 @@
 aiogram==3.3.0
 aiogram-dialog==2.2.0a3
-pydantic==2.5.3
+pydantic==2.6.1
 APScheduler==3.10.4
 #yt-dlp==2023.11.16
 # bleeding edge for fix like extraction
