@@ -6,7 +6,7 @@ Simple Youtube LiveStreams notifier in telegram based on [youtube-dlp](https://g
 
 Use this bot to receive periodic reports on live broadcasts on YouTube and generate and send the report to telegram. 
 
-The current version of the bot works in the telegram channel [ДИСКОРДОВО СЕЛО](https://t.me/diskordovoselo).
+The current version of the bot works in the telegram channel [НАСРАНО](https://t.me/HACPAH1).
 
 ## Features
 
