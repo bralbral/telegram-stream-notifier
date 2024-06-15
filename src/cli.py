@@ -15,6 +15,7 @@ from src.bot import setup_dispatcher
 from src.config import Config
 from src.config import load_config
 from src.constants import CONFIG_FILE_PATH
+from src.constants import VERSION
 from src.scheduler import setup_scheduler
 
 if platform.system() == "linux":
@@ -62,7 +63,7 @@ async def run_bot() -> None:
         chat_id=config.chat_id, dal=dal, scheduler=scheduler
     )
 
-    await logger.ainfo("Starting bot")
+    await logger.aerror(f"Starting bot, version: {VERSION}")
 
     try:
         await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())

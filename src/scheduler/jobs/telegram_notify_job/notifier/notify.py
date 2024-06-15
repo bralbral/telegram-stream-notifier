@@ -49,7 +49,7 @@ async def notify(
 
     # logging errors
     for error in errors:
-        await logger.error(f"Error with {error.channel.url}: {error.ex_message}")
+        await logger.aerror(f"Error with {error.channel.id}: {error.ex_message}")
 
     await logger.ainfo(f"Live list length {len(live_list)}")
 
