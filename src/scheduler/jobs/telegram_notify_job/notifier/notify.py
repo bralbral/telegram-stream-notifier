@@ -12,7 +12,6 @@ from ..data_fetcher import async_fetch_livestreams
 from ..report_generator import generate_jinja_report
 from .utils import check_if_need_send_instead_of_edit
 from src.db import DataAccessLayer
-from src.dto import ChannelErrorCreateDTO
 from src.dto import MessageLogCreateDTO
 from src.dto import YoutubeErrorInfoDTO
 from src.dto import YoutubeVideoInfoDTO
@@ -50,14 +49,7 @@ async def notify(
 
     # logging errors
     for error in errors:
-        # TODO temp stub
-        # skip errors like this
-        if error.ex_message.find("This channel does not have a streams tab") > -1:
-            continue
-
-        await dal.create_channel_error(
-            ChannelErrorCreateDTO(channel_id=error.channel.id, error=error.ex_message)
-        )
+        await logger.error(f"Error with {error.channel.url}: {error.ex_message}")
 
     await logger.ainfo(f"Live list length {len(live_list)}")
 
