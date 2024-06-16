@@ -11,6 +11,6 @@ services:
       - ./youtube-notifier-bot.db:/app/youtube-notifier-bot.db
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    command: bash -c "bash alembic-upgrade.bash && python -m src"
+    command: sh -c "bash alembic-upgrade.bash && python -m src"
 
 

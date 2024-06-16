@@ -76,6 +76,18 @@ and build docker image:
 
 And use this image with [docker-compose.yml](./deploy/example.docker-compose.yml) from `deploy` dir.
 
+### Install with k8s
+
+> Stable release with `main` tag on [dockerhub](https://hub.docker.com/r/bral1488/telegram-youtube-notifier/tags)
+
+Just copy [deployment.yml](deploy%2Fk8s%2Fexample.deployment.yml) and fill in sections in `ConfigMap`, `PersistentVolume` sections.
+
+> ⚠️ Deployment use `storageClassName: local-path`. A detailed description can be found [here](https://kubernetes.io/docs/concepts/storage/storage-classes/#local)  
+
+Apply deployment:
+
+`kubectl apply -f deployment.yml`
+
 ## Setup Cookies
 
 You can use own cookies for yt-dlp extractors.
