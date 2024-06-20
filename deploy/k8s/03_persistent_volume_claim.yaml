@@ -1,0 +1,13 @@
+# create volume claim for database
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: yt-notifier-pvc
+  namespace: yt-notifier-namespace
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 128Mi
+  storageClassName: local-path
