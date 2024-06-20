@@ -1,0 +1,53 @@
+# create deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yt-notifier
+  namespace: yt-notifier-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: yt-notifier
+  template:
+    metadata:
+      labels:
+        app: yt-notifier
+    spec:
+      containers:
+      - name: yt-notifier
+        image: bral1488/telegram-youtube-notifier:main
+        imagePullPolicy: Always
+        command: ["sh", "-c", "python -m src"]
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/config.yaml
+          subPath: config.yaml
+          readOnly: true
+        - name: config-volume
+          mountPath: /app/cookies.txt
+          subPath: cookies.txt
+          readOnly: true
+        - name: db-volume
+          mountPath: /db/youtube-notifier-bot.db
+          subPath: youtube-notifier-bot.db
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        securityContext:
+          runAsUser: 0
+        env:
+          - name: SQLITE_DATABASE_FILE_PATH
+            value: "/db/youtube-notifier-bot.db"
+      volumes:
+      - name: config-volume
+        configMap:
+          name: yt-notifier-config
+      - name: db-volume
+        persistentVolumeClaim:
+          claimName: yt-notifier-pvc
+      tolerations:
+      - key: "node.kubernetes.io/disk-pressure"
+        operator: "Exists"
+        effect: "NoSchedule"

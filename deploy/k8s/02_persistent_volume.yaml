@@ -1,0 +1,24 @@
+# create persistent volume for database
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: yt-notifier-pv
+  namespace: yt-notifier-namespace
+spec:
+  capacity:
+    storage: 128Mi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: local-path
+  local:
+    path: /path/to/database/on/host/machine
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - my-k8s-node  # get value from kubectl get nodes

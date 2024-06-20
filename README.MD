@@ -80,13 +80,21 @@ And use this image with [docker-compose.yml](./deploy/example.docker-compose.yml
 
 > Stable release with `main` tag on [dockerhub](https://hub.docker.com/r/bral1488/telegram-youtube-notifier/tags)
 
-Just copy [deployment.yml](deploy%2Fk8s%2Fexample.deployment.yml) and fill in sections in `ConfigMap`, `PersistentVolume` sections.
+Manifests located in [k8s](deploy%2Fk8s) directory.
+
+It consists of `Namespace`, `ConfigMap`, `PersistenVolume`, `PersistentVolumeClaim`, and `Deployment` files.
+
+You need fill sections in  [01_configmap.yaml](deploy%2Fk8s%2F01_configmap.yaml) and [02_persistent_volume.yaml](deploy%2Fk8s%2F02_persistent_volume.yaml) files.
 
 > ⚠️ Deployment use `storageClassName: local-path`. A detailed description can be found [here](https://kubernetes.io/docs/concepts/storage/storage-classes/#local)  
 
 Apply deployment:
 
-`kubectl apply -f deployment.yml`
+`kubectl apply -f <directory with configs>`
+
+Or you can do it step by step:
+
+`kubectl apply -f <file from config dir>`
 
 ## Setup Cookies
 
