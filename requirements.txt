@@ -1,6 +1,6 @@
 aiogram==3.7.0
 aiogram-dialog==2.2.0a4
-pydantic==2.7.2
+pydantic==2.7.4
 APScheduler==3.10.4
 yt-dlp==2024.5.27
 sulguk==0.8.0
