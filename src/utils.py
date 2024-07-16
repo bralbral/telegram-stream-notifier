@@ -2,7 +2,7 @@ import re
 from typing import Optional
 
 YOUTUBE_USERNAME_CHANNEL_LINK_PATTERN = re.compile(
-    r"^https?://(?:www\.)?youtube\.com/@[\w-]+/?$"
+    r"^https?://(?:www\.)?youtube\.com/@[\w.-]+/?$"
 )
 
 TWITCH_USERNAME_CHANNEL_LINK_PATTERN = re.compile(
