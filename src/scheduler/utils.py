@@ -38,6 +38,7 @@ def setup_scheduler(conf: Config, bot: Bot, dal: DataAccessLayer) -> AsyncIOSche
         "extract_flat": True,
         "skip_download": True,
         "getcomments": False,
+        "extractor_args": {"youtubetab": {"skip": "authcheck"}},
     }
 
     ydl = yt_dlp.YoutubeDL(ydl_opts)
