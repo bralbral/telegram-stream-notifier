@@ -3,6 +3,6 @@ black==24.4.2
 autoflake==2.3.1
 reorder-python-imports==3.13.0
 pyupgrade==3.16.0
-pytest==8.2.2
+pytest==8.3.2
 pytest-cov==5.0.0
 git+https://github.com/aio-libs/sort-all.git
