@@ -2,7 +2,7 @@ aiogram==3.10.0
 aiogram-dialog==2.2.0a5
 pydantic==2.8.2
 APScheduler==3.10.4
-yt-dlp==2024.8.1
+yt-dlp==2024.8.6
 sulguk==0.8.0
 jinja2==3.1.4
 pyyaml==6.0.2
