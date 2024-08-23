@@ -26,8 +26,7 @@ class ChannelBaseDTO(DTO):
         return v.lower()
 
 
-class ChannelCreateDTO(ChannelBaseDTO):
-    ...
+class ChannelCreateDTO(ChannelBaseDTO): ...
 
 
 class ChannelRetrieveDTO(ChannelCreateDTO):
@@ -35,12 +34,6 @@ class ChannelRetrieveDTO(ChannelCreateDTO):
     user: UserRetrieveDTO
     created_at: datetime
     updated_at: datetime
-    errors: list[str]
-
-    @field_validator("errors", mode="before")
-    def extract_only_error_message(cls, v, **kwargs):
-        if isinstance(v, list):
-            return [_.error for _ in v]
 
     def to_html(self) -> str:
         user_attribute_list = [self.user.username, self.user.user_id]
@@ -55,8 +48,7 @@ class ChannelRetrieveDTO(ChannelCreateDTO):
             f"├──<b>url</b>: {self.url}<br/>"
             f"├──<b>added by</b>: {user_link}<br/>"
             f"├──<b>added at</b>: {self.created_at}<br/>"
-            f"├──<b>last modified at</b>: {self.updated_at}<br/>"
-            f"└──<b>Errors count</b>: {len(self.errors)} <br/>"
+            f"└──<b>last modified at</b>: {self.updated_at}<br/>"
         )
 
 

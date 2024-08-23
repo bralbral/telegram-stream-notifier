@@ -1,10 +1,3 @@
-"""init
-
-Revision ID: da6a2af82a8b
-Revises: 
-Create Date: 2023-12-19 17:55:42.111237
-
-"""
 from typing import Sequence
 from typing import Union
 
