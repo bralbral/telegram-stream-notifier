@@ -52,27 +52,6 @@ async def on_turn_off(callback: CallbackQuery, button: Button, manager: DialogMa
     await manager.switch_to(ChannelsSG.turn_off)
 
 
-async def on_turn_delete_errors(
-    callback: CallbackQuery, button: Button, manager: DialogManager
-):
-    index = manager.dialog_data["current_page"]
-    channel: ChannelRetrieveDTO = manager.dialog_data["channels"][index]
-
-    if channel.id:
-        dal: DataAccessLayer = manager.start_data["dal"]
-
-        result = await dal.clear_channel_errors(channel_id=channel.id)
-
-        if result:
-            await callback.answer("Success.")
-        else:
-            await callback.answer("Cannot delete error rows.")
-    else:
-        await callback.answer("Cannot delete error rows.")
-
-    await manager.switch_to(state=ChannelsSG.scrolling)
-
-
 async def on_turn_on(callback: CallbackQuery, button: Button, manager: DialogManager):
     await manager.switch_to(ChannelsSG.turn_on)
 
@@ -114,7 +93,6 @@ __all__ = [
     "on_finish",
     "on_perform_delete",
     "on_perform_update",
-    "on_turn_delete_errors",
     "on_turn_off",
     "on_turn_on",
 ]
