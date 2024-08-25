@@ -62,19 +62,6 @@ def setup_scheduler(conf: Config, bot: Bot, dal: DataAccessLayer) -> AsyncIOSche
         next_run_time=datetime.now(),
     )
 
-    # TODO TEMPRORARY COMMENT
-    # JUST CLARIFY ERROR
-    # auto_turn_off_kwargs = {"dal": dal}
-    # scheduler.add_job(
-    #     auto_turn_off,
-    #     trigger=IntervalTrigger(seconds=conf.interval_s * 2),
-    #     kwargs=auto_turn_off_kwargs,
-    #     replace_existing=True,
-    #     max_instances=1,
-    #     coalesce=True,
-    #     next_run_time=datetime.now(),
-    # )
-
     return scheduler
 
 
