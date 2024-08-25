@@ -6,13 +6,20 @@ from sqlalchemy import String
 from sqlalchemy import UniqueConstraint
 from sqlalchemy.orm import relationship
 
+from .channel_type import ChannelTypeORMRelatedModel
 from .mixins import ModelORM
 from .mixins import RepresentationMixin
 from .mixins import TimestampsMixin
 from .user import UserORMRelatedModel
 
 
-class ChannelORM(ModelORM, TimestampsMixin, UserORMRelatedModel, RepresentationMixin):
+class ChannelORM(
+    ModelORM,
+    TimestampsMixin,
+    UserORMRelatedModel,
+    ChannelTypeORMRelatedModel,
+    RepresentationMixin,
+):
     """
     Model for storing YT channels
     """
@@ -30,6 +37,13 @@ class ChannelORM(ModelORM, TimestampsMixin, UserORMRelatedModel, RepresentationM
     url = Column(String(length=255), nullable=False, index=True)
     label = Column(String(length=255), nullable=False, index=True)
     enabled = Column(Boolean, default=True, index=True)
+    type = relationship(
+        "ChannelTypeORM",
+        backref="channels",
+        foreign_keys="ChannelORM.channel_type_id",
+        uselist=False,
+        lazy="selectin",
+    )
     user = relationship(
         "UserORM",
         backref="channels",
