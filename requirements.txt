@@ -1,4 +1,4 @@
-aiogram==3.10.0
+aiogram==3.12.0
 aiogram-dialog==2.2.0a5
 pydantic==2.8.2
 APScheduler==3.10.4
