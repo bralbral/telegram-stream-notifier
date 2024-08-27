@@ -8,15 +8,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..constants import SQLITE_DATABASE_FILE_PATH
 from ..dto import ChannelCreateDTO
 from ..dto import ChannelRetrieveDTO
+from ..dto import ChannelTypeRetrieveDTO
 from ..dto import MessageLogCreateDTO
 from ..dto import MessageLogRetrieveDTO
 from ..dto import UserCreateDTO
 from ..dto import UserRetrieveDTO
 from .dao import ChannelDAO
+from .dao import ChannelTypeDAO
 from .dao import MessageLogDAO
-from .dao import UserRepo
+from .dao import UserDAO
 from .exceptions import DatabaseDoesNotExist
 from .models import ChannelORM
+from .models import ChannelTypeORM
 from .models import MessageLogORM
 from .models import UserORM
 from .session import session_maker
@@ -55,7 +58,7 @@ class DataAccessLayer:
         """
         :return:
         """
-        self.__user_repo = UserRepo(
+        self.__user_repo = UserDAO(
             session=self.__session, schema=UserRetrieveDTO, model_orm=UserORM
         )
         self.__channel_repo = ChannelDAO(
@@ -67,6 +70,11 @@ class DataAccessLayer:
             session=self.__session,
             schema=MessageLogRetrieveDTO,
             model_orm=MessageLogORM,
+        )
+        self.__channel_type_repo = ChannelTypeDAO(
+            session=self.__session,
+            schema=ChannelTypeRetrieveDTO,
+            model_orm=ChannelTypeORM,
         )
 
     async def create_user(

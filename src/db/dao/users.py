@@ -9,7 +9,7 @@ from src.dto import UserCreateDTO
 from src.dto import UserRetrieveDTO
 
 
-class UserRepo(DAO):
+class UserDAO(DAO):
     async def create(self, user_schema: UserCreateDTO) -> Optional[UserRetrieveDTO]:
         """
         :param user_schema:
@@ -32,4 +32,4 @@ class UserRepo(DAO):
         return user_dto
 
 
-__all__ = ["UserRepo"]
+__all__ = ["UserDAO"]
