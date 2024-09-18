@@ -7,14 +7,17 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.exceptions import TelegramNetworkError
 from aiogram.utils.chat_action import ChatActionSender
 from sulguk import SULGUK_PARSE_MODE
+from twitchAPI.twitch import Twitch
 
-from ..data_fetcher import async_fetch_livestreams
+from ..data_fetcher import async_twitch_fetch_livestreams
+from ..data_fetcher import async_youtube_fetch_livestreams
 from ..report_generator import generate_jinja_report
 from .utils import check_if_need_send_instead_of_edit
 from src.db import DataAccessLayer
+from src.dto import DTO
 from src.dto import MessageLogCreateDTO
-from src.dto import YoutubeErrorInfoDTO
-from src.dto import YoutubeVideoInfoDTO
+from src.dto import TwitchErrorInfoDTO
+from src.dto import TwitchVideoInfoDTO
 from src.logger import logger
 
 
@@ -26,6 +29,7 @@ async def notify(
     empty_template: Optional[str],
     report_template: str,
     dal: DataAccessLayer,
+    twitch: Optional[Twitch] = None,
 ) -> None:
     """
     :param dal:
@@ -41,11 +45,21 @@ async def notify(
     # get channels
     channels = await dal.get_channels(enabled=True)
 
-    data: tuple[
-        list[YoutubeVideoInfoDTO], list[YoutubeErrorInfoDTO]
-    ] = await async_fetch_livestreams(channels=channels, ydl=ydl)
+    data: tuple[list[DTO], list[DTO]] = await async_youtube_fetch_livestreams(
+        channels=channels, ydl=ydl
+    )
 
     live_list, errors = data
+
+    if twitch:
+        _twitch = await twitch
+
+        twitch_data: tuple[list[TwitchVideoInfoDTO], list[TwitchErrorInfoDTO]] = (
+            await async_twitch_fetch_livestreams(channels=channels, twitch=_twitch)
+        )
+        twitch_live_list, twitch_errors = twitch_data
+        live_list.extend(twitch_live_list)
+        errors.extend(twitch_errors)
 
     # logging errors
     for error in errors:

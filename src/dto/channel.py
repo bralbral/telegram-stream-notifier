@@ -5,6 +5,7 @@ from pydantic import Field
 from pydantic import field_validator
 
 from .base import DTO
+from .channel_type import ChannelTypeBaseDTO
 from .user import UserRetrieveDTO
 
 
@@ -13,6 +14,7 @@ class ChannelBaseDTO(DTO):
     label: str = Field(max_length=255)
     user_id: int
     enabled: bool
+    type: ChannelTypeBaseDTO
 
     model_config = ConfigDict(from_attributes=True)
 

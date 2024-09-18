@@ -5,12 +5,12 @@ from typing import Optional
 
 import yt_dlp
 
-from .utils import make_time_readable
 from src.decorators import wrap_sync_to_async
 from src.dto import ChannelRetrieveDTO
 from src.dto import YoutubeErrorInfoDTO
 from src.dto import YoutubeVideoInfoDTO
 from src.logger import logger
+from src.scheduler.jobs.telegram_notify_job.data_fetcher.utils import make_time_readable
 
 
 def fetch_live_stream(
@@ -73,7 +73,7 @@ def fetch_live_stream(
 async_fetch_livestream = wrap_sync_to_async(fetch_live_stream)
 
 
-async def async_fetch_livestreams(
+async def async_youtube_fetch_livestreams(
     channels: list[ChannelRetrieveDTO], ydl: yt_dlp.YoutubeDL
 ) -> tuple[list[YoutubeVideoInfoDTO], list[YoutubeErrorInfoDTO]]:
     """
@@ -98,4 +98,4 @@ async def async_fetch_livestreams(
     return live_streams, errors
 
 
-__all__ = ["async_fetch_livestreams"]
+__all__ = ["async_youtube_fetch_livestreams"]
