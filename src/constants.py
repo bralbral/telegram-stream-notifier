@@ -10,7 +10,7 @@ COOKIES_FILE_PATH: str = os.environ.get(
 SQLITE_DATABASE_FILE_PATH: str = os.environ.get(
     "SQLITE_DATABASE_FILE_PATH", os.path.join(ROOT_DIR, "youtube-notifier-bot.db")
 )
-VERSION: str = "2024-09-18.05"
+VERSION: str = "2024-09-19.10"
 
 __all__ = [
     "CONFIG_FILE_PATH",

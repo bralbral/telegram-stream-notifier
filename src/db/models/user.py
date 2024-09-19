@@ -1,47 +1,24 @@
-from sqlalchemy import BigInteger
-from sqlalchemy import Boolean
-from sqlalchemy import Column
-from sqlalchemy import ForeignKey
-from sqlalchemy import Integer
-from sqlalchemy import String
-from sqlalchemy import UniqueConstraint
+import enum
 
-from .mixins import ModelORM
-from .mixins import RepresentationMixin
-from .mixins import TimestampsMixin
+from sqlmodel import Field
+
+from .base import BaseModel
 
 
-class UserORM(ModelORM, TimestampsMixin, RepresentationMixin):
-    """
-    Model for storing TG users
-    """
+class UserRole(enum.IntEnum):
+    USER = 0
+    ADMIN = 1
+
+
+class UserModel(BaseModel, table=True):
 
     __tablename__ = "users"
 
-    __table_args__ = (UniqueConstraint("user_id", name="ix_uniq_telegram_user_id"),)
-    # some features with autoincrement
-    # https://docs.sqlalchemy.org/en/20/dialects/sqlite.html#allowing-autoincrement-behavior-sqlalchemy-types-other-than-integer-integer
-    id = Column(
-        Integer,
-        primary_key=True,
-        autoincrement=True,
-    )
-    user_id = Column(BigInteger, nullable=False, index=True)
-    username = Column(String(length=255), nullable=True, index=True)
-    firstname = Column(String(length=255), nullable=True, index=True)
-    lastname = Column(String(length=255), nullable=True, index=True)
-    is_superuser = Column(Boolean, default=False, index=True)
+    user_id: int = Field(index=True)
+    username: str = Field(max_length=255, nullable=True, index=True)
+    firstname: str = Field(max_length=255, nullable=True, index=True)
+    lastname: str = Field(max_length=255, nullable=True, index=True)
+    user_role_id: int | None = Field(default=None, foreign_key="user_roles.id")
 
 
-class UserORMRelatedModel:
-    __abstract__ = True
-
-    user_id = Column(
-        ForeignKey(
-            f"{UserORM.__tablename__}.id", ondelete="CASCADE", onupdate="CASCADE"
-        ),
-        nullable=False,
-    )
-
-
-__all__ = ["UserORM", "UserORMRelatedModel"]
+__all__ = ["UserModel"]

@@ -1,27 +1,17 @@
 import asyncio
 import os
-from typing import cast
 from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..constants import SQLITE_DATABASE_FILE_PATH
-from ..dto import ChannelCreateDTO
-from ..dto import ChannelRetrieveDTO
-from ..dto import ChannelTypeRetrieveDTO
-from ..dto import MessageLogCreateDTO
-from ..dto import MessageLogRetrieveDTO
-from ..dto import UserCreateDTO
-from ..dto import UserRetrieveDTO
 from .dao import ChannelDAO
 from .dao import ChannelTypeDAO
 from .dao import MessageLogDAO
 from .dao import UserDAO
+from .dao import UserRoleDAO
 from .exceptions import DatabaseDoesNotExist
-from .models import ChannelORM
-from .models import ChannelTypeORM
-from .models import MessageLogORM
-from .models import UserORM
+from .models import UserModel
 from .session import session_maker
 
 
@@ -33,7 +23,11 @@ class DataAccessLayer:
             self.__session = session
 
         self.__sqlite_exists()
-        self.__init_repo()
+        self.channel_dao = ChannelDAO(session=session)
+        self.channel_type_dao = ChannelTypeDAO(session=session)
+        self.message_log_dao = MessageLogDAO(session=session)
+        self.user_dao = UserDAO(session=session)
+        self.user_role_dao = UserRoleDAO(session=session)
 
     @staticmethod
     def __sqlite_exists():
@@ -54,51 +48,26 @@ class DataAccessLayer:
         if self.__session:
             asyncio.create_task(self.__session.close())
 
-    def __init_repo(self) -> None:
+    async def create_user(self, user: UserModel) -> Optional[UserModel]:
         """
+        :param user:
         :return:
         """
-        self.__user_repo = UserDAO(
-            session=self.__session, schema=UserRetrieveDTO, model_orm=UserORM
-        )
-        self.__channel_repo = ChannelDAO(
-            session=self.__session,
-            schema=ChannelRetrieveDTO,
-            model_orm=ChannelORM,
-        )
-        self.__message_log_repo = MessageLogDAO(
-            session=self.__session,
-            schema=MessageLogRetrieveDTO,
-            model_orm=MessageLogORM,
-        )
-        self.__channel_type_repo = ChannelTypeDAO(
-            session=self.__session,
-            schema=ChannelTypeRetrieveDTO,
-            model_orm=ChannelTypeORM,
-        )
+        return await self.user_dao.create(obj=user)
 
-    async def create_user(
-        self, user_schema: UserCreateDTO
-    ) -> Optional[UserRetrieveDTO]:
-        """
-        :param user_schema:
-        :return:
-        """
-        return await self.__user_repo.create(user_schema=user_schema)
-
-    async def get_user_by_pk(self, pk: int) -> Optional[UserRetrieveDTO]:
+    async def get_user_by_pk(self, pk: int) -> Optional[UserModel]:
         """
         :param pk:
         :return:
         """
-        return await self.__user_repo.get_by_pk(pk=pk)
+        return await self.user_dao.get_by_id(id=pk)
 
-    async def get_user_by_attr(self, **kwargs) -> Optional[UserRetrieveDTO]:
+    async def get_user_by_attr(self, **kwargs) -> Optional[UserModel]:
         """
         :param kwargs:
         :return:
         """
-        return await self.__user_repo.get_by_attr(**kwargs)
+        return await self.user_dao.get(**kwargs)
 
     async def list_users_by_attr(self, **kwargs) -> list[UserRetrieveDTO]:
         """
@@ -189,5 +158,4 @@ class DataAccessLayer:
         """
         return await self.__channel_repo.update_by_pk(pk=_id, data=data)
 
-
-__all__ = ["DataAccessLayer"]
+    __all__ = ["DataAccessLayer"]
