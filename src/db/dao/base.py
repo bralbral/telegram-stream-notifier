@@ -22,24 +22,32 @@ class BaseDAO(ABC, Generic[T]):
         self.model = model
 
     @abstractmethod
-    async def get_by_id(self, id: int) -> Optional[T]:
+    async def get_many(self, **kwargs) -> Sequence[T]:
         try:
-            statement = select(self.model).where(self.model.id == id)
-            result = await self.session.execute(statement)
-            return result.scalars().first()
-        except SQLAlchemyError as e:
-            await logger.aerror(f"Error getting {self.model.__name__} by id: {e}")
-            return None
-
-    @abstractmethod
-    async def get_all(self) -> Sequence[T]:
-        try:
-            statement = select(self.model)
+            statement = (
+                select(self.model).filter_by(**kwargs).order_by(self.model.id.desc())
+            )
             results = await self.session.execute(statement)
             return results.scalars().all()
         except SQLAlchemyError as e:
-            await logger.aerror(f"Error getting all {self.model.__name__}: {e}")
+            await logger.aerror(
+                f"Error searching {self.model.__name__} with attributes {kwargs}: {e}"
+            )
             return []
+
+    @abstractmethod
+    async def get_first(self, **kwargs) -> Optional[T]:
+        try:
+            statement = (
+                select(self.model).filter_by(**kwargs).order_by(self.model.id.desc())
+            )
+            result = await self.session.execute(statement)
+            return result.scalars().first()
+        except SQLAlchemyError as e:
+            await logger.aerror(
+                f"Error searching for one {self.model.__name__} with attributes {kwargs}: {e}"
+            )
+            return None
 
     @abstractmethod
     async def create(self, obj: T) -> Optional[T]:

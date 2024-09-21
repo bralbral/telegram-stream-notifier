@@ -1,9 +1,9 @@
 from sqlmodel import Field
 
-from .base import BaseModel
+from .base import BaseSQLModel
 
 
-class ChannelModel(BaseModel, table=True):
+class ChannelModel(BaseSQLModel):
 
     __tablename__ = "channels"
 

@@ -4,7 +4,7 @@ from sqlalchemy import Column
 from sqlalchemy import Enum
 from sqlmodel import Field
 
-from .base import BaseModel
+from .base import BaseSQLModel
 
 
 class UserRole(enum.IntEnum):
@@ -12,7 +12,7 @@ class UserRole(enum.IntEnum):
     ADMIN = 1
 
 
-class UserRoleModel(BaseModel, table=True):
+class UserRoleModel(BaseSQLModel):
 
     __tablename__ = "user_roles"
 

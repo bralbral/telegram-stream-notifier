@@ -12,7 +12,7 @@ class YoutubeVideoInfoDTO(DTO):
 
 
 class YoutubeErrorInfoDTO(DTO):
-    channel: str
+    channel: dict
     ex_message: str
 
 

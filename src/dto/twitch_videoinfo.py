@@ -11,7 +11,7 @@ class TwitchVideoInfoDTO(DTO):
 
 
 class TwitchErrorInfoDTO(DTO):
-    channel: str
+    channel: dict
     ex_message: str
 
 

@@ -15,40 +15,36 @@ class ChannelDAO(BaseDAO[ChannelModel]):
     def __init__(self, session: AsyncSession):
         super().__init__(session, ChannelModel)
 
-    async def get_by_id(self, id: int) -> Optional[ChannelModel]:
-        try:
-            statement = (
-                select(self.model)
-                .where(self.model.id == id)
-                .options(joinedload(self.model.channel_type))
-            )
-            result = await self.session.execute(statement)
-            return result.scalars().first()
-        except SQLAlchemyError as e:
-            await logger.aerror(
-                f"Error getting {self.model.__name__} by id with relationships: {e}"
-            )
-            return None
+    @property
+    def __prepare_select_statement(self):
+        statement = (
+            select(self.model)
+            .options(joinedload(self.model.user_role))
+            .options(joinedload(self.model.channel_type))
+        )
+        return statement
 
-    async def get_all(self) -> Sequence[ChannelModel]:
+    async def get_many(self, **kwargs) -> Sequence[ChannelModel]:
         try:
-            statement = select(self.model).options(joinedload(self.model.channel_type))
+            statement = self.__prepare_select_statement.filter_by(**kwargs)
             results = await self.session.execute(statement)
             return results.scalars().all()
         except SQLAlchemyError as e:
             await logger.aerror(
-                f"Error getting all {self.model.__name__} with relationships: {e}"
+                f"Error searching {self.model.__name__} with attributes {kwargs}: {e}"
             )
             return []
 
-    async def create(self, obj: ChannelModel) -> Optional[ChannelModel]:
-        return await super().create(obj)
-
-    async def update(self, obj: ChannelModel) -> Optional[ChannelModel]:
-        return await super().update(obj)
-
-    async def delete(self, id: int) -> bool:
-        return await super().delete(id)
+    async def get_first(self, **kwargs) -> Optional[ChannelModel]:
+        try:
+            statement = self.__prepare_select_statement.filter_by(**kwargs)
+            result = await self.session.execute(statement)
+            return result.scalars().first()
+        except SQLAlchemyError as e:
+            await logger.aerror(
+                f"Error searching for one {self.model.__name__} with attributes {kwargs}: {e}"
+            )
+            return None
 
 
 __all__ = ["ChannelDAO"]

@@ -2,7 +2,7 @@ import enum
 
 from sqlmodel import Field
 
-from .base import BaseModel
+from .base import BaseSQLModel
 
 
 class UserRole(enum.IntEnum):
@@ -10,7 +10,7 @@ class UserRole(enum.IntEnum):
     ADMIN = 1
 
 
-class UserModel(BaseModel, table=True):
+class UserModel(BaseSQLModel):
 
     __tablename__ = "users"
 

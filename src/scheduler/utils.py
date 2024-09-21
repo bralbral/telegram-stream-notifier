@@ -10,7 +10,6 @@ from apscheduler.triggers.interval import IntervalTrigger
 from twitchAPI.twitch import Twitch
 
 from src.config import Config
-from src.constants import COOKIES_FILE_PATH
 from src.db import DataAccessLayer
 from src.scheduler.jobs.telegram_notify_job import notify
 
@@ -26,8 +25,14 @@ def setup_scheduler(conf: Config, bot: Bot, dal: DataAccessLayer) -> AsyncIOSche
     scheduler = AsyncIOScheduler()
 
     cookiefile: Optional[TextIO]
+
     try:
-        cookiefile = open(file=COOKIES_FILE_PATH, encoding="utf-8")
+        youtube = conf.youtube
+        if conf.youtube:
+            cookies_filepath = youtube.cookies_filepath
+            cookiefile = open(file=cookies_filepath, encoding="utf-8")
+        else:
+            cookiefile = None
     except FileNotFoundError:
         cookiefile = None
 

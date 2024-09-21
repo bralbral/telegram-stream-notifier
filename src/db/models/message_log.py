@@ -1,9 +1,9 @@
 from sqlmodel import Field
 
-from .base import BaseModel
+from .base import BaseSQLModel
 
 
-class MessageLogModel(BaseModel, table=True):
+class MessageLogModel(BaseSQLModel):
 
     __tablename__ = "message_logs"
 

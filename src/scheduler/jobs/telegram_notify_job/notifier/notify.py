@@ -14,10 +14,11 @@ from ..data_fetcher import async_youtube_fetch_livestreams
 from ..report_generator import generate_jinja_report
 from .utils import check_if_need_send_instead_of_edit
 from src.db import DataAccessLayer
-from src.dto import DTO
-from src.dto import MessageLogCreateDTO
+from src.db.models import MessageLogModel
 from src.dto import TwitchErrorInfoDTO
 from src.dto import TwitchVideoInfoDTO
+from src.dto import YoutubeErrorInfoDTO
+from src.dto import YoutubeVideoInfoDTO
 from src.logger import logger
 
 
@@ -39,15 +40,19 @@ async def notify(
     :param ydl:
     :param bot:
     :param chat_id:
+    :param twitch
     :return:
     """
 
     # get channels
     channels = await dal.get_channels(enabled=True)
 
-    data: tuple[list[DTO], list[DTO]] = await async_youtube_fetch_livestreams(
-        channels=channels, ydl=ydl
-    )
+    data: tuple[
+        list[YoutubeVideoInfoDTO | TwitchVideoInfoDTO],
+        list[YoutubeErrorInfoDTO | TwitchErrorInfoDTO],
+    ]
+
+    data = await async_youtube_fetch_livestreams(channels=channels, ydl=ydl)
 
     live_list, errors = data
 
@@ -161,9 +166,7 @@ async def notify(
 
         if message_id:
             await dal.create_message(
-                message_log_schema=MessageLogCreateDTO(
-                    message_id=message_id, text=message_text
-                )
+                obj=MessageLogModel(message_id=message_id, text=message_text)
             )
 
 

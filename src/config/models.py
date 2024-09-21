@@ -17,6 +17,11 @@ class BotConfig(BaseSettings):
     token: SecretStr
 
 
+class YoutubeCredentials(BaseSettings):
+
+    cookies_filepath: str
+
+
 class TwitchCredentials(BaseSettings):
     """
     Credentials for TwitchApi
@@ -39,6 +44,7 @@ class Config(BaseSettings):
     start_scheduler: bool
     interval_s: int
     twitch: Optional[TwitchCredentials] = None
+    youtube: Optional[YoutubeCredentials] = None
 
 
 __all__ = ["BotConfig", "Config"]

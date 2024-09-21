@@ -4,7 +4,7 @@ from sqlalchemy import Column
 from sqlalchemy import Enum
 from sqlmodel import Field
 
-from .base import BaseModel
+from .base import BaseSQLModel
 
 
 class ChannelType(enum.IntEnum):
@@ -12,7 +12,7 @@ class ChannelType(enum.IntEnum):
     TWITCH = 1
 
 
-class ChannelTypeModel(BaseModel, table=True):
+class ChannelTypeModel(BaseSQLModel):
 
     __tablename__ = "channel_types"
 
