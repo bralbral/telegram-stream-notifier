@@ -1,12 +1,15 @@
 import enum
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Column
 from sqlalchemy import Enum
 from sqlmodel import Field
 from sqlmodel import Relationship
 
-from . import ChannelModel
 from .base import BaseSQLModel
+
+if TYPE_CHECKING:
+    from .channel import ChannelModel
 
 
 class ChannelType(enum.IntEnum):
@@ -24,7 +27,7 @@ class ChannelTypeModel(BaseSQLModel):
         )
     )
 
-    channels: list[ChannelModel] = Relationship(back_populates="type")
+    channels: list["ChannelModel"] = Relationship(back_populates="type")
 
 
 __all__ = ["ChannelTypeModel"]

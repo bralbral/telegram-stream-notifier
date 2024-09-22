@@ -8,7 +8,7 @@ CONFIG_FILE_PATH: str = os.environ.get(
 SQLITE_DATABASE_FILE_PATH: str = os.environ.get(
     "SQLITE_DATABASE_FILE_PATH", os.path.join(ROOT_DIR, "youtube-notifier-bot.db")
 )
-VERSION: str = "2024-09-22.05"
+VERSION: str = "2024-09-22.10"
 
 __all__ = [
     "CONFIG_FILE_PATH",

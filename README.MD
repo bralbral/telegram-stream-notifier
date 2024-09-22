@@ -32,7 +32,7 @@ The current version of the bot works in the telegram channel [НАСРАНО](ht
 
 ## Database schema
 
-<img src="src/db/svg_schema/db-schema.svg">
+<img src="db-schema.png">
 
 ## Deploy
 

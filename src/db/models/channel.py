@@ -1,9 +1,9 @@
 from sqlmodel import Field
 from sqlmodel import Relationship
 
-from . import UserModel
 from .base import BaseSQLModel
 from .channel_type import ChannelTypeModel
+from .user import UserModel
 
 
 class ChannelModel(BaseSQLModel):
