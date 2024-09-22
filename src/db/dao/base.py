@@ -26,9 +26,9 @@ class BaseDAO(Generic[T]):
         return statement
 
     @abstractmethod
-    async def get_many(self, **kwargs) -> Sequence[T]:
+    async def get_many(self, *args, **kwargs) -> Sequence[T]:
         try:
-            statement = self.__prepare_select_statement.filter_by(**kwargs)
+            statement = self.__prepare_select_statement.where(*args).filter_by(**kwargs)
             results = await self.session.execute(statement)
             return results.scalars().all()
         except SQLAlchemyError as e:
@@ -38,9 +38,9 @@ class BaseDAO(Generic[T]):
             return []
 
     @abstractmethod
-    async def get_first(self, **kwargs) -> Optional[T]:
+    async def get_first(self, *args, **kwargs) -> Optional[T]:
         try:
-            statement = self.__prepare_select_statement.filter_by(**kwargs)
+            statement = self.__prepare_select_statement.where(*args).filter_by(**kwargs)
             result = await self.session.execute(statement)
             return result.scalars().first()
         except SQLAlchemyError as e:

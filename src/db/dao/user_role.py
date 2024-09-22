@@ -11,11 +11,11 @@ class UserRoleDAO(BaseDAO[UserRoleModel]):
     def __init__(self, session: AsyncSession):
         super().__init__(session, UserRoleModel)
 
-    async def get_first(self, **kwargs) -> Optional[UserRoleModel]:
-        return await super().get_first(**kwargs)
+    async def get_first(self, *args, **kwargs) -> Optional[UserRoleModel]:
+        return await super().get_first(*args, **kwargs)
 
-    async def get_many(self, **kwargs) -> Sequence[UserRoleModel]:
-        return await super().get_many(**kwargs)
+    async def get_many(self, *args, **kwargs) -> Sequence[UserRoleModel]:
+        return await super().get_many(*args, **kwargs)
 
     async def create(self, obj: UserRoleModel) -> Optional[UserRoleModel]:
         return await super().create(obj)

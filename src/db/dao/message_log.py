@@ -17,11 +17,11 @@ class MessageLogDAO(BaseDAO[MessageLogModel]):
         statement = select(self.model).order_by(self.model.id)
         return statement
 
-    async def get_first(self, **kwargs) -> Optional[MessageLogModel]:
-        return await super().get_first(**kwargs)
+    async def get_first(self, *args, **kwargs) -> Optional[MessageLogModel]:
+        return await super().get_first(*args, **kwargs)
 
-    async def get_many(self, **kwargs) -> Sequence[MessageLogModel]:
-        return await super().get_many(**kwargs)
+    async def get_many(self, *args, **kwargs) -> Sequence[MessageLogModel]:
+        return await super().get_many(*args, **kwargs)
 
     async def create(self, obj: MessageLogModel) -> Optional[MessageLogModel]:
         return await super().create(obj)

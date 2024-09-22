@@ -17,12 +17,12 @@ class UserDAO(BaseDAO[UserModel]):
 
     @property
     def __prepare_select_statement(self):
-        statement = select(self.model).options(joinedload(self.model.user_role))
+        statement = select(self.model).options(joinedload(self.model.role))
         return statement
 
-    async def get_many(self, **kwargs) -> Sequence[UserModel]:
+    async def get_many(self, *args, **kwargs) -> Sequence[UserModel]:
         try:
-            statement = self.__prepare_select_statement.filter_by(**kwargs)
+            statement = self.__prepare_select_statement.where(*args).filter_by(**kwargs)
             results = await self.session.execute(statement)
             return results.scalars().all()
         except SQLAlchemyError as e:
@@ -31,9 +31,9 @@ class UserDAO(BaseDAO[UserModel]):
             )
             return []
 
-    async def get_first(self, **kwargs) -> Optional[UserModel]:
+    async def get_first(self, *args, **kwargs) -> Optional[UserModel]:
         try:
-            statement = self.__prepare_select_statement.filter_by(**kwargs)
+            statement = self.__prepare_select_statement.where(*args).filter_by(**kwargs)
             result = await self.session.execute(statement)
             return result.scalars().first()
         except SQLAlchemyError as e:

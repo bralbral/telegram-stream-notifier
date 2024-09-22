@@ -24,9 +24,9 @@ class ChannelDAO(BaseDAO[ChannelModel]):
         )
         return statement
 
-    async def get_many(self, **kwargs) -> Sequence[ChannelModel]:
+    async def get_many(self, *args, **kwargs) -> Sequence[ChannelModel]:
         try:
-            statement = self.__prepare_select_statement.filter_by(**kwargs)
+            statement = self.__prepare_select_statement.where(*args).filter_by(**kwargs)
             results = await self.session.execute(statement)
             return results.scalars().all()
         except SQLAlchemyError as e:
@@ -35,9 +35,9 @@ class ChannelDAO(BaseDAO[ChannelModel]):
             )
             return []
 
-    async def get_first(self, **kwargs) -> Optional[ChannelModel]:
+    async def get_first(self, *args, **kwargs) -> Optional[ChannelModel]:
         try:
-            statement = self.__prepare_select_statement.filter_by(**kwargs)
+            statement = self.__prepare_select_statement.where(*args).filter_by(**kwargs)
             result = await self.session.execute(statement)
             return result.scalars().first()
         except SQLAlchemyError as e:

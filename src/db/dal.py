@@ -14,6 +14,8 @@ from .exceptions import DatabaseDoesNotExist
 from .models import ChannelModel
 from .models import MessageLogModel
 from .models import UserModel
+from .models import UserRoleModel
+from .models.user_role import UserRole
 from .session import session_maker
 
 
@@ -64,26 +66,28 @@ class DataAccessLayer:
         """
         return await self.user_dao.get_first(id=pk)
 
-    async def get_user_by_attr(self, **kwargs) -> Optional[UserModel]:
+    async def get_user_by_attr(self, *args, **kwargs) -> Optional[UserModel]:
         """
         :param kwargs:
         :return:
         """
-        return await self.user_dao.get_first(**kwargs)
+        return await self.user_dao.get_first(*args, **kwargs)
 
-    async def list_users_by_attr(self, **kwargs) -> list[UserModel]:
+    async def list_users_by_attr(self, *args, **kwargs) -> list[UserModel]:
         """
         :param kwargs:
         :return:
         """
-        return list(await self.user_dao.get_many(**kwargs))
+        return list(await self.user_dao.get_many(*args, **kwargs))
 
     async def is_superusers_exists(self) -> bool:
         """
         :return:
         """
 
-        return bool(await self.list_users_by_attr(**{"is_superuser": True}))
+        return bool(
+            await self.list_users_by_attr(UserRoleModel.role == UserRole.SUPERUSER)
+        )
 
     async def get_users(self, superusers: bool = False) -> list[int]:
         """
@@ -92,9 +96,13 @@ class DataAccessLayer:
         """
         users: list[UserModel]
         if superusers:
-            users = await self.list_users_by_attr(**{"is_superuser": True})
+            users = await self.list_users_by_attr(
+                role=UserRoleModel(role=UserRole.SUPERUSER)
+            )
         else:
-            users = await self.list_users_by_attr(**{"is_superuser": False})
+            users = await self.list_users_by_attr(
+                role=UserRoleModel(role=UserRole.USER)
+            )
 
         user_ids: list[int] = [user.user_id for user in users]
         return user_ids
@@ -122,13 +130,13 @@ class DataAccessLayer:
         """
         return await self.channel_dao.create(obj=obj)
 
-    async def get_channels(self, **kwargs) -> list[ChannelModel]:
+    async def get_channels(self, *args, **kwargs) -> list[ChannelModel]:
         """
         :param kwargs:
         :return:
         """
 
-        return list(await self.channel_dao.get_many(**kwargs))
+        return list(await self.channel_dao.get_many(*args, **kwargs))
 
     async def delete_channel_by_id(self, id: int) -> Optional[int]:
         """
