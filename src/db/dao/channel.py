@@ -46,5 +46,14 @@ class ChannelDAO(BaseDAO[ChannelModel]):
             )
             return None
 
+    async def create(self, obj: ChannelModel) -> Optional[ChannelModel]:
+        return await super().create(obj)
+
+    async def update(self, obj: ChannelModel) -> Optional[ChannelModel]:
+        return await super().update(obj)
+
+    async def delete(self, id: int) -> bool:
+        return await super().delete(id)
+
 
 __all__ = ["ChannelDAO"]

@@ -51,12 +51,12 @@ class DataAccessLayer:
         if self.__session:
             asyncio.create_task(self.__session.close())
 
-    async def create_user(self, user: UserModel) -> Optional[UserModel]:
+    async def create_user(self, obj: UserModel) -> Optional[UserModel]:
         """
         :param user:
         :return:
         """
-        return await self.user_dao.create(obj=user)
+        return await self.user_dao.create(obj=obj)
 
     async def get_user_by_pk(self, pk: int) -> Optional[UserModel]:
         """
@@ -142,6 +142,10 @@ class DataAccessLayer:
         """
         :return:
         """
-        return await self.channel_dao.update(obj=obj)
+        channel = await self.channel_dao.update(obj=obj)
+        if channel:
+            return channel.id
+
+        return None
 
     __all__ = ["DataAccessLayer"]

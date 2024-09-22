@@ -11,7 +11,7 @@ from aiogram_dialog.widgets.kbd import (
 
 from src.bot.states import ChannelsSG
 from src.db import DataAccessLayer
-from src.dto import ChannelRetrieveDTO
+from src.db.models import ChannelModel
 
 
 async def on_finish(
@@ -32,11 +32,11 @@ async def on_perform_delete(
     callback: CallbackQuery, button: Button, manager: DialogManager
 ):
     index = manager.dialog_data["current_page"]
-    channel: ChannelRetrieveDTO = manager.dialog_data["channels"][index]
+    channel: ChannelModel = manager.dialog_data["channels"][index]
 
     if channel.id:
         dal: DataAccessLayer = manager.start_data["dal"]
-        result = await dal.delete_channel_by_id(_id=channel.id)
+        result = await dal.delete_channel_by_id(id=channel.id)
 
         if result:
             await callback.answer("Success.")
@@ -60,7 +60,7 @@ async def on_perform_update(
     callback: CallbackQuery, button: Button, manager: DialogManager
 ):
     index = manager.dialog_data["current_page"]
-    channel: ChannelRetrieveDTO = manager.dialog_data["channels"][index]
+    channel: ChannelModel = manager.dialog_data["channels"][index]
 
     if channel.id:
         dal: DataAccessLayer = manager.start_data["dal"]
@@ -74,9 +74,7 @@ async def on_perform_update(
             await callback.answer("Unknown callback data")
             return
 
-        result = await dal.update_channel_by_id(
-            _id=channel.id, data={"enabled": enabled}
-        )
+        result = await dal.update_channel_by_id(obj=channel)
 
         if result:
             await callback.answer("Success.")

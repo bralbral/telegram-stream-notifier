@@ -4,7 +4,7 @@ from typing import Collection
 from aiogram.filters.base import Filter
 from aiogram.types import Message
 
-from .model import UserRole
+from src.db.models.user_role import UserRole
 
 
 class RoleFilter(Filter):

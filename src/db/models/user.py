@@ -1,13 +1,9 @@
-import enum
-
 from sqlmodel import Field
+from sqlmodel import Relationship
 
+from . import ChannelModel
+from . import UserRoleModel
 from .base import BaseSQLModel
-
-
-class UserRole(enum.IntEnum):
-    USER = 0
-    ADMIN = 1
 
 
 class UserModel(BaseSQLModel):
@@ -19,6 +15,13 @@ class UserModel(BaseSQLModel):
     firstname: str = Field(max_length=255, nullable=True, index=True)
     lastname: str = Field(max_length=255, nullable=True, index=True)
     user_role_id: int | None = Field(default=None, foreign_key="user_roles.id")
+
+    role: UserRoleModel = Relationship(back_populates="users")
+    channels: list[ChannelModel] = Relationship(back_populates="user")
+
+    @property
+    def get_url_generated_by_id(self) -> str:
+        return f"tg://openmessage?user_id={self.user_id}"
 
 
 __all__ = ["UserModel"]

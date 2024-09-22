@@ -18,7 +18,6 @@ class BotConfig(BaseSettings):
 
 
 class YoutubeCredentials(BaseSettings):
-
     cookies_filepath: str
 
 

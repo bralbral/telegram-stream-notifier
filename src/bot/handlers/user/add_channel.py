@@ -9,7 +9,7 @@ from aiogram.types import Message
 from sulguk import SULGUK_PARSE_MODE
 
 from ....db import DataAccessLayer
-from ....dto import ChannelCreateDTO
+from ....db.models import ChannelModel
 from ...filters import RoleFilter
 from ...filters import UserRole
 from ...states import ChannelsSG
@@ -72,14 +72,14 @@ async def label_handler(
                     **{"user_id": message.from_user.id}
                 )
                 if user_schema:
-                    channel_schema = ChannelCreateDTO(
+                    channel = ChannelModel(
                         url=url,
                         label=label,
                         enabled=True,
                         user_id=user_schema.id,
                     )
 
-                    result = await dal.create_channel(channel_schema=channel_schema)
+                    result = await dal.create_channel(obj=channel)
                     if result:
                         await message.answer(
                             f"Created. <br/> "

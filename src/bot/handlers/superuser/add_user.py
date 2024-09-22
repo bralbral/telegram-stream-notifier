@@ -18,7 +18,7 @@ from ...filters import RoleFilter
 from ...filters import UserRole
 from ...states import UsersSG
 from src.db import DataAccessLayer
-from src.dto import UserCreateDTO
+from src.db.models import UserModel
 from src.logger import logger
 
 add_user_router = Router(name="acl")
@@ -62,7 +62,7 @@ async def handle_user(
         user_id = message.user_shared.user_id
         chat: Chat = await bot.get_chat(chat_id=user_id)
 
-        user_dto = UserCreateDTO(
+        user = UserModel(
             user_id=user_id,
             username=chat.username,
             firstname=chat.first_name,
@@ -70,10 +70,10 @@ async def handle_user(
             is_superuser=False,
         )
 
-        result = await dal.create_user(user_schema=user_dto)
+        result = await dal.create_user(obj=user)
         if result:
             await bot.set_my_commands(
-                user_commands(), scope=BotCommandScopeChat(chat_id=user_dto.user_id)
+                user_commands(), scope=BotCommandScopeChat(chat_id=user.user_id)
             )
 
             await message.answer(text="Success. User added.")

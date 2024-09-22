@@ -3,7 +3,9 @@ import enum
 from sqlalchemy import Column
 from sqlalchemy import Enum
 from sqlmodel import Field
+from sqlmodel import Relationship
 
+from . import ChannelModel
 from .base import BaseSQLModel
 
 
@@ -21,6 +23,8 @@ class ChannelTypeModel(BaseSQLModel):
             Enum(ChannelType), default=ChannelType.YOUTUBE, nullable=False, index=False
         )
     )
+
+    channels: list[ChannelModel] = Relationship(back_populates="type")
 
 
 __all__ = ["ChannelTypeModel"]

@@ -42,5 +42,14 @@ class UserDAO(BaseDAO[UserModel]):
             )
             return None
 
+    async def create(self, obj: UserModel) -> Optional[UserModel]:
+        return await super().create(obj)
+
+    async def update(self, obj: UserModel) -> Optional[UserModel]:
+        return await super().update(obj)
+
+    async def delete(self, id: int) -> bool:
+        return await super().delete(id)
+
 
 __all__ = ["UserDAO"]

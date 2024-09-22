@@ -3,13 +3,16 @@ import enum
 from sqlalchemy import Column
 from sqlalchemy import Enum
 from sqlmodel import Field
+from sqlmodel import Relationship
 
+from . import UserModel
 from .base import BaseSQLModel
 
 
 class UserRole(enum.IntEnum):
     USER = 0
-    ADMIN = 1
+    SUPERUSER = 1
+    UNKNOWN = -1
 
 
 class UserRoleModel(BaseSQLModel):
@@ -22,5 +25,7 @@ class UserRoleModel(BaseSQLModel):
         )
     )
 
+    users: list[UserModel] = Relationship(back_populates="role")
 
-__all__ = ["UserRoleModel"]
+
+__all__ = ["UserRole", "UserRoleModel"]

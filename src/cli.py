@@ -7,8 +7,7 @@ from aiogram import Dispatcher
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from .db import DataAccessLayer
-from .dto import UserCreateDTO
-from .dto import UserRetrieveDTO
+from .db.models import UserModel
 from .logger import logger
 from src.bot import setup_bot
 from src.bot import setup_dispatcher
@@ -27,11 +26,11 @@ if platform.system() == "linux":
 async def create_super_user(telegram_id: int) -> None:
     dal = DataAccessLayer()
 
-    user_dto = UserCreateDTO(user_id=telegram_id, is_superuser=True, is_admin=True)
+    user = UserModel(user_id=telegram_id)
 
-    result = await dal.create_user(user_schema=user_dto)
+    result = await dal.create_user(obj=user)
 
-    if isinstance(result, UserRetrieveDTO) and result.id is not None:
+    if isinstance(result, UserModel) and result.id is not None:
         await logger.ainfo("User created.")
     else:
         await logger.error("Cannot create user.")

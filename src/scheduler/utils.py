@@ -28,7 +28,7 @@ def setup_scheduler(conf: Config, bot: Bot, dal: DataAccessLayer) -> AsyncIOSche
 
     try:
         youtube = conf.youtube
-        if conf.youtube:
+        if youtube:
             cookies_filepath = youtube.cookies_filepath
             cookiefile = open(file=cookies_filepath, encoding="utf-8")
         else:

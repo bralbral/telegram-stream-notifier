@@ -15,8 +15,7 @@ from aiogram.types import Message
 from sulguk import SULGUK_PARSE_MODE
 
 from ....db import DataAccessLayer
-from ....dto import ChannelCreateDTO
-from ....dto import ChannelRetrieveDTO
+from ....db.models import ChannelModel
 from ...filters import RoleFilter
 from ...filters import UserRole
 from ...states import ChannelsSG
@@ -63,7 +62,7 @@ async def channel_file_handler(
     user_schema = await dal.get_user_by_attr(**{"user_id": message.from_user.id})
     if user_schema:
         _: BinaryIO = await bot.download_file(file.file_path)
-        channels: list[ChannelCreateDTO] = []
+        channels: list[ChannelModel] = []
         with TextIOWrapper(_, encoding="utf-8") as text_io:
             for line in text_io:
                 line = line.strip()
@@ -83,7 +82,7 @@ async def channel_file_handler(
                     )
                     return
 
-                channel = ChannelCreateDTO(
+                channel = ChannelModel(
                     url=splitted_line[0],
                     label=splitted_line[1],
                     enabled=True,
@@ -92,9 +91,7 @@ async def channel_file_handler(
                 channels.append(channel)
 
         for channel in channels:
-            result: Optional[ChannelRetrieveDTO] = await dal.create_channel(
-                channel_schema=channel
-            )
+            result: Optional[ChannelModel] = await dal.create_channel(obj=channel)
             await message.answer(f"{str(result)}")
 
     await state.clear()

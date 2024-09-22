@@ -1,4 +1,3 @@
-from abc import ABC
 from abc import abstractmethod
 from typing import Generic
 from typing import Optional
@@ -9,24 +8,27 @@ from typing import TypeVar
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
-from sqlmodel import SQLModel
 
+from src.db.models.base import BaseSQLModel
 from src.logger import logger
 
-T = TypeVar("T", bound=SQLModel)
+T = TypeVar("T", bound=BaseSQLModel)
 
 
-class BaseDAO(ABC, Generic[T]):
+class BaseDAO(Generic[T]):
     def __init__(self, session: AsyncSession, model: Type[T]):
         self.session = session
         self.model = model
 
+    @property
+    def __prepare_select_statement(self):
+        statement = select(self.model)
+        return statement
+
     @abstractmethod
     async def get_many(self, **kwargs) -> Sequence[T]:
         try:
-            statement = (
-                select(self.model).filter_by(**kwargs).order_by(self.model.id.desc())
-            )
+            statement = self.__prepare_select_statement.filter_by(**kwargs)
             results = await self.session.execute(statement)
             return results.scalars().all()
         except SQLAlchemyError as e:
@@ -38,9 +40,7 @@ class BaseDAO(ABC, Generic[T]):
     @abstractmethod
     async def get_first(self, **kwargs) -> Optional[T]:
         try:
-            statement = (
-                select(self.model).filter_by(**kwargs).order_by(self.model.id.desc())
-            )
+            statement = self.__prepare_select_statement.filter_by(**kwargs)
             result = await self.session.execute(statement)
             return result.scalars().first()
         except SQLAlchemyError as e:
