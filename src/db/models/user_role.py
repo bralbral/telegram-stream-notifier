@@ -1,12 +1,18 @@
 import enum
+from datetime import datetime
+from typing import Optional
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Column
+from sqlalchemy import DateTime
 from sqlalchemy import Enum
 from sqlmodel import Field
 from sqlmodel import Relationship
+from sqlmodel import SQLModel
 
-from . import UserModel
-from .base import BaseSQLModel
+
+if TYPE_CHECKING:
+    from .user import UserModel
 
 
 class UserRole(enum.IntEnum):
@@ -15,17 +21,33 @@ class UserRole(enum.IntEnum):
     UNKNOWN = -1
 
 
-class UserRoleModel(BaseSQLModel):
+class UserRoleModel(SQLModel, table=True):
 
     __tablename__ = "user_roles"
-
-    role: UserRole = Field(
+    id: Optional[int] = Field(default=None, primary_key=True)
+    created_at: Optional[datetime] = Field(
+        sa_column=Column(
+            DateTime,
+            default=datetime.utcnow,
+            nullable=False,
+        )
+    )
+    updated_at: Optional[datetime] = Field(
+        sa_column=Column(
+            DateTime,
+            default=datetime.utcnow,
+            onupdate=datetime.utcnow,
+        )
+    )
+    role: "UserRole" = Field(
         sa_column=Column(
             Enum(UserRole), default=UserRole.USER, nullable=False, index=False
         )
     )
 
-    users: list[UserModel] = Relationship(back_populates="role")
+    users: list["UserModel"] = Relationship(
+        back_populates="role",
+    )
 
 
 __all__ = ["UserRole", "UserRoleModel"]

@@ -8,11 +8,11 @@ from typing import TypeVar
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
+from sqlmodel import SQLModel
 
-from src.db.models.base import BaseSQLModel
 from src.logger import logger
 
-T = TypeVar("T", bound=BaseSQLModel)
+T = TypeVar("T", bound=SQLModel)
 
 
 class BaseDAO(Generic[T]):

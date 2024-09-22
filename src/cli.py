@@ -8,6 +8,8 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from .db import DataAccessLayer
 from .db.models import UserModel
+from .db.models import UserRoleModel
+from .db.models.user_role import UserRole
 from .logger import logger
 from src.bot import setup_bot
 from src.bot import setup_dispatcher
@@ -26,7 +28,9 @@ if platform.system() == "linux":
 async def create_super_user(telegram_id: int) -> None:
     dal = DataAccessLayer()
 
-    user = UserModel(user_id=telegram_id)
+    role = UserRoleModel(role=UserRole.SUPERUSER)
+
+    user = UserModel(user_id=telegram_id, role=role)
 
     result = await dal.create_user(obj=user)
 

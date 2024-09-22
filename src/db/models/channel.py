@@ -1,23 +1,46 @@
+from datetime import datetime
+from typing import Optional
+from typing import TYPE_CHECKING
+
+from sqlalchemy import Column
+from sqlalchemy import DateTime
 from sqlmodel import Field
 from sqlmodel import Relationship
-
-from .base import BaseSQLModel
-from .channel_type import ChannelTypeModel
-from .user import UserModel
+from sqlmodel import SQLModel
 
 
-class ChannelModel(BaseSQLModel):
+if TYPE_CHECKING:
+    from .channel_type import ChannelTypeModel
+    from .user import UserModel
+
+
+class ChannelModel(SQLModel):
 
     __tablename__ = "channels"
 
+    id: Optional[int] = Field(default=None, primary_key=True)
+    created_at: Optional[datetime] = Field(
+        sa_column=Column(
+            DateTime,
+            default=datetime.utcnow,
+            nullable=False,
+        )
+    )
+    updated_at: Optional[datetime] = Field(
+        sa_column=Column(
+            DateTime,
+            default=datetime.utcnow,
+            onupdate=datetime.utcnow,
+        )
+    )
     url: str = Field(max_length=255, nullable=False, index=True)
     label: str = Field(max_length=255, nullable=False, index=True)
     enabled: bool = Field(nullable=False, index=True)
     user_id: int | None = Field(default=None, foreign_key="users.id")
     channel_type_id: int | None = Field(default=None, foreign_key="channel_types.id")
 
-    user: UserModel = Relationship(back_populates="channels")
-    type: ChannelTypeModel = Relationship(back_populates="channels")
+    user: "UserModel" = Relationship(back_populates="channels")
+    type: "ChannelTypeModel" = Relationship(back_populates="channels")
 
     def to_html(self) -> str:
 

@@ -53,7 +53,6 @@ class DataAccessLayer:
 
     async def create_user(self, obj: UserModel) -> Optional[UserModel]:
         """
-        :param user:
         :return:
         """
         return await self.user_dao.create(obj=obj)
