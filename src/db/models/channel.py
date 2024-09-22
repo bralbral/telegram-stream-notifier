@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from .user import UserModel
 
 
-class ChannelModel(SQLModel):
+class ChannelModel(SQLModel, table=True):
 
     __tablename__ = "channels"
 
