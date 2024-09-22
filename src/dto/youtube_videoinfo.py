@@ -1,7 +1,6 @@
 from typing import Optional
 
 from .base import DTO
-from .channel import ChannelRetrieveDTO
 
 
 class YoutubeVideoInfoDTO(DTO):
@@ -13,7 +12,7 @@ class YoutubeVideoInfoDTO(DTO):
 
 
 class YoutubeErrorInfoDTO(DTO):
-    channel: ChannelRetrieveDTO
+    channel: dict
     ex_message: str
 
 

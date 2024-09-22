@@ -1,19 +1,14 @@
-from .channel import ChannelORM
-from .channel import ChannelORMRelatedModel
-from .channel_type import ChannelTypeORM
-from .channel_type import ChannelTypeORMRelatedModel
-from .message_log import MessageLogORM
-from .mixins.base import ModelORM
-from .user import UserORM
-from .user import UserORMRelatedModel
+from .channel import ChannelModel
+from .channel_type import ChannelTypeModel
+from .message_log import MessageLogModel
+from .user import UserModel
+from .user_role import UserRoleModel
+
 
 __all__ = [
-    "ChannelORM",
-    "ChannelORMRelatedModel",
-    "ChannelTypeORM",
-    "ChannelTypeORMRelatedModel",
-    "MessageLogORM",
-    "ModelORM",
-    "UserORM",
-    "UserORMRelatedModel",
+    "ChannelModel",
+    "ChannelTypeModel",
+    "MessageLogModel",
+    "UserModel",
+    "UserRoleModel",
 ]

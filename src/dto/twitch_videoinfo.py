@@ -1,7 +1,6 @@
 from typing import Optional
 
 from .base import DTO
-from .channel import ChannelRetrieveDTO
 
 
 class TwitchVideoInfoDTO(DTO):
@@ -12,7 +11,7 @@ class TwitchVideoInfoDTO(DTO):
 
 
 class TwitchErrorInfoDTO(DTO):
-    channel: ChannelRetrieveDTO
+    channel: dict
     ex_message: str
 
 

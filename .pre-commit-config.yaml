@@ -1,10 +1,12 @@
 repos:
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.3.0
+    rev: v1.8.0
     hooks:
       - id: mypy
         exclude: deprecated|deploy|venv
-        args: [--python-version=3.11, --ignore-missing-imports,  --install-types, --non-interactive,]
+        additional_dependencies:
+          - sqlmodel==0.0.22
+        args: [--python-version=3.12, --ignore-missing-imports,  --install-types, --non-interactive,]
 
   - repo: local
     hooks:
