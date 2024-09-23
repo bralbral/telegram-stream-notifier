@@ -49,7 +49,9 @@ async def run_bot() -> None:
     superusers: list[int] = await dal.get_users(superusers=True)
 
     if not await dal.is_superusers_exists():
-        await logger.aerror("You must to create superuser before start.")
+        await logger.aerror(
+            "You must to create superuser before start. Restart with --telegram_id YOUR_TELEGRAM_ID option"
+        )
         return
 
     bot: Bot = await setup_bot(
