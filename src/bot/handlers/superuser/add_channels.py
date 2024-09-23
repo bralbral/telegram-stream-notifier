@@ -59,8 +59,8 @@ async def channel_file_handler(
         )
         return
 
-    user_schema = await dal.get_user_by_attr(**{"user_id": message.from_user.id})
-    if user_schema:
+    user = await dal.get_user_by_attr(**{"user_id": message.from_user.id})
+    if user:
         _: BinaryIO = await bot.download_file(file.file_path)
         channels: list[ChannelModel] = []
         with TextIOWrapper(_, encoding="utf-8") as text_io:
@@ -86,7 +86,7 @@ async def channel_file_handler(
                     url=splitted_line[0],
                     label=splitted_line[1],
                     enabled=True,
-                    user_id=user_schema.id,
+                    user=user,
                 )
                 channels.append(channel)
 

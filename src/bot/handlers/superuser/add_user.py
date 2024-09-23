@@ -19,6 +19,7 @@ from ...filters import UserRole
 from ...states import UsersSG
 from src.db import DataAccessLayer
 from src.db.models import UserModel
+from src.db.models import UserRoleModel
 from src.logger import logger
 
 add_user_router = Router(name="acl")
@@ -67,7 +68,7 @@ async def handle_user(
             username=chat.username,
             firstname=chat.first_name,
             lastname=chat.last_name,
-            is_superuser=False,
+            role=UserRoleModel(role=UserRole.USER),
         )
 
         result = await dal.create_user(obj=user)
@@ -78,7 +79,7 @@ async def handle_user(
 
             await message.answer(text="Success. User added.")
         else:
-            await message.answer(text="Error during create. Try again.")
+            await message.answer(text="❌ Error during create. Try again.")
 
     except (Exception,) as ex:
         await logger.aerror(str(ex))
