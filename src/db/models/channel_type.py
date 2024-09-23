@@ -15,9 +15,10 @@ if TYPE_CHECKING:
     from .channel import ChannelModel
 
 
-class ChannelType(enum.IntEnum):
-    YOUTUBE = 0
-    TWITCH = 1
+class ChannelType(enum.StrEnum):
+    YOUTUBE = "YOUTUBE"
+    TWITCH = "TWITCH"
+    KICK = "KICK"
 
 
 class ChannelTypeModel(SQLModel, table=True):
@@ -40,7 +41,7 @@ class ChannelTypeModel(SQLModel, table=True):
     )
     type: ChannelType = Field(
         sa_column=Column(
-            Enum(ChannelType),
+            Enum(ChannelType, length=15),
             default=ChannelType.YOUTUBE,
             nullable=False,
             index=False,

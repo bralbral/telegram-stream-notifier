@@ -22,7 +22,7 @@ repos:
         entry: black
         language: python
         types: [ python ]
-        args: [ --line-length=88, --target-version=py311 ]
+        args: [ --line-length=88, --target-version=py312, --force-exclude, src/db/migrations/*]
 
       # For upgrade python code syntax for newer versions of the language
       - id: pyupgrade

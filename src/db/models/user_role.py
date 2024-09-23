@@ -15,10 +15,10 @@ if TYPE_CHECKING:
     from .user import UserModel
 
 
-class UserRole(enum.IntEnum):
-    USER = 0
-    SUPERUSER = 1
-    UNKNOWN = -1
+class UserRole(enum.StrEnum):
+    USER = "USER"
+    SUPERUSER = "SUPERUSER"
+    UNKNOWN = "UNKNOWN"
 
 
 class UserRoleModel(SQLModel, table=True):
@@ -42,7 +42,7 @@ class UserRoleModel(SQLModel, table=True):
     )
     role: "UserRole" = Field(
         sa_column=Column(
-            Enum(UserRole),
+            Enum(UserRole, length=15),
             default=UserRole.USER,
             nullable=False,
             index=False,
