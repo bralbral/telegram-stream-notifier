@@ -1,8 +1,8 @@
 """init
 
-Revision ID: 6b5d2c59a456
+Revision ID: 9218e49d7217
 Revises: 
-Create Date: 2024-09-23 12:13:56.930387
+Create Date: 2024-09-23 12:20:41.097968
 
 """
 from typing import Sequence
@@ -13,7 +13,7 @@ import sqlmodel
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = '6b5d2c59a456'
+revision: str = '9218e49d7217'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -54,7 +54,7 @@ def upgrade() -> None:
     sa.Column('username', sqlmodel.sql.sqltypes.AutoString(length=255), nullable=True),
     sa.Column('firstname', sqlmodel.sql.sqltypes.AutoString(length=255), nullable=True),
     sa.Column('lastname', sqlmodel.sql.sqltypes.AutoString(length=255), nullable=True),
-    sa.Column('user_role_id', sa.Integer(), nullable=True),
+    sa.Column('user_role_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['user_role_id'], ['user_roles.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -70,7 +70,7 @@ def upgrade() -> None:
     sa.Column('label', sqlmodel.sql.sqltypes.AutoString(length=255), nullable=False),
     sa.Column('enabled', sa.Boolean(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.Column('channel_type_id', sa.Integer(), nullable=True),
+    sa.Column('channel_type_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['channel_type_id'], ['channel_types.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')

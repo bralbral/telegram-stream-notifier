@@ -49,7 +49,9 @@ class ChannelTypeModel(SQLModel, table=True):
         )
     )
 
-    channels: list["ChannelModel"] = Relationship(back_populates="type")
+    channels: list["ChannelModel"] = Relationship(
+        back_populates="type", cascade_delete=True
+    )
 
 
 __all__ = ["ChannelTypeModel"]

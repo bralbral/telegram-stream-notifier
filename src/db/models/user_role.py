@@ -50,9 +50,7 @@ class UserRoleModel(SQLModel, table=True):
         )
     )
 
-    users: list["UserModel"] = Relationship(
-        back_populates="role",
-    )
+    users: list["UserModel"] = Relationship(back_populates="role", cascade_delete=True)
 
 
 __all__ = ["UserRole", "UserRoleModel"]

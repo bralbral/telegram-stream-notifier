@@ -37,7 +37,9 @@ class ChannelModel(SQLModel, table=True):
     label: str = Field(max_length=255, nullable=False, index=True)
     enabled: bool = Field(nullable=False, index=True)
     user_id: int | None = Field(default=None, foreign_key="users.id")
-    channel_type_id: int | None = Field(default=None, foreign_key="channel_types.id")
+    channel_type_id: int | None = Field(
+        default=None, foreign_key="channel_types.id", nullable=False
+    )
 
     user: "UserModel" = Relationship(back_populates="channels")
     type: "ChannelTypeModel" = Relationship(back_populates="channels")

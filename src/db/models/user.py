@@ -32,11 +32,13 @@ class UserModel(SQLModel, table=True):
             onupdate=datetime.utcnow,
         )
     )
-    user_id: int = Field(index=True, unique=True)
+    user_id: int = Field(index=True, unique=True, nullable=False)
     username: str = Field(max_length=255, nullable=True, index=True)
     firstname: str = Field(max_length=255, nullable=True, index=True)
     lastname: str = Field(max_length=255, nullable=True, index=True)
-    user_role_id: int | None = Field(default=None, foreign_key="user_roles.id")
+    user_role_id: int | None = Field(
+        default=None, foreign_key="user_roles.id", nullable=False
+    )
 
     role: "UserRoleModel" = Relationship(
         back_populates="users",
