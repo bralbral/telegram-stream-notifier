@@ -44,7 +44,7 @@ class RoleMiddleware(BaseMiddleware):
                     **{"user_id": user_id}
                 )
                 if _user:
-                    if _user.role == UserRole.SUPERUSER:
+                    if _user.role.role == UserRole.SUPERUSER:
                         data["role"] = UserRole.SUPERUSER
                     else:
                         data["role"] = UserRole.USER

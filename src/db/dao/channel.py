@@ -19,8 +19,8 @@ class ChannelDAO(BaseDAO[ChannelModel]):
     def __prepare_select_statement(self):
         statement = (
             select(self.model)
-            .options(joinedload(self.model.user_role))
-            .options(joinedload(self.model.channel_type))
+            .options(joinedload(self.model.user))
+            .options(joinedload(self.model.type))
         )
         return statement
 
