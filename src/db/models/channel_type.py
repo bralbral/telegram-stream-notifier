@@ -40,7 +40,11 @@ class ChannelTypeModel(SQLModel, table=True):
     )
     type: ChannelType = Field(
         sa_column=Column(
-            Enum(ChannelType), default=ChannelType.YOUTUBE, nullable=False, index=False
+            Enum(ChannelType),
+            default=ChannelType.YOUTUBE,
+            nullable=False,
+            index=False,
+            unique=True,
         )
     )
 

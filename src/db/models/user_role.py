@@ -24,6 +24,7 @@ class UserRole(enum.IntEnum):
 class UserRoleModel(SQLModel, table=True):
 
     __tablename__ = "user_roles"
+
     id: Optional[int] = Field(default=None, primary_key=True)
     created_at: Optional[datetime] = Field(
         sa_column=Column(
@@ -41,7 +42,11 @@ class UserRoleModel(SQLModel, table=True):
     )
     role: "UserRole" = Field(
         sa_column=Column(
-            Enum(UserRole), default=UserRole.USER, nullable=False, index=False
+            Enum(UserRole),
+            default=UserRole.USER,
+            nullable=False,
+            index=False,
+            unique=True,
         )
     )
 

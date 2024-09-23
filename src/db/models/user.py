@@ -32,7 +32,7 @@ class UserModel(SQLModel, table=True):
             onupdate=datetime.utcnow,
         )
     )
-    user_id: int = Field(index=True)
+    user_id: int = Field(index=True, unique=True)
     username: str = Field(max_length=255, nullable=True, index=True)
     firstname: str = Field(max_length=255, nullable=True, index=True)
     lastname: str = Field(max_length=255, nullable=True, index=True)

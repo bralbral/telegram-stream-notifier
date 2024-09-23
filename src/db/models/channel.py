@@ -33,7 +33,7 @@ class ChannelModel(SQLModel, table=True):
             onupdate=datetime.utcnow,
         )
     )
-    url: str = Field(max_length=255, nullable=False, index=True)
+    url: str = Field(max_length=255, nullable=False, index=True, unique=True)
     label: str = Field(max_length=255, nullable=False, index=True)
     enabled: bool = Field(nullable=False, index=True)
     user_id: int | None = Field(default=None, foreign_key="users.id")
