@@ -1,8 +1,17 @@
-# telegram-youtube-notifier-bot
+# telegram-stream-notifier-bot (former telegram-youtube-notifier-bot)
 
 > ⚠️ Warning: project is still under development, use with caution.
 
-Simple Youtube LiveStreams notifier in telegram based on [youtube-dlp](https://github.com/yt-dlp/yt-dlp) and  [aiogram](https://github.com/aiogram/aiogram) .
+Simple LiveStreams notifier in telegram based on [aiogram](https://github.com/aiogram/aiogram), [aiogram-dialog](https://github.com/Tishka17/aiogram_dialog)  and [aps-schedule](https://github.com/agronholm/apscheduler).
+
+### Available platforms
+
+| Platform        | Based on                                        | Status                                                                |
+|-----------------|-------------------------------------------------|-----------------------------------------------------------------------|
+| Youtube         | [youtube-dlp](https://github.com/yt-dlp/yt-dlp) |  ✅                                                  |
+| Twitch          | [twitch-api](https://github.com/Teekeks/pyTwitchAPI)                                  | ❌                                             |
+| Kick            | User                                            | ❌                                     |
+
 
 Use this bot to receive periodic reports on live broadcasts on YouTube and generate and send the report to telegram. 
 
@@ -16,7 +25,7 @@ The current version of the bot works in the telegram channel [НАСРАНО](ht
 
 3. Regularly checking active channels using [aps-schedule](https://github.com/agronholm/apscheduler).
 
-4. Getting information about streams using [youtube-dlp](https://github.com/yt-dlp/yt-dlp).
+4. Getting information about streams using packages from [list](#Available-platforms).
 
 ## Commands
 
@@ -26,7 +35,6 @@ The current version of the bot works in the telegram channel [НАСРАНО](ht
 | channels        | User      | Channels Administration                                              |
 | cancel          | User      | Clear current fsm-state (if error)                                   |
 | add_user        | Superuser | Add user                                                             |
-| add_channels    | Superuser | Bulk channels importing from file                                    |
 | scheduler_start | Superuser | Start scheduling periodic tasks of fetching information about streams |
 | scheduler_pause | Superuser | Pause scheduling periodic tasks of fetching information about streams |
 
