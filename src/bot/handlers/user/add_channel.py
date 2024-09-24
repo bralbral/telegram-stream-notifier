@@ -29,6 +29,9 @@ async def start_add_channel_dialog(
     await dialog_manager.start(
         ChannelCreateSG.start,
         mode=StartMode.RESET_STACK,
+        data={
+            "dal": dal,
+        },
     )
 
 

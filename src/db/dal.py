@@ -96,11 +96,12 @@ class DataAccessLayer:
         """
         users: list[UserModel]
         if superusers:
-            role = UserRoleModel(role=UserRole.SUPERUSER)
+            role = UserRole.SUPERUSER
         else:
-            role = UserRoleModel(role=UserRole.USER)
+            role = UserRole.USER
 
-        users = await self.list_users_by_attr(role=role)
+        role_instance, _ = await self.user_role_dao.get_or_create(role=role)
+        users = await self.list_users_by_attr(**{"role": role_instance})
 
         user_ids: list[int] = [user.user_id for user in users]
         return user_ids
