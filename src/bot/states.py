@@ -16,11 +16,10 @@ class ChannelCreateSG(StatesGroup):
     start = State()
     type_selected = State()
     url_selected = State()
-    label_selected = State()
 
 
 class UsersSG(StatesGroup):
     promote = State()
 
 
-__all__ = ["ChannelsSG", "UsersSG"]
+__all__ = ["ChannelCreateSG", "ChannelsSG", "UsersSG"]

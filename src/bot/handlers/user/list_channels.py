@@ -10,10 +10,10 @@ from ...filters import RoleFilter
 from ...filters import UserRole
 from ...states import ChannelsSG
 
-scroll_channel_router = Router(name="scroll_channel")
+list_channels_router = Router(name="scroll_channel")
 
 
-@scroll_channel_router.message(
+@list_channels_router.message(
     Command("channels"),
     RoleFilter(role=[UserRole.USER, UserRole.SUPERUSER]),
     State(state="*"),
@@ -32,4 +32,4 @@ async def start_channels_dialog(
     )
 
 
-__all__ = ["scroll_channel_router"]
+__all__ = ["list_channels_router"]

@@ -58,4 +58,4 @@ class ChannelTypeModel(SQLModel, table=True):
     )
 
 
-__all__ = ["ChannelTypeModel"]
+__all__ = ["ChannelType", "ChannelTypeModel"]
