@@ -20,6 +20,9 @@ class UserRoleDAO(BaseDAO[UserRoleModel]):
     async def create(self, obj: UserRoleModel) -> Optional[UserRoleModel]:
         return await super().create(obj)
 
+    async def get_or_create(self, **kwargs) -> tuple[UserRoleModel, bool]:
+        return await super().get_or_create(**kwargs)
+
     async def update(self, obj: UserRoleModel) -> Optional[UserRoleModel]:
         return await super().update(obj)
 

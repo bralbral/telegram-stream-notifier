@@ -52,6 +52,7 @@ class ChannelModel(SQLModel, table=True):
 
         return (
             f"📺 <b>Selected channel</b>: <br/>"
+            f"├──<b>type</b>: <b>{self.type.type}</b><br/>"
             f"├──<b>enabled</b>: <b>{self.enabled}</b><br/>"
             f"├──<b>id</b>: {self.id}<br/>"
             f"├──<b>label</b>: {self.label}<br/>"

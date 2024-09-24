@@ -20,6 +20,9 @@ class ChannelTypeDAO(BaseDAO[ChannelTypeModel]):
     async def create(self, obj: ChannelTypeModel) -> Optional[ChannelTypeModel]:
         return await super().create(obj)
 
+    async def get_or_create(self, **kwargs) -> tuple[ChannelTypeModel, bool]:
+        return await super().get_or_create(**kwargs)
+
     async def update(self, obj: ChannelTypeModel) -> Optional[ChannelTypeModel]:
         return await super().update(obj)
 

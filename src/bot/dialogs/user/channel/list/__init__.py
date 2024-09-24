@@ -6,7 +6,7 @@ from .windows import scroll_window
 from .windows import turn_off_window
 from .windows import turn_on_window
 
-channel_dialog = Dialog(
+channels_list_dialog = Dialog(
     scroll_window(),
     delete_window(),
     turn_on_window(),
@@ -15,4 +15,4 @@ channel_dialog = Dialog(
 )
 
 
-__all__ = ["channel_dialog"]
+__all__ = ["channels_list_dialog"]

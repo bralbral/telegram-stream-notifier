@@ -45,6 +45,9 @@ class UserDAO(BaseDAO[UserModel]):
     async def create(self, obj: UserModel) -> Optional[UserModel]:
         return await super().create(obj)
 
+    async def get_or_create(self, **kwargs) -> tuple[UserModel, bool]:
+        return await super().get_or_create(**kwargs)
+
     async def update(self, obj: UserModel) -> Optional[UserModel]:
         return await super().update(obj)
 

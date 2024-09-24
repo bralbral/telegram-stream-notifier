@@ -68,7 +68,7 @@ def scroll_window():
                     Button(Const("✏️ Turn on"), id="off", on_click=on_turn_on),
                     Button(Const("✏️ Turn off"), id="on", on_click=on_turn_off),
                 ),
-                when=F["role"] == str(UserRole.SUPERUSER),
+                when=F["role"] == UserRole.SUPERUSER,
             ),
             Row(
                 Button(Const("✏️ Turn off"), id="on", on_click=on_turn_off),
@@ -93,7 +93,7 @@ def delete_window():
         Const("Are you sure?"),
         Row(
             Button(
-                Const("✅ Yes, delete this channel."),
+                Const("✅ Yes, delete this channel_listing."),
                 id="delete",
                 on_click=on_perform_delete,
             ),
@@ -110,7 +110,7 @@ def turn_on_window():
         Const("Are you sure?"),
         Row(
             Button(
-                Const("✅ Yes, turn on this channel."),
+                Const("✅ Yes, turn on this channel_listing."),
                 id="on",
                 on_click=on_perform_update,
             ),
@@ -127,7 +127,7 @@ def turn_off_window():
         Const("Are you sure?"),
         Row(
             Button(
-                Const("✅ Yes, turn off this channel."),
+                Const("✅ Yes, turn off this channel_listing."),
                 id="off",
                 on_click=on_perform_update,
             ),

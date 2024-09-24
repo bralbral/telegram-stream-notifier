@@ -62,6 +62,21 @@ class BaseDAO(Generic[T]):
             return None
 
     @abstractmethod
+    async def get_or_create(self, **kwargs) -> tuple[T, bool]:
+
+        instance = await self.get_first(**kwargs)
+        if instance:
+            return instance, False
+
+        instance = self.model(**kwargs)
+        obj = await self.create(obj=instance)
+
+        if not obj:
+            raise
+
+        return obj, True
+
+    @abstractmethod
     async def update(self, obj: T) -> Optional[T]:
         try:
             self.session.add(obj)

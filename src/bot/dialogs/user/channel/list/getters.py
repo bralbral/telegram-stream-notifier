@@ -1,7 +1,7 @@
 from aiogram_dialog import DialogManager
 
-from ...filters import UserRole
 from .constants import ID_STUB_SCROLL
+from src.bot.filters import UserRole
 from src.db import DataAccessLayer
 
 

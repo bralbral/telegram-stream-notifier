@@ -26,6 +26,9 @@ class MessageLogDAO(BaseDAO[MessageLogModel]):
     async def create(self, obj: MessageLogModel) -> Optional[MessageLogModel]:
         return await super().create(obj)
 
+    async def get_or_create(self, **kwargs) -> tuple[MessageLogModel, bool]:
+        return await super().get_or_create(**kwargs)
+
     async def update(self, obj: MessageLogModel) -> Optional[MessageLogModel]:
         return await super().update(obj)
 

@@ -33,8 +33,8 @@ async def add_channels(message: Message, state: FSMContext, **kwargs) -> None:
     await message.answer(
         text="Upload a file with format: <br/>"
         "<code>url[TAB]label[END_ROW]</code><br/>"
-        "every single line == channel to insert.<br/>"
-        "Set channel url in format: <b>https://www.youtube.com/@username</b>"
+        "every single line == channel_listing to insert.<br/>"
+        "Set channel_listing url in format: <b>https://www.youtube.com/@username</b>"
         "Enter /cancel for exit <br/>",
         parse_mode=SULGUK_PARSE_MODE,
     )
@@ -77,7 +77,7 @@ async def channel_file_handler(
                 if not youtube_channel_url_validator(splitted_line[0]):
                     await message.answer(
                         text=f"Error url validation: {splitted_line[0]} <br/>"
-                        "Set channel url in format: <b>https://www.youtube.com/@username</b>",
+                        "Set channel_listing url in format: <b>https://www.youtube.com/@username</b>",
                         parse_mode=SULGUK_PARSE_MODE,
                     )
                     return

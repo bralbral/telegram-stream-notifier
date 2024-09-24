@@ -12,6 +12,13 @@ class ChannelsSG(StatesGroup):
     bulk_channels = State()
 
 
+class ChannelCreateSG(StatesGroup):
+    start = State()
+    type_selected = State()
+    url_selected = State()
+    label_selected = State()
+
+
 class UsersSG(StatesGroup):
     promote = State()
 

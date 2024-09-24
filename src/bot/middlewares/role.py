@@ -7,9 +7,9 @@ from aiocache import Cache
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
 from aiogram.types import Message
 
-from src.bot.filters.role import UserRole
 from src.db import DataAccessLayer
 from src.db.models import UserModel
+from src.db.models.user_role import UserRole
 
 
 class RoleMiddleware(BaseMiddleware):

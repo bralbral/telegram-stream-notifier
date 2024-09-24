@@ -96,13 +96,11 @@ class DataAccessLayer:
         """
         users: list[UserModel]
         if superusers:
-            users = await self.list_users_by_attr(
-                role=UserRoleModel(role=UserRole.SUPERUSER)
-            )
+            role = UserRoleModel(role=UserRole.SUPERUSER)
         else:
-            users = await self.list_users_by_attr(
-                role=UserRoleModel(role=UserRole.USER)
-            )
+            role = UserRoleModel(role=UserRole.USER)
+
+        users = await self.list_users_by_attr(role=role)
 
         user_ids: list[int] = [user.user_id for user in users]
         return user_ids
@@ -128,6 +126,13 @@ class DataAccessLayer:
         """
         :return:
         """
+
+        channel_type = obj.type
+        channel_type_instance, _ = await self.channel_type_dao.get_or_create(
+            type=channel_type.type
+        )
+        obj.type = channel_type_instance
+
         return await self.channel_dao.create(obj=obj)
 
     async def get_channels(self, *args, **kwargs) -> list[ChannelModel]:
