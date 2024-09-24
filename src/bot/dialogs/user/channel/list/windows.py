@@ -24,7 +24,7 @@ from .on_click import on_perform_update
 from .on_click import on_turn_off
 from .on_click import on_turn_on
 from .widgets import Viewer
-from src.bot.states import ChannelsSG
+from src.bot.states import ChannelsListSG
 from src.db.models.user_role import UserRole
 
 
@@ -77,14 +77,14 @@ def scroll_window():
             Button(Const("❌ Exit"), id="finish", on_click=on_finish),
             when=~F["is_empty"],
         ),
-        state=ChannelsSG.scrolling,
+        state=ChannelsListSG.scrolling,
         getter=scroll_getter,
         parse_mode=SULGUK_PARSE_MODE,
     )
 
 
 SWITCH_TO_SCROLLING = SwitchTo(
-    text=Const("🔙 No, return me back."), state=ChannelsSG.scrolling, id="back"
+    text=Const("🔙 No, return me back."), state=ChannelsListSG.scrolling, id="back"
 )
 
 
@@ -100,7 +100,7 @@ def delete_window():
             SWITCH_TO_SCROLLING,
         ),
         Button(Const("❌ Exit"), id="finish", on_click=on_finish),
-        state=ChannelsSG.delete,
+        state=ChannelsListSG.delete,
         getter=scroll_getter,
     )
 
@@ -117,7 +117,7 @@ def turn_on_window():
             SWITCH_TO_SCROLLING,
         ),
         Button(Const("❌ Exit"), id="finish", on_click=on_finish),
-        state=ChannelsSG.turn_on,
+        state=ChannelsListSG.turn_on,
         getter=scroll_getter,
     )
 
@@ -134,7 +134,7 @@ def turn_off_window():
             SWITCH_TO_SCROLLING,
         ),
         Button(Const("❌ Exit"), id="finish", on_click=on_finish),
-        state=ChannelsSG.turn_off,
+        state=ChannelsListSG.turn_off,
         getter=scroll_getter,
     )
 

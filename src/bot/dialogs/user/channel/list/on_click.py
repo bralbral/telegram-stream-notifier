@@ -9,7 +9,7 @@ from aiogram_dialog.widgets.kbd import (
     Button,
 )
 
-from src.bot.states import ChannelsSG
+from src.bot.states import ChannelsListSG
 from src.db import DataAccessLayer
 from src.db.models import ChannelModel
 
@@ -25,7 +25,7 @@ async def on_finish(
 
 
 async def on_delete(callback: CallbackQuery, button: Button, manager: DialogManager):
-    await manager.switch_to(ChannelsSG.delete)
+    await manager.switch_to(ChannelsListSG.delete)
 
 
 async def on_perform_delete(
@@ -45,15 +45,15 @@ async def on_perform_delete(
     else:
         await callback.answer("Cannot delete row.")
 
-    await manager.switch_to(state=ChannelsSG.scrolling)
+    await manager.switch_to(state=ChannelsListSG.scrolling)
 
 
 async def on_turn_off(callback: CallbackQuery, button: Button, manager: DialogManager):
-    await manager.switch_to(ChannelsSG.turn_off)
+    await manager.switch_to(ChannelsListSG.turn_off)
 
 
 async def on_turn_on(callback: CallbackQuery, button: Button, manager: DialogManager):
-    await manager.switch_to(ChannelsSG.turn_on)
+    await manager.switch_to(ChannelsListSG.turn_on)
 
 
 async def on_perform_update(
@@ -74,7 +74,16 @@ async def on_perform_update(
             await callback.answer("Unknown callback data")
             return
 
-        result = await dal.update_channel_by_id(obj=channel)
+        channel_obj = await dal.channel_dao.get_first(**{"id": channel.id})
+
+        if not channel_obj:
+            await callback.answer(
+                "❌ Channel does not exist. Please contact administrator."
+            )
+            return
+
+        channel_obj.enabled = enabled
+        result = await dal.update_channel_by_id(obj=channel_obj)
 
         if result:
             await callback.answer("Success.")
@@ -83,7 +92,7 @@ async def on_perform_update(
     else:
         await callback.answer("Cannot update row.")
 
-    await manager.switch_to(state=ChannelsSG.scrolling)
+    await manager.switch_to(state=ChannelsListSG.scrolling)
 
 
 __all__ = [
