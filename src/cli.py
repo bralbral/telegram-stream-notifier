@@ -7,8 +7,9 @@ from aiogram import Dispatcher
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from .db import DataAccessLayer
-from .dto import UserCreateDTO
-from .dto import UserRetrieveDTO
+from .db.models import UserModel
+from .db.models import UserRoleModel
+from .db.models.user_role import UserRole
 from .logger import logger
 from src.bot import setup_bot
 from src.bot import setup_dispatcher
@@ -27,11 +28,13 @@ if platform.system() == "linux":
 async def create_super_user(telegram_id: int) -> None:
     dal = DataAccessLayer()
 
-    user_dto = UserCreateDTO(user_id=telegram_id, is_superuser=True, is_admin=True)
+    role = UserRoleModel(role=UserRole.SUPERUSER)
 
-    result = await dal.create_user(user_schema=user_dto)
+    user = UserModel(user_id=telegram_id, role=role)
 
-    if isinstance(result, UserRetrieveDTO) and result.id is not None:
+    result = await dal.create_user(obj=user)
+
+    if isinstance(result, UserModel) and result.id is not None:
         await logger.ainfo("User created.")
     else:
         await logger.error("Cannot create user.")
@@ -46,7 +49,9 @@ async def run_bot() -> None:
     superusers: list[int] = await dal.get_users(superusers=True)
 
     if not await dal.is_superusers_exists():
-        await logger.aerror("You must to create superuser before start.")
+        await logger.aerror(
+            "You must to create superuser before start. Restart with --telegram_id YOUR_TELEGRAM_ID option"
+        )
         return
 
     bot: Bot = await setup_bot(

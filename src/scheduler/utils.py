@@ -7,9 +7,9 @@ import yt_dlp
 from aiogram import Bot
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
+from twitchAPI.twitch import Twitch
 
 from src.config import Config
-from src.constants import COOKIES_FILE_PATH
 from src.db import DataAccessLayer
 from src.scheduler.jobs.telegram_notify_job import notify
 
@@ -25,8 +25,14 @@ def setup_scheduler(conf: Config, bot: Bot, dal: DataAccessLayer) -> AsyncIOSche
     scheduler = AsyncIOScheduler()
 
     cookiefile: Optional[TextIO]
+
     try:
-        cookiefile = open(file=COOKIES_FILE_PATH, encoding="utf-8")
+        youtube = conf.youtube
+        if youtube:
+            cookies_filepath = youtube.cookies_filepath
+            cookiefile = open(file=cookies_filepath, encoding="utf-8")
+        else:
+            cookiefile = None
     except FileNotFoundError:
         cookiefile = None
 
@@ -41,6 +47,11 @@ def setup_scheduler(conf: Config, bot: Bot, dal: DataAccessLayer) -> AsyncIOSche
         "extractor_args": {"youtubetab": {"skip": "authcheck"}},
     }
 
+    if conf.twitch:
+        twitch = Twitch(app_id=conf.twitch.app_id, app_secret=conf.twitch.app_secret)
+    else:
+        twitch = None
+
     ydl = yt_dlp.YoutubeDL(ydl_opts)
 
     notify_kwargs = {
@@ -51,6 +62,7 @@ def setup_scheduler(conf: Config, bot: Bot, dal: DataAccessLayer) -> AsyncIOSche
         "report_template": conf.report.template,
         "empty_template": conf.report.empty,
         "dal": dal,
+        "twitch": twitch,
     }
     scheduler.add_job(
         notify,
@@ -61,19 +73,6 @@ def setup_scheduler(conf: Config, bot: Bot, dal: DataAccessLayer) -> AsyncIOSche
         coalesce=True,
         next_run_time=datetime.now(),
     )
-
-    # TODO TEMPRORARY COMMENT
-    # JUST CLARIFY ERROR
-    # auto_turn_off_kwargs = {"dal": dal}
-    # scheduler.add_job(
-    #     auto_turn_off,
-    #     trigger=IntervalTrigger(seconds=conf.interval_s * 2),
-    #     kwargs=auto_turn_off_kwargs,
-    #     replace_existing=True,
-    #     max_instances=1,
-    #     coalesce=True,
-    #     next_run_time=datetime.now(),
-    # )
 
     return scheduler
 
