@@ -7,9 +7,9 @@ from aiocache import Cache
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
 from aiogram.types import Message
 
-from src.bot.filters.role import UserRole
 from src.db import DataAccessLayer
-from src.dto import UserCreateDTO
+from src.db.models import UserModel
+from src.db.models.user_role import UserRole
 
 
 class RoleMiddleware(BaseMiddleware):
@@ -40,11 +40,11 @@ class RoleMiddleware(BaseMiddleware):
             else:
                 user_id = user.id
 
-                _user: Optional[UserCreateDTO] = await dal.get_user_by_attr(
+                _user: Optional[UserModel] = await dal.get_user_by_attr(
                     **{"user_id": user_id}
                 )
                 if _user:
-                    if _user.is_superuser:
+                    if _user.role.role == UserRole.SUPERUSER:
                         data["role"] = UserRole.SUPERUSER
                     else:
                         data["role"] = UserRole.USER

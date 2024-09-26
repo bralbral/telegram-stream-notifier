@@ -17,6 +17,20 @@ class BotConfig(BaseSettings):
     token: SecretStr
 
 
+class YoutubeCredentials(BaseSettings):
+    cookies_filepath: str
+
+
+class TwitchCredentials(BaseSettings):
+    """
+    Credentials for TwitchApi
+    https://dev.twitch.tv/docs/authentication/register-app/
+    """
+
+    app_id: str
+    app_secret: str
+
+
 class Config(BaseSettings):
     """
     All in one config
@@ -28,6 +42,8 @@ class Config(BaseSettings):
     report: Report
     start_scheduler: bool
     interval_s: int
+    twitch: Optional[TwitchCredentials] = None
+    youtube: Optional[YoutubeCredentials] = None
 
 
 __all__ = ["BotConfig", "Config"]

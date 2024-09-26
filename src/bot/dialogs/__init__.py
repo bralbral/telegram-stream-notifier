@@ -1,10 +1,10 @@
 from aiogram import Dispatcher
 
-from .channel import channel_dialog
+from .user import register_user_dialogs
 
 
 def register_dialogs(dp: Dispatcher) -> None:
-    dp.include_router(channel_dialog)
+    register_user_dialogs(dp=dp)
 
 
 __all__ = ["register_dialogs"]
