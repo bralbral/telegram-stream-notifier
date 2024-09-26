@@ -51,3 +51,12 @@ start_scheduler: False
 # interval between checks in seconds
 interval_s: 60
 
+# For notification from Twitch
+# You can obtain from https://dev.twitch.tv/console
+# twitch:
+#   app_id: xxxxxxxxxxxxxxxxxxxxxxxxxx
+#   app_secret: xxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Path to cookie file for youtube-dlp
+# youtube:
+#  cookies_filepath: /path/to/cookies.txt
