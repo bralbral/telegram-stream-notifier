@@ -6,10 +6,10 @@ Simple LiveStreams notifier in telegram based on [aiogram](https://github.com/ai
 
 ### Available platforms
 
-| Platform        | Based on                                        | Status                                                                |
-|-----------------|-------------------------------------------------|-----------------------------------------------------------------------|
-| Youtube         | [youtube-dlp](https://github.com/yt-dlp/yt-dlp) |  ✅                                                  |
-| Twitch          | [twitch-api](https://github.com/Teekeks/pyTwitchAPI)                                  | ❌                                             |
+| Platform        | Based on                                        | Status                                                               |
+|-----------------|-------------------------------------------------|----------------------------------------------------------------------|
+| Youtube         | [youtube-dlp](https://github.com/yt-dlp/yt-dlp) |  ✅                                                 |
+| Twitch          | [twitch-api](https://github.com/Teekeks/pyTwitchAPI)                                  | ✅                                             |
 | Kick            | ❌                                             | ❌                                     |
 
 

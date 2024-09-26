@@ -57,6 +57,13 @@ class DataAccessLayer:
         """
         :return:
         """
+
+        user_role = obj.role
+        user_role_instance, _ = await self.user_role_dao.get_or_create(
+            role=user_role.role
+        )
+        obj.role = user_role_instance
+
         return await self.user_dao.create(obj=obj)
 
     async def get_user_by_pk(self, pk: int) -> Optional[UserModel]:
