@@ -12,7 +12,7 @@ url_validators: dict = {
 url_examples: dict = {
     ChannelType.YOUTUBE: "https://www.youtube.com/@username",
     ChannelType.TWITCH: "https://www.twitch.tv/username",
-    ChannelType.KICK: "empty",
+    ChannelType.KICK: "https://www.kick.com/username",
 }
 
 __all__ = ["url_examples", "url_validators"]
