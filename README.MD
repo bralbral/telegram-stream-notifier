@@ -44,7 +44,7 @@ The current version of the bot works in the telegram channel [НАСРАНО](ht
 
 ### Install from source
 
-> Tested on Ubuntu 22.04, python 3.11
+> Tested on Ubuntu 22.04, python 3.12
 
 Just copy source code:
 

@@ -1,8 +1,8 @@
 import asyncio
 import operator
+from datetime import datetime
 from typing import Optional
 
-from black import datetime
 from dateutil.tz import tzutc
 from twitchAPI.helper import first
 from twitchAPI.object.api import Stream
