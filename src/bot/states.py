@@ -2,16 +2,6 @@ from aiogram.fsm.state import State
 from aiogram.fsm.state import StatesGroup
 
 
-class ChannelsSG(StatesGroup):
-    input_url = State()
-    input_label = State()
-    scrolling = State()
-    delete = State()
-    turn_on = State()
-    turn_off = State()
-    bulk_channels = State()
-
-
 class ChannelsListSG(StatesGroup):
     scrolling = State()
     delete = State()
@@ -29,4 +19,4 @@ class UsersSG(StatesGroup):
     promote = State()
 
 
-__all__ = ["ChannelCreateSG", "ChannelsListSG", "ChannelsSG", "UsersSG"]
+__all__ = ["ChannelCreateSG", "ChannelsListSG", "UsersSG"]

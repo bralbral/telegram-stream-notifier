@@ -11,7 +11,7 @@ url_validators: dict = {
 
 url_examples: dict = {
     ChannelType.YOUTUBE: "https://www.youtube.com/@username",
-    ChannelType.TWITCH: "empty",
+    ChannelType.TWITCH: "https://www.twitch.tv/username",
     ChannelType.KICK: "empty",
 }
 

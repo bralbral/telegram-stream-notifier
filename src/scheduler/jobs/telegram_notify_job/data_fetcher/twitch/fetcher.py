@@ -13,6 +13,7 @@ from src.logger import logger
 from src.scheduler.jobs.telegram_notify_job.data_fetcher.utils import make_time_readable
 from src.scheduler.jobs.telegram_notify_job.dto import ErrorVideoInfo
 from src.scheduler.jobs.telegram_notify_job.dto import VideoInfo
+from src.utils import extract_twitch_username
 
 
 async def async_fetch_livestream(
@@ -27,8 +28,12 @@ async def async_fetch_livestream(
 
     live_stream = None
     try:
+
+        username = extract_twitch_username(channel.url)
+        if not username:
+            raise Exception(f"Cannot extract username for {channel.url}")
         data: Optional[Stream] = await first(
-            twitch.get_streams(user_login=[channel.url], first=1, stream_type="live")
+            twitch.get_streams(user_login=[username], first=1, stream_type="live")
         )
 
         if data:

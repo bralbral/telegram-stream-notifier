@@ -18,8 +18,6 @@ from .utils import check_if_need_send_instead_of_edit
 from src.db import DataAccessLayer
 from src.db.models import MessageLogModel
 from src.logger import logger
-from src.scheduler.jobs.telegram_notify_job.dto.videoinfo import ErrorVideoInfo
-from src.scheduler.jobs.telegram_notify_job.dto.videoinfo import VideoInfo
 
 
 async def notify(

@@ -4,7 +4,6 @@ from aiogram.types import BotCommand
 def superuser_commands() -> list[BotCommand]:
     commands = [
         BotCommand(command="add_user", description="Add user to bot."),
-        BotCommand(command="add_channels", description="Add channels from file."),
         BotCommand(command="scheduler_start", description="Start scheduler."),
         BotCommand(command="scheduler_pause", description="Stop scheduler."),
     ]
