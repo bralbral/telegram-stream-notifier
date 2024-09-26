@@ -7,6 +7,8 @@ services:
     restart: always
     volumes:
       - ./config.yaml:/app/config.yaml
+      # youtube cookies optional
+      # make sure that has same path at config
       - ./cookies.txt:/app/cookies.txt:touch
       - ./youtube-notifier-bot.db:/app/youtube-notifier-bot.db
       - /etc/timezone:/etc/timezone:ro
