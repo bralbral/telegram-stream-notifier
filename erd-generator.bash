@@ -1,0 +1,1 @@
+eralchemy -i sqlite:///youtube-notifier-bot.db -o db-schema.png --exclude-tables alembic_version --exclude-columns created_at updated_at

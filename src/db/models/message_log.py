@@ -1,32 +1,32 @@
-from sqlalchemy import BigInteger
+from datetime import datetime
+from typing import Optional
+
 from sqlalchemy import Column
-from sqlalchemy import Integer
-from sqlalchemy import String
-from sqlalchemy import UniqueConstraint
-
-from .mixins import ModelORM
-from .mixins import RepresentationMixin
-from .mixins import TimestampsMixin
+from sqlalchemy import DateTime
+from sqlmodel import Field
+from sqlmodel import SQLModel
 
 
-class MessageLogORM(ModelORM, TimestampsMixin, RepresentationMixin):
-    """
-    Model for storing id of actual post message
-    """
+class MessageLogModel(SQLModel, table=True):
 
     __tablename__ = "message_logs"
-
-    __table_args__ = (UniqueConstraint("message_id", name="ix_uniq_message_id"),)
-
-    # some features with autoincrement
-    # https://docs.sqlalchemy.org/en/20/dialects/sqlite.html#allowing-autoincrement-behavior-sqlalchemy-types-other-than-integer-integer
-    id = Column(
-        Integer,
-        primary_key=True,
-        autoincrement=True,
+    id: Optional[int] = Field(default=None, primary_key=True)
+    created_at: Optional[datetime] = Field(
+        sa_column=Column(
+            DateTime,
+            default=datetime.utcnow,
+            nullable=False,
+        )
     )
-    message_id = Column(BigInteger, nullable=False, index=True)
-    text = Column(String, nullable=False, index=False)
+    updated_at: Optional[datetime] = Field(
+        sa_column=Column(
+            DateTime,
+            default=datetime.utcnow,
+            onupdate=datetime.utcnow,
+        )
+    )
+    message_id: int = Field(index=True)
+    text: str = Field(nullable=False, index=False)
 
 
-__all__ = ["MessageLogORM"]
+__all__ = ["MessageLogModel"]

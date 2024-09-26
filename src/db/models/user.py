@@ -1,47 +1,55 @@
-from sqlalchemy import BigInteger
-from sqlalchemy import Boolean
+from datetime import datetime
+from typing import Optional
+from typing import TYPE_CHECKING
+
 from sqlalchemy import Column
-from sqlalchemy import ForeignKey
-from sqlalchemy import Integer
-from sqlalchemy import String
-from sqlalchemy import UniqueConstraint
-
-from .mixins import ModelORM
-from .mixins import RepresentationMixin
-from .mixins import TimestampsMixin
+from sqlalchemy import DateTime
+from sqlmodel import Field
+from sqlmodel import Relationship
+from sqlmodel import SQLModel
 
 
-class UserORM(ModelORM, TimestampsMixin, RepresentationMixin):
-    """
-    Model for storing TG users
-    """
+if TYPE_CHECKING:
+    from .channel import ChannelModel
+    from .user_role import UserRoleModel
+
+
+class UserModel(SQLModel, table=True):
 
     __tablename__ = "users"
-
-    __table_args__ = (UniqueConstraint("user_id", name="ix_uniq_telegram_user_id"),)
-    # some features with autoincrement
-    # https://docs.sqlalchemy.org/en/20/dialects/sqlite.html#allowing-autoincrement-behavior-sqlalchemy-types-other-than-integer-integer
-    id = Column(
-        Integer,
-        primary_key=True,
-        autoincrement=True,
+    id: Optional[int] = Field(default=None, primary_key=True)
+    created_at: Optional[datetime] = Field(
+        sa_column=Column(
+            DateTime,
+            default=datetime.utcnow,
+            nullable=False,
+        )
     )
-    user_id = Column(BigInteger, nullable=False, index=True)
-    username = Column(String(length=255), nullable=True, index=True)
-    firstname = Column(String(length=255), nullable=True, index=True)
-    lastname = Column(String(length=255), nullable=True, index=True)
-    is_superuser = Column(Boolean, default=False, index=True)
-
-
-class UserORMRelatedModel:
-    __abstract__ = True
-
-    user_id = Column(
-        ForeignKey(
-            f"{UserORM.__tablename__}.id", ondelete="CASCADE", onupdate="CASCADE"
-        ),
-        nullable=False,
+    updated_at: Optional[datetime] = Field(
+        sa_column=Column(
+            DateTime,
+            default=datetime.utcnow,
+            onupdate=datetime.utcnow,
+        )
+    )
+    user_id: int = Field(index=True, unique=True, nullable=False)
+    username: str = Field(max_length=255, nullable=True, index=True)
+    firstname: str = Field(max_length=255, nullable=True, index=True)
+    lastname: str = Field(max_length=255, nullable=True, index=True)
+    user_role_id: int | None = Field(
+        default=None, foreign_key="user_roles.id", nullable=False
     )
 
+    role: "UserRoleModel" = Relationship(
+        back_populates="users",
+    )
+    channels: list["ChannelModel"] = Relationship(
+        back_populates="user",
+    )
 
-__all__ = ["UserORM", "UserORMRelatedModel"]
+    @property
+    def get_url_generated_by_id(self) -> str:
+        return f"tg://openmessage?user_id={self.user_id}"
+
+
+__all__ = ["UserModel"]

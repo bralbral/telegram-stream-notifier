@@ -1,5 +1,7 @@
-from .channels import ChannelDAO
+from .channel import ChannelDAO
+from .channel_type import ChannelTypeDAO
 from .message_log import MessageLogDAO
-from .users import UserRepo
+from .user import UserDAO
+from .user_role import UserRoleDAO
 
-__all__ = ["ChannelDAO", "MessageLogDAO", "UserRepo"]
+__all__ = ["ChannelDAO", "ChannelTypeDAO", "MessageLogDAO", "UserDAO", "UserRoleDAO"]

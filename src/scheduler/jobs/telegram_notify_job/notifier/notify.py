@@ -7,15 +7,19 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.exceptions import TelegramNetworkError
 from aiogram.utils.chat_action import ChatActionSender
 from sulguk import SULGUK_PARSE_MODE
+from twitchAPI.twitch import Twitch
 
-from ..data_fetcher import async_fetch_livestreams
+from ..data_fetcher import async_twitch_fetch_livestreams
+from ..data_fetcher import async_youtube_fetch_livestreams
+from ..dto import ErrorVideoInfo
+from ..dto import VideoInfo
 from ..report_generator import generate_jinja_report
 from .utils import check_if_need_send_instead_of_edit
 from src.db import DataAccessLayer
-from src.dto import MessageLogCreateDTO
-from src.dto import YoutubeErrorInfoDTO
-from src.dto import YoutubeVideoInfoDTO
+from src.db.models import MessageLogModel
 from src.logger import logger
+from src.scheduler.jobs.telegram_notify_job.dto.videoinfo import ErrorVideoInfo
+from src.scheduler.jobs.telegram_notify_job.dto.videoinfo import VideoInfo
 
 
 async def notify(
@@ -26,6 +30,7 @@ async def notify(
     empty_template: Optional[str],
     report_template: str,
     dal: DataAccessLayer,
+    twitch: Optional[Twitch] = None,
 ) -> None:
     """
     :param dal:
@@ -35,21 +40,33 @@ async def notify(
     :param ydl:
     :param bot:
     :param chat_id:
+    :param twitch
     :return:
     """
 
     # get channels
     channels = await dal.get_channels(enabled=True)
 
-    data: tuple[
-        list[YoutubeVideoInfoDTO], list[YoutubeErrorInfoDTO]
-    ] = await async_fetch_livestreams(channels=channels, ydl=ydl)
+    data: tuple[list[VideoInfo], list[ErrorVideoInfo]] = (
+        await async_youtube_fetch_livestreams(channels=channels, ydl=ydl)
+    )
 
     live_list, errors = data
 
+    if twitch:
+        _twitch = await twitch
+
+        twitch_data: tuple[list[VideoInfo], list[ErrorVideoInfo]] = (
+            await async_twitch_fetch_livestreams(channels=channels, twitch=_twitch)
+        )
+
+        twitch_live_list, twitch_errors = twitch_data
+        live_list.extend(twitch_live_list)
+        errors.extend(twitch_errors)
+
     # logging errors
     for error in errors:
-        await logger.aerror(f"Error with {error.channel.id}: {error.ex_message}")
+        await logger.aerror(f"Error with {error.channel["id"]}: {error.ex_message}")
 
     await logger.ainfo(f"Live list length {len(live_list)}")
 
@@ -147,9 +164,7 @@ async def notify(
 
         if message_id:
             await dal.create_message(
-                message_log_schema=MessageLogCreateDTO(
-                    message_id=message_id, text=message_text
-                )
+                obj=MessageLogModel(message_id=message_id, text=message_text)
             )
 
 
