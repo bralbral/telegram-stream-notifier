@@ -6,11 +6,11 @@ Simple LiveStreams notifier in telegram based on [aiogram](https://github.com/ai
 
 ### Available platforms
 
-| Platform        | Based on                                        | Status                                                               |
-|-----------------|-------------------------------------------------|----------------------------------------------------------------------|
-| Youtube         | [youtube-dlp](https://github.com/yt-dlp/yt-dlp) |  ✅                                                 |
-| Twitch          | [twitch-api](https://github.com/Teekeks/pyTwitchAPI)                                  | ✅                                             |
-
+| Platform | Based on                                             | Status                                               |
+|----------|------------------------------------------------------|------------------------------------------------------|
+| Youtube  | [youtube-dlp](https://github.com/yt-dlp/yt-dlp)      | ✅                                                    |
+| Twitch   | [twitch-api](https://github.com/Teekeks/pyTwitchAPI) | ✅                                                    |
+| Kick     | [aiohttp](https://github.com/aio-libs/aiohttp)          | ❌ (Until cloudflare-403 fix or creating official api |
 Use this bot to receive periodic reports on live broadcasts on stream platforms and generate and send the report to telegram. 
 
 The current version of the bot works in the telegram channel [НАСРАНО](https://t.me/HACPAH1).
