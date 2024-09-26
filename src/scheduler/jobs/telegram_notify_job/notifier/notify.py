@@ -17,6 +17,7 @@ from ..report_generator import generate_jinja_report
 from .utils import check_if_need_send_instead_of_edit
 from src.db import DataAccessLayer
 from src.db.models import MessageLogModel
+from src.db.models.channel_type import ChannelType
 from src.logger import logger
 
 
@@ -45,8 +46,15 @@ async def notify(
     # get channels
     channels = await dal.get_channels(enabled=True)
 
+    youtube_channels = [
+        channel for channel in channels if channel.type.type == ChannelType.YOUTUBE
+    ]
+    twitch_channels = [
+        channel for channel in channels if channel.type.type == ChannelType.TWITCH
+    ]
+
     data: tuple[list[VideoInfo], list[ErrorVideoInfo]] = (
-        await async_youtube_fetch_livestreams(channels=channels, ydl=ydl)
+        await async_youtube_fetch_livestreams(channels=youtube_channels, ydl=ydl)
     )
 
     live_list, errors = data
@@ -55,7 +63,9 @@ async def notify(
         _twitch = await twitch
 
         twitch_data: tuple[list[VideoInfo], list[ErrorVideoInfo]] = (
-            await async_twitch_fetch_livestreams(channels=channels, twitch=_twitch)
+            await async_twitch_fetch_livestreams(
+                channels=twitch_channels, twitch=_twitch
+            )
         )
 
         twitch_live_list, twitch_errors = twitch_data
