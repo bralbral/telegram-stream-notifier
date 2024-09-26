@@ -104,7 +104,7 @@ Or you can do it step by step:
 
 `kubectl apply -f <file from config dir>`
 
-## Setup Cookies
+## Setup Cookies for Youtube
 
 You can use own cookies for yt-dlp extractors.
 
