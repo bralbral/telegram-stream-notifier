@@ -22,7 +22,7 @@ class BaseDAO(Generic[T]):
 
     @property
     def __prepare_select_statement(self):
-        statement = select(self.model)
+        statement = select(self.model).order_by(self.model.id.desc())
         return statement
 
     @abstractmethod

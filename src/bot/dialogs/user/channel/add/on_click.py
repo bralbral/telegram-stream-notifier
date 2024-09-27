@@ -9,6 +9,8 @@ from aiogram_dialog.widgets.kbd import (
     Button,
 )
 
+from src.db.models.channel_type import ChannelType
+
 
 async def on_finish(
     callback: CallbackQuery, button: Button, manager: DialogManager
@@ -26,6 +28,13 @@ async def on_select_channel_type(
     manager: DialogManager,
     item_id: str,
 ):
+    # temporary stub
+    # wait for https://github.com/bralbral/telegram-stream-notifier/issues/114
+    if item_id == ChannelType.KICK:
+        await callback.answer(
+            "Notifications from Kick.com do not implemented. Try later."
+        )
+        return
 
     manager.dialog_data["selected_channel_type"] = item_id
     await manager.next()
