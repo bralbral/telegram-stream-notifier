@@ -65,7 +65,7 @@ Run:
 
 > Stable release with `main` tag on [dockerhub](https://hub.docker.com/r/bral1488/telegram-youtube-notifier/tags)
 
-Just copy [docker-compose.yml](./deploy/example.docker-compose.yml) and fill in  [config.yaml](./deploy/example.config.yaml).
+Just copy [docker-compose.yml](./deploy/docker/example.docker-compose.yml) and fill in  [config.yaml](./deploy/example.config.yaml).
 
 Run containers:
 
