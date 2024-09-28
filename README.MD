@@ -49,7 +49,7 @@ The current version of the bot works in the telegram channel [НАСРАНО](ht
 
 Just copy source code:
 
-`git clone https://github.com/bralbral/telegram-youtube-notifier.git`
+`git clone https://github.com/bralbral/telegram-stream-notifier.git`
 
 Install requirements:
 
@@ -75,7 +75,7 @@ Of course, you can build image yourself:
 
 Just copy source code:
 
-`git clone https://github.com/bralbral/telegram-youtube-notifier.git`
+`git clone https://github.com/bralbral/telegram-stream-notifier.git`
 
 and build docker image:
 
