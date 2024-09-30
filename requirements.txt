@@ -16,5 +16,5 @@ alembic==1.13.2
 aiosqlite==0.20.0
 asyncclick==8.1.7.2
 anyio==4.4.0
-aiocache==0.12.2
+aiocache==0.12.3
 sqlmodel==0.0.22
