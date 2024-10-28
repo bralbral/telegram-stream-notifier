@@ -10,7 +10,7 @@ pyyaml==6.0.2
 pydantic_settings==2.6.0
 structlog==24.4.0
 orjson==3.10.10
-uvloop==0.20.0
+uvloop==0.21.0
 SQLAlchemy==2.0.36
 alembic==1.13.3
 aiosqlite==0.20.0
