@@ -1,6 +1,6 @@
 aiogram==3.15.0
 aiogram-dialog==2.2.0
-pydantic==2.10.2
+pydantic==2.9.2
 APScheduler==3.11.0
 yt-dlp==2024.11.18
 twitchapi==4.3.1
