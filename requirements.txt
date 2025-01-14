@@ -9,7 +9,7 @@ jinja2==3.1.5
 pyyaml==6.0.2
 pydantic_settings==2.7.1
 structlog==24.4.0
-orjson==3.10.13
+orjson==3.10.14
 uvloop==0.21.0
 SQLAlchemy==2.0.37
 alembic==1.14.0
