@@ -14,7 +14,7 @@ uvloop==0.21.0
 SQLAlchemy==2.0.37
 alembic==1.14.0
 aiosqlite==0.20.0
-asyncclick==8.1.7.2
+asyncclick==8.1.8
 anyio==4.8.0
 aiocache==0.12.3
 sqlmodel==0.0.22
