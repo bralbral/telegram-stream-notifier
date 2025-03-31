@@ -12,7 +12,7 @@ structlog==25.2.0
 orjson==3.10.15
 uvloop==0.21.0
 SQLAlchemy==2.0.39
-alembic==1.15.1
+alembic==1.15.2
 aiosqlite==0.21.0
 asyncclick==8.1.8
 anyio==4.9.0
