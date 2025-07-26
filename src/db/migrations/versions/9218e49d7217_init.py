@@ -87,6 +87,15 @@ def upgrade() -> None:
             (CURRENT_TIMESTAMP, 'UNKNOWN')
         """)
     )
+    op.execute(
+        sa.text("""
+            INSERT INTO channel_types (created_at, type)
+            VALUES 
+            (CURRENT_TIMESTAMP, 'YOUTUBE'),
+            (CURRENT_TIMESTAMP, 'TWITCH'),
+            (CURRENT_TIMESTAMP, 'KICK')
+        """)
+    )
     # ### end Alembic commands ###
 
 
