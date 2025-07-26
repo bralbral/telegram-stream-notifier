@@ -8,4 +8,4 @@ services:
     tty: true
     image: bral1488/telegram-youtube-notifier:main
     restart: no
-    command: sh -c "bash alembic-upgrade.bash && python3 -m src --telegram_id ${TELEGRAM_ID}"
+    command: sh -c "sh alembic-upgrade.bash && python3 -m src --telegram_id ${TELEGRAM_ID}"
