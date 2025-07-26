@@ -78,6 +78,11 @@ def upgrade() -> None:
     op.create_index(op.f('ix_channels_enabled'), 'channels', ['enabled'], unique=False)
     op.create_index(op.f('ix_channels_label'), 'channels', ['label'], unique=False)
     op.create_index(op.f('ix_channels_url'), 'channels', ['url'], unique=True)
+    op.execute(
+        sa.text(
+            "INSERT INTO user_roles (created_at, role) VALUES (NOW(), 'SUPERUSER')"
+        )
+    )
     # ### end Alembic commands ###
 
 
