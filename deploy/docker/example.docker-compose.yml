@@ -2,7 +2,7 @@ version: '3'
 
 services:
   yt-notifier:
-    image: bral1488/telegram-youtube-notifier:develop
+    image: bral1488/telegram-youtube-notifier:main
     container_name: telegram-youtube-notifier
     restart: always
     volumes:
