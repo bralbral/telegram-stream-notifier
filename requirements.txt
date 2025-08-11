@@ -14,6 +14,6 @@ SQLAlchemy==2.0.42
 alembic==1.16.4
 aiosqlite==0.21.0
 asyncclick==8.1.8
-anyio==4.9.0
+anyio==4.10.0
 aiocache==0.12.3
 sqlmodel==0.0.24
