@@ -1,4 +1,4 @@
-aiogram==3.21.0
+aiogram==3.22.0
 aiogram-dialog==2.4.0
 APScheduler==3.11.0
 yt-dlp==2025.8.22
