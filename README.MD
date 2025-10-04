@@ -14,8 +14,6 @@ Simple LiveStreams notifier in telegram based on [aiogram](https://github.com/ai
 
 Use this bot to receive periodic reports on live broadcasts on stream platforms and generate and send the report to telegram. 
 
-The current version of the bot works in the telegram channel [НАСРАНО](https://t.me/HACPAH1).
-
 ## Features
 
 1. Generating a custom report using [jinja](https://github.com/pallets/jinja).
