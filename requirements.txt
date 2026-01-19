@@ -1,6 +1,6 @@
 aiogram==3.22.0
 aiogram-dialog==2.4.0
-APScheduler==3.11.1
+APScheduler==3.11.2
 yt-dlp==2025.12.8
 twitchapi==4.5.0
 sulguk==0.10.1
