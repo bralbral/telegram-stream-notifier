@@ -1,55 +1,29 @@
-from datetime import datetime
-from typing import Optional
-from typing import TYPE_CHECKING
+from __future__ import annotations
 
-from sqlalchemy import Column
-from sqlalchemy import DateTime
-from sqlmodel import Field
-from sqlmodel import Relationship
-from sqlmodel import SQLModel
+from tortoise import fields
+from tortoise.models import Model
 
 
-if TYPE_CHECKING:
-    from .channel import ChannelModel
-    from .user_role import UserRoleModel
-
-
-class UserModel(SQLModel, table=True):
-
-    __tablename__ = "users"
-    id: Optional[int] = Field(default=None, primary_key=True)
-    created_at: Optional[datetime] = Field(
-        sa_column=Column(
-            DateTime,
-            default=datetime.utcnow,
-            nullable=False,
-        )
-    )
-    updated_at: Optional[datetime] = Field(
-        sa_column=Column(
-            DateTime,
-            default=datetime.utcnow,
-            onupdate=datetime.utcnow,
-        )
-    )
-    user_id: int = Field(index=True, unique=True, nullable=False)
-    username: str = Field(max_length=255, nullable=True, index=True)
-    firstname: str = Field(max_length=255, nullable=True, index=True)
-    lastname: str = Field(max_length=255, nullable=True, index=True)
-    user_role_id: int | None = Field(
-        default=None, foreign_key="user_roles.id", nullable=False
+class UserModel(Model):
+    id = fields.IntField(pk=True)
+    created_at = fields.DatetimeField(auto_now_add=True)
+    updated_at = fields.DatetimeField(auto_now=True)
+    user_id = fields.IntField(unique=True, index=True)
+    username = fields.CharField(max_length=255, null=True, index=True)
+    firstname = fields.CharField(max_length=255, null=True, index=True)
+    lastname = fields.CharField(max_length=255, null=True, index=True)
+    role: fields.ForeignKeyRelation["UserRoleModel"] = fields.ForeignKeyField(  # noqa: F821
+        "models.UserRoleModel", related_name="users", on_delete=fields.CASCADE
     )
 
-    role: "UserRoleModel" = Relationship(
-        back_populates="users",
-    )
-    channels: list["ChannelModel"] = Relationship(
-        back_populates="user",
-    )
+    channels: fields.ReverseRelation["ChannelModel"]  # noqa: F821
 
     @property
     def get_url_generated_by_id(self) -> str:
         return f"tg://openmessage?user_id={self.user_id}"
+
+    class Meta:
+        table = "users"
 
 
 __all__ = ["UserModel"]

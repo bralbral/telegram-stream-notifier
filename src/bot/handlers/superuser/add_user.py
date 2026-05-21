@@ -83,7 +83,7 @@ async def handle_user(
 
     except (Exception,) as ex:
         await logger.aerror(str(ex))
-        await message.reply(text=f"❌ UnknownError. Notify administrators. Thank you!")
+        await message.reply(text="❌ UnknownError. Notify administrators. Thank you!")
     finally:
         await state.clear()
         await message.answer(text="Finished", reply_markup=ReplyKeyboardRemove())

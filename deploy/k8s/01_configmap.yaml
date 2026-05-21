@@ -46,6 +46,11 @@ data:
 
     start_scheduler: True
     interval_s: 300
+    # PostgreSQL database configuration
+    database:
+      host: postgres-service  # Kubernetes service name or external host
+      port: 5432
+      database: youtube_notifier
     # For notification from Twitch
     # You can obtain from https://dev.twitch.tv/console
     # twitch:

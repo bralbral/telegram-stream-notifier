@@ -1,15 +1,13 @@
 from typing import Optional
-
-from sqlalchemy.ext.asyncio import AsyncSession
-from typing_extensions import Sequence
+from typing import Sequence
 
 from .base import BaseDAO
 from src.db.models import ChannelTypeModel
 
 
 class ChannelTypeDAO(BaseDAO[ChannelTypeModel]):
-    def __init__(self, session: AsyncSession):
-        super().__init__(session, ChannelTypeModel)
+    def __init__(self):
+        super().__init__(ChannelTypeModel)
 
     async def get_first(self, *args, **kwargs) -> Optional[ChannelTypeModel]:
         return await super().get_first(*args, **kwargs)

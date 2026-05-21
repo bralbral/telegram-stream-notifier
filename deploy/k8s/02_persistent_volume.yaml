@@ -1,24 +1,51 @@
-# create persistent volume for database
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: yt-notifier-pv
-  namespace: yt-notifier-namespace
-spec:
-  capacity:
-    storage: 128Mi
-  volumeMode: Filesystem
-  accessModes:
-  - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
-  storageClassName: local-path
-  local:
-    path: /path/to/database/on/host/machine
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - my-k8s-node  # get value from kubectl get nodes
+# NOTE: This file is deprecated as the application now uses PostgreSQL
+# which typically runs as a separate service or managed database.
+# You can create a PostgreSQL deployment in Kubernetes using a StatefulSet
+# or use a managed PostgreSQL service (e.g., AWS RDS, Google Cloud SQL, etc.)
+
+# Example PostgreSQL deployment would look like:
+# apiVersion: apps/v1
+# kind: StatefulSet
+# metadata:
+#   name: postgres
+#   namespace: yt-notifier-namespace
+# spec:
+#   serviceName: postgres
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: postgres
+#   template:
+#     metadata:
+#       labels:
+#         app: postgres
+#     spec:
+#       containers:
+#       - name: postgres
+#         image: postgres:15-alpine
+#         ports:
+#         - containerPort: 5432
+#         env:
+#         - name: POSTGRES_PASSWORD
+#           valueFrom:
+#             secretKeyRef:
+#               name: yt-notifier-secrets
+#               key: database.password
+#         - name: POSTGRES_DB
+#           value: youtube_notifier
+#         - name: POSTGRES_USER
+#           valueFrom:
+#             secretKeyRef:
+#               name: yt-notifier-secrets
+#               key: database.user
+#         volumeMounts:
+#         - name: postgres-storage
+#           mountPath: /var/lib/postgresql/data
+#   volumeClaimTemplates:
+#   - metadata:
+#       name: postgres-storage
+#     spec:
+#       accessModes: [ "ReadWriteOnce" ]
+#       resources:
+#         requests:
+#           storage: 1Gi

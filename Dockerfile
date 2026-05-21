@@ -8,7 +8,7 @@ WORKDIR /app
 # Copy the application source code to the container
 COPY ./requirements.txt /app/requirements.txt
 COPY ./src /app/src
-COPY alembic.ini alembic-upgrade.bash /app/
+COPY aerich-upgrade.bash /app/
 
 
 # Install system dependencies, Python dependencies, and clean up
@@ -21,7 +21,6 @@ RUN apk update && \
     && apk add --no-cache \
         git \
         ffmpeg \
-        sqlite \
     && pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt && \
     apk del .build-deps && \
@@ -30,3 +29,5 @@ RUN apk update && \
 
 # Set the user to non-root
 USER 1000
+
+RUN ln -s /usr/bin/python3 /usr/bin/python || true

@@ -5,33 +5,22 @@ from typing import Sequence
 from typing import Type
 from typing import TypeVar
 
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlmodel import select
-from sqlmodel import SQLModel
+from tortoise.models import Model
 
 from src.logger import logger
 
-T = TypeVar("T", bound=SQLModel)
+T = TypeVar("T", bound=Model)
 
 
 class BaseDAO(Generic[T]):
-    def __init__(self, session: AsyncSession, model: Type[T]):
-        self.session = session
+    def __init__(self, model: Type[T]):
         self.model = model
-
-    @property
-    def __prepare_select_statement(self):
-        statement = select(self.model).order_by(self.model.id.desc())
-        return statement
 
     @abstractmethod
     async def get_many(self, *args, **kwargs) -> Sequence[T]:
         try:
-            statement = self.__prepare_select_statement.where(*args).filter_by(**kwargs)
-            results = await self.session.execute(statement)
-            return results.scalars().all()
-        except SQLAlchemyError as e:
+            return await self.model.filter(*args, **kwargs).order_by("-id")
+        except Exception as e:
             await logger.aerror(
                 f"Error searching {self.model.__name__} with attributes {kwargs}: {e}"
             )
@@ -40,10 +29,8 @@ class BaseDAO(Generic[T]):
     @abstractmethod
     async def get_first(self, *args, **kwargs) -> Optional[T]:
         try:
-            statement = self.__prepare_select_statement.where(*args).filter_by(**kwargs)
-            result = await self.session.execute(statement)
-            return result.scalars().first()
-        except SQLAlchemyError as e:
+            return await self.model.filter(*args, **kwargs).first()
+        except Exception as e:
             await logger.aerror(
                 f"Error searching for one {self.model.__name__} with attributes {kwargs}: {e}"
             )
@@ -52,18 +39,14 @@ class BaseDAO(Generic[T]):
     @abstractmethod
     async def create(self, obj: T) -> Optional[T]:
         try:
-            self.session.add(obj)
-            await self.session.commit()
-            await self.session.refresh(obj)
+            await obj.save()
             return obj
-        except SQLAlchemyError as e:
+        except Exception as e:
             await logger.aerror(f"Error creating {self.model.__name__}: {e}")
-            await self.session.rollback()
             return None
 
     @abstractmethod
     async def get_or_create(self, **kwargs) -> tuple[T, bool]:
-
         instance = await self.get_first(**kwargs)
         if instance:
             return instance, False
@@ -79,27 +62,22 @@ class BaseDAO(Generic[T]):
     @abstractmethod
     async def update(self, obj: T) -> Optional[T]:
         try:
-            self.session.add(obj)
-            await self.session.commit()
-            await self.session.refresh(obj)
+            await obj.save()
             return obj
-        except SQLAlchemyError as e:
+        except Exception as e:
             await logger.aerror(f"Error updating {self.model.__name__}: {e}")
-            await self.session.rollback()
             return None
 
     @abstractmethod
     async def delete(self, id: int) -> bool:
         try:
-            obj = await self.session.get(self.model, id)
+            obj = await self.model.get_or_none(id=id)
             if obj:
-                await self.session.delete(obj)
-                await self.session.commit()
+                await obj.delete()
                 return True
             return False
-        except SQLAlchemyError as e:
+        except Exception as e:
             await logger.aerror(f"Error deleting {self.model.__name__}: {e}")
-            await self.session.rollback()
             return False
 
 

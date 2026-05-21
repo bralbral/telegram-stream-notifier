@@ -1,13 +1,4 @@
-# create volume claim for database
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: yt-notifier-pvc
-  namespace: yt-notifier-namespace
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 128Mi
-  storageClassName: local-path
+# NOTE: This file is deprecated as the application now uses PostgreSQL
+# which typically runs as a separate service or managed database.
+# If you need persistent storage for PostgreSQL, define it in your PostgreSQL deployment
+# (see 02_persistent_volume.yaml for an example StatefulSet configuration)

@@ -1,51 +1,24 @@
-from datetime import datetime
-from typing import Optional
-from typing import TYPE_CHECKING
+from __future__ import annotations
 
-from sqlalchemy import Column
-from sqlalchemy import DateTime
-from sqlmodel import Field
-from sqlmodel import Relationship
-from sqlmodel import SQLModel
+from tortoise import fields
+from tortoise.models import Model
 
 
-if TYPE_CHECKING:
-    from .channel_type import ChannelTypeModel
-    from .user import UserModel
-
-
-class ChannelModel(SQLModel, table=True):
-
-    __tablename__ = "channels"
-
-    id: Optional[int] = Field(default=None, primary_key=True)
-    created_at: Optional[datetime] = Field(
-        sa_column=Column(
-            DateTime,
-            default=datetime.utcnow,
-            nullable=False,
-        )
+class ChannelModel(Model):
+    id = fields.IntField(pk=True)
+    created_at = fields.DatetimeField(auto_now_add=True)
+    updated_at = fields.DatetimeField(auto_now=True)
+    url = fields.CharField(max_length=255, unique=True, index=True)
+    label = fields.CharField(max_length=255, index=True)
+    enabled = fields.BooleanField(index=True)
+    user: fields.ForeignKeyRelation["UserModel"] = fields.ForeignKeyField(  # noqa: F821
+        "models.UserModel", related_name="channels", null=True, on_delete=fields.CASCADE
     )
-    updated_at: Optional[datetime] = Field(
-        sa_column=Column(
-            DateTime,
-            default=datetime.utcnow,
-            onupdate=datetime.utcnow,
-        )
+    type: fields.ForeignKeyRelation["ChannelTypeModel"] = fields.ForeignKeyField(  # noqa: F821
+        "models.ChannelTypeModel", related_name="channels", on_delete=fields.CASCADE
     )
-    url: str = Field(max_length=255, nullable=False, index=True, unique=True)
-    label: str = Field(max_length=255, nullable=False, index=True)
-    enabled: bool = Field(nullable=False, index=True)
-    user_id: int | None = Field(default=None, foreign_key="users.id")
-    channel_type_id: int | None = Field(
-        default=None, foreign_key="channel_types.id", nullable=False
-    )
-
-    user: "UserModel" = Relationship(back_populates="channels")
-    type: "ChannelTypeModel" = Relationship(back_populates="channels")
 
     def to_html(self) -> str:
-
         user_attribute_list = [self.user.username, self.user.user_id]
         attribute = next(item for item in user_attribute_list if item is not None)
         user_link = f'<a href="{self.user.get_url_generated_by_id}">{attribute}</a>'
@@ -61,6 +34,9 @@ class ChannelModel(SQLModel, table=True):
             f"├──<b>added at</b>: {self.created_at}<br/>"
             f"└──<b>last modified at</b>: {self.updated_at}<br/>"
         )
+
+    class Meta:
+        table = "channels"
 
 
 __all__ = ["ChannelModel"]

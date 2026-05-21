@@ -1,18 +1,52 @@
 version: '3'
 
 services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: youtube-notifier-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: youtube_notifier
+      POSTGRES_PASSWORD: your_secure_password
+      POSTGRES_DB: youtube_notifier
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U youtube_notifier"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   yt-notifier:
     image: bral1488/telegram-youtube-notifier:main
     container_name: telegram-youtube-notifier
     restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
     volumes:
       - ./config.yaml:/app/config.yaml
       # youtube cookies optional
       # make sure that has same path at config
       - ./cookies.txt:/app/cookies.txt:touch
-      - ./youtube-notifier-bot.db:/app/youtube-notifier-bot.db
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    command: sh -c "sh alembic-upgrade.bash && python -m src"
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: youtube_notifier
+      DATABASE_PASSWORD: your_secure_password
+      DATABASE_NAME: youtube_notifier
+    command: sh -c "sh aerich-upgrade.bash && python -m src"
+    networks:
+      - notifier-network
+
+volumes:
+  postgres_data:
+
+networks:
+  notifier-network:
 
 

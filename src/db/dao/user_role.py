@@ -1,15 +1,13 @@
 from typing import Optional
 from typing import Sequence
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from .base import BaseDAO
 from src.db.models import UserRoleModel
 
 
 class UserRoleDAO(BaseDAO[UserRoleModel]):
-    def __init__(self, session: AsyncSession):
-        super().__init__(session, UserRoleModel)
+    def __init__(self):
+        super().__init__(UserRoleModel)
 
     async def get_first(self, *args, **kwargs) -> Optional[UserRoleModel]:
         return await super().get_first(*args, **kwargs)

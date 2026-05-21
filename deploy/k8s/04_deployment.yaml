@@ -18,7 +18,7 @@ spec:
       - name: yt-notifier
         image: bral1488/telegram-youtube-notifier:main
         imagePullPolicy: Always
-        command: ["sh", "-c", "python -m src"]
+        command: ["sh", "-c", "aerich upgrade && python -m src"]
         volumeMounts:
         - name: config-volume
           mountPath: /app/config.yaml
@@ -28,9 +28,6 @@ spec:
           mountPath: /app/cookies.txt
           subPath: cookies.txt
           readOnly: true
-        - name: db-volume
-          mountPath: /db/youtube-notifier-bot.db
-          subPath: youtube-notifier-bot.db
         resources:
           limits:
             memory: "256Mi"
@@ -38,15 +35,35 @@ spec:
         securityContext:
           runAsUser: 0
         env:
-          - name: SQLITE_DATABASE_FILE_PATH
-            value: "/db/youtube-notifier-bot.db"
+          - name: DATABASE_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: yt-notifier-config
+                key: database.host
+          - name: DATABASE_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: yt-notifier-config
+                key: database.port
+          - name: DATABASE_USER
+            valueFrom:
+              secretKeyRef:
+                name: yt-notifier-secrets
+                key: database.user
+          - name: DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: yt-notifier-secrets
+                key: database.password
+          - name: DATABASE_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: yt-notifier-config
+                key: database.name
       volumes:
       - name: config-volume
         configMap:
           name: yt-notifier-config
-      - name: db-volume
-        persistentVolumeClaim:
-          claimName: yt-notifier-pvc
       tolerations:
       - key: "node.kubernetes.io/disk-pressure"
         operator: "Exists"

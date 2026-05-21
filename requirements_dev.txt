@@ -1,9 +1,6 @@
 pre-commit==4.5.1
-black==26.3.1
-autoflake==2.3.1
-reorder-python-imports==3.16.0
-pyupgrade==3.20.0
+ruff==0.6.9
 pytest==9.0.3
 pytest-cov==7.1.0
-eralchemy==1.7.0
+aerich==0.7.2
 git+https://github.com/aio-libs/sort-all.git
