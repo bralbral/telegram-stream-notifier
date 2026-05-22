@@ -1,11 +1,11 @@
 from typing import Any
-from typing import Awaitable
-from typing import Callable
-from typing import Optional
+from collections.abc import Awaitable
+from collections.abc import Callable
 
 from aiocache import Cache
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
 from aiogram.types import Message
+from aiogram.types import TelegramObject
 
 from src.db import DataAccessLayer
 from src.db.models import UserModel
@@ -24,13 +24,16 @@ class RoleMiddleware(BaseMiddleware):
 
     async def __call__(
         self,
-        handler: Callable[[Message, dict[str, Any]], Awaitable[Any]],
-        event: Message,
+        handler: Callable[[TelegramObject, dict[str, Any]], Awaitable[Any]],
+        event: TelegramObject,
         data: dict[str, Any],
     ) -> Any:
-        user = event.from_user
+        message = event
+        if not isinstance(message, Message):
+            return await handler(event, data)
+        user = message.from_user
         dal: DataAccessLayer = data["dal"]
-        data["role"] = UserRole.UNKNOWN
+        data["role"] = UserRole.USER
 
         if user:
             verified = await self.cache.get(key=f"{self.prefix}_{user.id}")
@@ -40,12 +43,12 @@ class RoleMiddleware(BaseMiddleware):
             else:
                 user_id = user.id
 
-                _user: Optional[UserModel] = await dal.get_user_by_attr(
+                _user: UserModel | None = await dal.get_user_by_attr(
                     **{"user_id": user_id}
                 )
                 if _user:
-                    if _user.role.role == UserRole.SUPERUSER:
-                        data["role"] = UserRole.SUPERUSER
+                    if _user.role.role == UserRole.ADMIN:
+                        data["role"] = UserRole.ADMIN
                     else:
                         data["role"] = UserRole.USER
 

@@ -8,38 +8,36 @@ repos:
            - tortoise-orm==0.21.7
          args: [--python-version=3.12, --ignore-missing-imports, --install-types, --non-interactive]
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.6.9
-    hooks:
-      - id: ruff
-        args: [--fix, --exit-non-zero-on-fix]
-      - id: ruff-format
+   - repo: https://github.com/astral-sh/ruff-pre-commit
+     rev: v0.6.9
+     hooks:
+       - id: ruff
+         args: [--fix, --exit-non-zero-on-fix]
+       - id: ruff-format
 
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.17.0
-    hooks:
-      - id: pyupgrade
-        args: [--py312]
+   - repo: https://github.com/asottile/pyupgrade
+     rev: v3.17.0
+     hooks:
+       - id: pyupgrade
+         args: [--py312]
 
-  - repo: local
-    hooks:
-      # update version on constants.py
-      - id: version_updater
-        name: version_updater
-        entry: python3 ./src/version_updater.py
-        language: python
+   - repo: local
+     hooks:
+       - id: version_updater
+         name: version_updater
+         entry: python3 ./src/version_updater.py
+         language: python
 
-      # sort __all__ statements
-      - id: sort-all
-        name: Sort __all__ records
-        description: Automatically Sort __all__ records alphabetically.
-        entry: sort-all
-        language: python
-        types: [ python ]
+       - id: sort-all
+         name: Sort __all__ records
+         description: Automatically Sort __all__ records alphabetically.
+         entry: sort-all
+         language: python
+         types: [ python ]
 
-      - id: pytest-check
-        name: pytest-check
-        entry: pytest --cov=src tests/
-        language: system
-        pass_filenames: false
-        fail_fast: true
+       - id: pytest-check
+         name: pytest-check
+         entry: pytest --cov=src tests/
+         language: system
+         pass_filenames: false
+         fail_fast: true

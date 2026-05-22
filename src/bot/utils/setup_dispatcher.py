@@ -1,35 +1,14 @@
 from aiogram import Dispatcher
-from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.fsm.storage.memory import SimpleEventIsolation
-from aiogram_dialog import setup_dialogs
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from ...db import DataAccessLayer
-from ..dialogs import register_dialogs
-from ..handlers import register_handlers
-from ..middlewares import register_middlewares
+from src.db import DataAccessLayer
 
 
-def setup_dispatcher(
-    chat_id: int, dal: DataAccessLayer, scheduler: AsyncIOScheduler
-) -> Dispatcher:
-    """
-    :param scheduler:
-    :param dal:
-    :param chat_id:
-    :return:
-    """
-    dp: Dispatcher = Dispatcher(
-        storage=MemoryStorage(),
-        scheduler=scheduler,
-        chat_id=chat_id,
-        events_isolation=SimpleEventIsolation(),
-    )
+def setup_dispatcher(chat_id: int, dal: DataAccessLayer, scheduler) -> Dispatcher:
+    dp = Dispatcher()
 
-    register_middlewares(dp=dp, dal=dal)
-    register_handlers(dp=dp)
-    register_dialogs(dp=dp)
-    setup_dialogs(dp)
+    from .handlers import register_handlers
+
+    register_handlers(dp)
 
     return dp
 

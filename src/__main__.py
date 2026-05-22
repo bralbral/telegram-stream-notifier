@@ -16,6 +16,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 if platform.system() == "linux":
     import uvloop
+
     uvloop.install()
 
 
@@ -28,19 +29,19 @@ async def close_db():
     await Tortoise.close_connections()
 
 
-async def ensure_superuser(dal: DataAccessLayer, superuser_id: int) -> None:
-    """Ensure superuser exists, create if not"""
-    if not await dal.is_superusers_exists():
-        await logger.ainfo(f"Creating superuser with ID: {superuser_id}")
-        role = UserRoleModel(role=UserRole.SUPERUSER)
-        user = UserModel(user_id=superuser_id, role=role)
+async def ensure_admin(dal: DataAccessLayer, admin_id: int) -> None:
+    """Ensure admin exists, create if not"""
+    if not await dal.is_admins_exists():
+        await logger.ainfo(f"Creating admin with ID: {admin_id}")
+        role = UserRoleModel(role=UserRole.ADMIN)
+        user = UserModel(user_id=admin_id, role=role)
         result = await dal.create_user(obj=user)
         if isinstance(result, UserModel) and result.id is not None:
-            await logger.ainfo("Superuser created successfully")
+            await logger.ainfo("Admin created successfully")
         else:
-            await logger.aerror("Failed to create superuser")
+            await logger.aerror("Failed to create admin")
     else:
-        await logger.ainfo("Superuser already exists")
+        await logger.ainfo("Admin already exists")
 
 
 async def main() -> None:
@@ -49,18 +50,18 @@ async def main() -> None:
         config = load_config(config_path=CONFIG_FILE_PATH)
         dal = DataAccessLayer()
 
-        # Ensure superuser exists
-        await ensure_superuser(dal, config.superuser_id)
+        # Ensure admin exists
+        await ensure_admin(dal, config.admin_id)
 
-        users = await dal.get_users(superusers=False)
-        superusers = await dal.get_users(superusers=True)
+        users = await dal.get_users(admins=False)
+        admin_users = await dal.get_users(admins=True)
 
-        if not await dal.is_superusers_exists():
-            await logger.aerror("No superusers found in database")
+        if not await dal.is_admins_exists():
+            await logger.aerror("No admins found in database")
             return
 
         bot: Bot = await setup_bot(
-            config=config.bot, users_id=users, superusers_id=superusers
+            config=config.bot, users_id=users, admins_id=admin_users
         )
 
         await logger.ainfo("Setup scheduler")

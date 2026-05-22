@@ -1,12 +1,10 @@
-from typing import Optional
-
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings
 
 
 class Report(BaseSettings):
-    template: Optional[str]
-    empty: Optional[str]
+    template: str | None
+    empty: str | None
 
 
 class BotConfig(BaseSettings):
@@ -54,15 +52,17 @@ class Config(BaseSettings):
     """
     All in one config
     """
+
     bot: BotConfig
     chat_id: int
     temp_chat_id: int
     report: Report
     start_scheduler: bool
     interval_s: int
-    superuser_id: int  # ← добавить
-    database: Optional[DatabaseConfig] = None
-    twitch: Optional[TwitchCredentials] = None
-    youtube: Optional[YoutubeCredentials] = None
+    admin_id: int
+    database: DatabaseConfig | None = None
+    twitch: TwitchCredentials | None = None
+    youtube: YoutubeCredentials | None = None
+
 
 __all__ = ["BotConfig", "Config", "DatabaseConfig"]

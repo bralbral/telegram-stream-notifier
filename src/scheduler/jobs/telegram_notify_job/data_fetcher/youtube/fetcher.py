@@ -1,7 +1,6 @@
 import asyncio
 import operator
 from datetime import datetime
-from typing import Optional
 
 import yt_dlp
 
@@ -15,13 +14,13 @@ from src.scheduler.jobs.telegram_notify_job.dto import VideoInfo
 
 def fetch_live_stream(
     channel: ChannelModel, ydl: yt_dlp.YoutubeDL
-) -> Optional[VideoInfo] | ErrorVideoInfo:
+) -> VideoInfo | None | ErrorVideoInfo:
     """
     :param ydl:
     :param channel:
     :return:
     """
-    logger.info(channel.model_dump_json())
+    logger.info(f"Channel: {channel.url} {channel.label}")
 
     live_stream = None
 
@@ -57,6 +56,12 @@ def fetch_live_stream(
                     live_stream = VideoInfo(
                         url=url,
                         label=channel.label,
+                        channel={
+                            "id": channel.id,
+                            "url": channel.url,
+                            "label": channel.label,
+                            "enabled": channel.enabled,
+                        },
                         like_count=like_count,
                         concurrent_view_count=concurrent_view_count,
                         duration=duration,
@@ -65,7 +70,15 @@ def fetch_live_stream(
 
     except Exception as ex:
         logger.error(f"Fetching info error: {channel.url} {ex}")
-        return ErrorVideoInfo(channel=channel.model_dump(), ex_message=str(ex))
+        return ErrorVideoInfo(
+            channel={
+                "id": channel.id,
+                "url": channel.url,
+                "label": channel.label,
+                "enabled": channel.enabled,
+            },
+            ex_message=str(ex),
+        )
 
     return live_stream
 

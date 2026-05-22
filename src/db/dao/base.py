@@ -1,8 +1,6 @@
 from abc import abstractmethod
 from typing import Generic
-from typing import Optional
-from typing import Sequence
-from typing import Type
+from collections.abc import Sequence
 from typing import TypeVar
 
 from tortoise.models import Model
@@ -13,7 +11,7 @@ T = TypeVar("T", bound=Model)
 
 
 class BaseDAO(Generic[T]):
-    def __init__(self, model: Type[T]):
+    def __init__(self, model: type[T]):
         self.model = model
 
     @abstractmethod
@@ -27,7 +25,7 @@ class BaseDAO(Generic[T]):
             return []
 
     @abstractmethod
-    async def get_first(self, *args, **kwargs) -> Optional[T]:
+    async def get_first(self, *args, **kwargs) -> T | None:
         try:
             return await self.model.filter(*args, **kwargs).first()
         except Exception as e:
@@ -37,7 +35,7 @@ class BaseDAO(Generic[T]):
             return None
 
     @abstractmethod
-    async def create(self, obj: T) -> Optional[T]:
+    async def create(self, obj: T) -> T | None:
         try:
             await obj.save()
             return obj
@@ -60,7 +58,7 @@ class BaseDAO(Generic[T]):
         return obj, True
 
     @abstractmethod
-    async def update(self, obj: T) -> Optional[T]:
+    async def update(self, obj: T) -> T | None:
         try:
             await obj.save()
             return obj

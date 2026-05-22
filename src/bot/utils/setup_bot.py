@@ -3,17 +3,17 @@ from aiogram.types import BotCommandScopeChat
 from sulguk import AiogramSulgukMiddleware
 
 from ...constants import VERSION
-from ..commands import superuser_commands
+from ..commands import admin_commands
 from ..commands import user_commands
 from src.config import BotConfig
 
 
 async def setup_bot(
-    config: BotConfig, superusers_id: list[int], users_id: list[int]
+    config: BotConfig, admins_id: list[int], users_id: list[int]
 ) -> Bot:
     """
     :param users_id:
-    :param superusers_id:
+    :param admins_id:
     :param config:
     :return:
     """
@@ -31,9 +31,9 @@ async def setup_bot(
             user_commands(), scope=BotCommandScopeChat(chat_id=_id)
         )
 
-    for _id in superusers_id:
+    for _id in admins_id:
         await bot.set_my_commands(
-            user_commands() + superuser_commands(),
+            user_commands() + admin_commands(),
             scope=BotCommandScopeChat(chat_id=_id),
         )
         await bot.send_message(chat_id=_id, text=f"Starting bot, version: {VERSION}")

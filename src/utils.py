@@ -1,5 +1,4 @@
 import re
-from typing import Optional
 
 YOUTUBE_USERNAME_CHANNEL_LINK_PATTERN = re.compile(
     r"^https?://(?:www\.)?youtube\.com/@[\w.-]+/?$"
@@ -24,7 +23,7 @@ def twitch_channel_url_validator(link: str) -> bool:
     return bool(match)
 
 
-def extract_twitch_username(link: str) -> Optional[str]:
+def extract_twitch_username(link: str) -> str | None:
     match = re.match(TWITCH_USERNAME_CHANNEL_LINK_PATTERN, link)
     if match:
         return match.group(1)
@@ -36,7 +35,7 @@ def kick_channel_url_validator(link: str) -> bool:
     return bool(match)
 
 
-def extract_kick_username(link: str) -> Optional[str]:
+def extract_kick_username(link: str) -> str | None:
     match = re.match(KICK_USERNAME_CHANNEL_LINK_PATTERN, link)
     if match:
         return match.group(1)

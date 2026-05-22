@@ -1,6 +1,5 @@
 from aiogram import Router
 from aiogram.filters import Command
-from aiogram.fsm.state import State
 from aiogram.types import Message
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
@@ -12,8 +11,7 @@ scheduler_router = Router(name="scheduler")
 
 @scheduler_router.message(
     Command("scheduler_start"),
-    RoleFilter(role=[UserRole.SUPERUSER]),
-    State(state="*"),
+    RoleFilter(role=[UserRole.ADMIN]),
 )
 async def start_scheduler(message: Message, scheduler: AsyncIOScheduler, **kwargs):
     if scheduler.running:
@@ -26,8 +24,7 @@ async def start_scheduler(message: Message, scheduler: AsyncIOScheduler, **kwarg
 
 @scheduler_router.message(
     Command("scheduler_pause"),
-    RoleFilter(role=[UserRole.SUPERUSER]),
-    State(state="*"),
+    RoleFilter(role=[UserRole.ADMIN]),
 )
 async def stop_scheduler(message: Message, scheduler: AsyncIOScheduler, **kwargs):
     scheduler.pause()

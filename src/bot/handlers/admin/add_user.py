@@ -2,9 +2,6 @@ from aiogram import Bot
 from aiogram import F
 from aiogram import Router
 from aiogram.filters import Command
-from aiogram.filters import StateFilter
-from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import State
 from aiogram.types import BotCommandScopeChat
 from aiogram.types import Chat
 from aiogram.types import KeyboardButton
@@ -16,7 +13,6 @@ from aiogram.types import ReplyKeyboardRemove
 from ...commands import user_commands
 from ...filters import RoleFilter
 from ...filters import UserRole
-from ...states import UsersSG
 from src.db import DataAccessLayer
 from src.db.models import UserModel
 from src.db.models import UserRoleModel
@@ -27,12 +23,11 @@ add_user_router = Router(name="acl")
 
 @add_user_router.message(
     Command("add_user"),
-    RoleFilter(role=[UserRole.SUPERUSER]),
-    State(state="*"),
+    RoleFilter(role=[UserRole.ADMIN]),
 )
-async def add_user(message: Message, state: FSMContext, **kwargs):
+async def add_user(message: Message, **kwargs):
     await message.answer(
-        "See keyboard below. Select User for add.",
+        "Press button below to select user for adding.",
         reply_markup=ReplyKeyboardMarkup(
             keyboard=[
                 [
@@ -48,19 +43,19 @@ async def add_user(message: Message, state: FSMContext, **kwargs):
             one_time_keyboard=True,
         ),
     )
-    await state.set_state(UsersSG.promote)
 
 
 @add_user_router.message(
     F.user_shared,
-    RoleFilter(role=[UserRole.SUPERUSER]),
-    StateFilter(UsersSG.promote),
+    RoleFilter(role=[UserRole.ADMIN]),
 )
-async def handle_user(
-    message: Message, state: FSMContext, bot: Bot, dal: DataAccessLayer, **kwargs
-):
+async def handle_user(message: Message, bot: Bot, dal: DataAccessLayer, **kwargs):
+    user_shared = message.user_shared
+    if not user_shared:
+        await message.answer(text="❌ No user shared.")
+        return
     try:
-        user_id = message.user_shared.user_id
+        user_id = user_shared.user_id
         chat: Chat = await bot.get_chat(chat_id=user_id)
 
         user = UserModel(
@@ -76,16 +71,16 @@ async def handle_user(
             await bot.set_my_commands(
                 user_commands(), scope=BotCommandScopeChat(chat_id=user.user_id)
             )
-
-            await message.answer(text="Success. User added.")
+            await message.answer(
+                text="Success. User added.", reply_markup=ReplyKeyboardRemove()
+            )
         else:
             await message.answer(text="❌ Error during create. Try again.")
 
-    except (Exception,) as ex:
+    except Exception as ex:
         await logger.aerror(str(ex))
-        await message.reply(text="❌ UnknownError. Notify administrators. Thank you!")
+        await message.reply(text="❌ UnknownError. Notify administrators.")
     finally:
-        await state.clear()
         await message.answer(text="Finished", reply_markup=ReplyKeyboardRemove())
 
 

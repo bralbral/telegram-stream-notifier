@@ -1,6 +1,3 @@
-from typing import Optional
-
-
 class BaseDatabaseException(Exception):
     default_message = "This is a default message!"
 
@@ -19,7 +16,7 @@ class DatabaseDoesNotExist(BaseDatabaseException):
 
 
 class ColumnDoesNotExist(BaseDatabaseException):
-    def __init__(self, column: str, table: Optional[str] = None):
+    def __init__(self, column: str, table: str | None = None):
         if not table:
             table = ""
 

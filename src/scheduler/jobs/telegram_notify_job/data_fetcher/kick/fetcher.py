@@ -1,7 +1,6 @@
 import asyncio
 import operator
 from datetime import datetime
-from typing import Optional
 
 from aiohttp import ClientSession
 from dateutil.tz import tzutc
@@ -17,31 +16,28 @@ from src.utils import extract_kick_username
 
 async def async_fetch_livestream(
     channel: ChannelModel, session: ClientSession
-) -> Optional[VideoInfo] | ErrorVideoInfo:
+) -> VideoInfo | None | ErrorVideoInfo:
     """
     :param session:
     :param channel:
     :return:
     """
-    await logger.ainfo(channel.model_dump_json())
+    await logger.ainfo(f"Channel: {channel.url} {channel.label}")
 
     live_stream = None
     try:
-
         username = extract_kick_username(channel.url)
         if not username:
             raise Exception(f"Cannot extract username for {channel.url}")
 
         async with session.get(f"{KICK_API_URL}{username}") as resp:
-
             raw_data = await resp.json()
 
-            livestream: Optional[dict] = raw_data.get("livestream", None)
+            livestream: dict | None = raw_data.get("livestream", None)
             if livestream:
                 is_live = livestream.get("is_live", None)
 
                 if is_live:
-
                     concurrent_view_count = livestream["viewer_count"]
 
                     duration = make_time_readable(
@@ -56,13 +52,27 @@ async def async_fetch_livestream(
                     live_stream = VideoInfo(
                         url=channel.url,
                         label=channel.label,
+                        channel={
+                            "id": channel.id,
+                            "url": channel.url,
+                            "label": channel.label,
+                            "enabled": channel.enabled,
+                        },
                         concurrent_view_count=concurrent_view_count,
                         duration=duration,
                     )
 
     except Exception as ex:
         await logger.aerror(f"Fetching info error: {channel.url} {ex}")
-        return ErrorVideoInfo(channel=channel.model_dump(), ex_message=str(ex))
+        return ErrorVideoInfo(
+            channel={
+                "id": channel.id,
+                "url": channel.url,
+                "label": channel.label,
+                "enabled": channel.enabled,
+            },
+            ex_message=str(ex),
+        )
 
     return live_stream
 

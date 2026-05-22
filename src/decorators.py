@@ -3,8 +3,7 @@ import concurrent.futures
 from functools import partial
 from functools import wraps
 from typing import Any
-from typing import Callable
-from typing import Optional
+from collections.abc import Callable
 
 
 def wrap_sync_to_async(func: Callable) -> Callable:
@@ -16,8 +15,8 @@ def wrap_sync_to_async(func: Callable) -> Callable:
     @wraps(func)
     async def run(
         *args,
-        loop: Optional[asyncio.AbstractEventLoop] = None,
-        executor: Optional[concurrent.futures.Executor] = None,
+        loop: asyncio.AbstractEventLoop | None = None,
+        executor: concurrent.futures.Executor | None = None,
         **kwargs,
     ) -> Any:
         """

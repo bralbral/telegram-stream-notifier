@@ -1,5 +1,3 @@
-from typing import Optional
-
 from aiogram import Bot
 from aiogram.exceptions import TelegramBadRequest
 
@@ -8,7 +6,7 @@ from src.logger import logger
 
 async def check_if_need_send_instead_of_edit(
     bot: Bot,
-    message_id: Optional[int],
+    message_id: int | None,
     from_chat_id: int,
     to_chat_id: int,
     delta_messages: int = 3,

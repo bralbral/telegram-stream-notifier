@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import Any
-from typing import Optional
 from typing import TextIO
 
 import yt_dlp
@@ -12,6 +11,18 @@ from twitchAPI.twitch import Twitch
 from src.config import Config
 from src.db import DataAccessLayer
 from src.scheduler.jobs.telegram_notify_job import notify
+from src.db.models.channel_type import ChannelType
+
+
+def detect_platform(url: str) -> ChannelType | None:
+    url_lower = url.lower()
+    if "youtube.com" in url_lower or "youtu.be" in url_lower:
+        return ChannelType.YOUTUBE
+    elif "twitch.tv" in url_lower:
+        return ChannelType.TWITCH
+    elif "kick.com" in url_lower:
+        return ChannelType.KICK
+    return None
 
 
 def setup_scheduler(conf: Config, bot: Bot, dal: DataAccessLayer) -> AsyncIOScheduler:
@@ -24,7 +35,7 @@ def setup_scheduler(conf: Config, bot: Bot, dal: DataAccessLayer) -> AsyncIOSche
 
     scheduler = AsyncIOScheduler()
 
-    cookiefile: Optional[TextIO]
+    cookiefile: TextIO | None
 
     try:
         youtube = conf.youtube
@@ -77,4 +88,4 @@ def setup_scheduler(conf: Config, bot: Bot, dal: DataAccessLayer) -> AsyncIOSche
     return scheduler
 
 
-__all__ = ["setup_scheduler"]
+__all__ = ["detect_platform", "setup_scheduler"]

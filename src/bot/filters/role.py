@@ -1,5 +1,5 @@
 from typing import Any
-from typing import Collection
+from collections.abc import Collection
 
 from aiogram.filters.base import Filter
 from aiogram.types import Message

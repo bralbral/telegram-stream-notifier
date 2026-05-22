@@ -1,5 +1,3 @@
-from typing import Optional
-
 import yt_dlp
 from aiogram import Bot
 from aiogram.enums import ChatAction
@@ -25,10 +23,10 @@ async def notify(
     chat_id: int,
     temp_chat_id: int,
     ydl: yt_dlp.YoutubeDL,
-    empty_template: Optional[str],
+    empty_template: str | None,
     report_template: str,
     dal: DataAccessLayer,
-    twitch: Optional[Twitch] = None,
+    twitch: Twitch | None = None,
 ) -> None:
     """
     :param dal:
@@ -42,7 +40,7 @@ async def notify(
     :return:
     """
 
-    # get channels
+    # get channels with subscribers
     channels = await dal.get_channels(enabled=True)
 
     if channels:
@@ -56,19 +54,19 @@ async def notify(
             channel for channel in channels if channel.type.type == ChannelType.KICK
         ]
 
-        data: tuple[list[VideoInfo], list[ErrorVideoInfo]] = (
-            await async_youtube_fetch_livestreams(channels=youtube_channels, ydl=ydl)
-        )
+        data: tuple[
+            list[VideoInfo], list[ErrorVideoInfo]
+        ] = await async_youtube_fetch_livestreams(channels=youtube_channels, ydl=ydl)
 
         live_list, errors = data
 
         if twitch and twitch_channels:
             _twitch = await twitch
 
-            twitch_data: tuple[list[VideoInfo], list[ErrorVideoInfo]] = (
-                await async_twitch_fetch_livestreams(
-                    channels=twitch_channels, twitch=_twitch
-                )
+            twitch_data: tuple[
+                list[VideoInfo], list[ErrorVideoInfo]
+            ] = await async_twitch_fetch_livestreams(
+                channels=twitch_channels, twitch=_twitch
             )
 
             twitch_live_list, twitch_errors = twitch_data
@@ -76,9 +74,9 @@ async def notify(
             errors.extend(twitch_errors)
 
         if kick_channels:
-            kick_data: tuple[list[VideoInfo], list[ErrorVideoInfo]] = (
-                await async_kick_fetch_livestreams(channels=kick_channels)
-            )
+            kick_data: tuple[
+                list[VideoInfo], list[ErrorVideoInfo]
+            ] = await async_kick_fetch_livestreams(channels=kick_channels)
 
             kick_live_list, kick_errors = kick_data
             live_list.extend(kick_live_list)
@@ -90,31 +88,52 @@ async def notify(
 
         await logger.ainfo(f"Live list length {len(live_list)}")
 
-        message_text: Optional[str] = generate_jinja_report(
+        message_text: str | None = generate_jinja_report(
             data=live_list,
             report_template=report_template,
             empty_template=empty_template,
         )
 
         if message_text:
-            try:
-                async with ChatActionSender(
-                    bot=bot, chat_id=chat_id, action=ChatAction.TYPING
-                ):
-                    msg = await bot.send_message(
-                        text=message_text,
-                        chat_id=chat_id,
-                        parse_mode=SULGUK_PARSE_MODE,
-                        disable_web_page_preview=True,
-                    )
-                    await logger.ainfo(f"Msg: {msg.message_id} sent")
+            # Group live streams by channel and notify subscribers
+            channels_to_notify: dict[int, list[VideoInfo]] = {}
+            for video in live_list:
+                if video.channel:
+                    channel_id = video.channel.get("id")
+                    if channel_id:
+                        if channel_id not in channels_to_notify:
+                            channels_to_notify[channel_id] = []
+                        channels_to_notify[channel_id].append(video)
 
-            except TelegramNetworkError as ex:
-                await logger.aerror(f"Exc: TelegramNetworkError finish cycle: {ex}")
-                return
-
-            except TelegramBadRequest as ex:
-                await logger.aerror(f"Error sending message: {ex}")
+            for channel in channels:
+                channel_videos = channels_to_notify.get(channel.id, [])
+                if channel_videos:
+                    # Get all subscribers for this channel
+                    subscribers = await channel.subscribers.all()
+                    for subscriber in subscribers:
+                        try:
+                            async with ChatActionSender(
+                                bot=bot,
+                                chat_id=subscriber.user_id,
+                                action=ChatAction.TYPING,
+                            ):
+                                msg = await bot.send_message(
+                                    text=message_text,
+                                    chat_id=subscriber.user_id,
+                                    parse_mode=SULGUK_PARSE_MODE,
+                                    disable_web_page_preview=True,
+                                )
+                                await logger.ainfo(
+                                    f"Msg: {msg.message_id} sent to user {subscriber.user_id}"
+                                )
+                        except TelegramNetworkError as ex:
+                            await logger.aerror(
+                                f"Exc: TelegramNetworkError for user {subscriber.user_id}: {ex}"
+                            )
+                        except TelegramBadRequest as ex:
+                            await logger.aerror(
+                                f"Error sending message to user {subscriber.user_id}: {ex}"
+                            )
 
 
 __all__ = ["notify"]

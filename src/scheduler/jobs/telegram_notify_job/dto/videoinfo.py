@@ -1,5 +1,3 @@
-from typing import Optional
-
 from .base import DTO
 
 
@@ -11,9 +9,10 @@ class ErrorVideoInfo(DTO):
 class VideoInfo(DTO):
     url: str
     label: str
-    concurrent_view_count: Optional[int] = None
-    duration: Optional[str] = None
-    like_count: Optional[int] = None
+    channel: dict | None = None
+    concurrent_view_count: int | None = None
+    duration: str | None = None
+    like_count: int | None = None
 
 
 __all__ = ["ErrorVideoInfo", "VideoInfo"]

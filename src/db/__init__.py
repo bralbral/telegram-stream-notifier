@@ -12,8 +12,7 @@ _db_name = os.environ.get("DATABASE_NAME", "youtube_notifier")
 TORTOISE_ORM = {
     "connections": {
         "default": (
-            f"postgres://{_db_user}:{_db_password}@"
-            f"{_db_host}:{_db_port}/{_db_name}"
+            f"postgres://{_db_user}:{_db_password}@" f"{_db_host}:{_db_port}/{_db_name}"
         )
     },
     "apps": {
