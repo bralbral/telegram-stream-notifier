@@ -146,14 +146,12 @@ dmypy.json
 cython_debug/
 
 logs
-config.yaml
 certs
 *.session
 *.session-journal
 temp*
 key
 deploy/data/*
-.env
-docker-compose.yml
+docker-compose.override.yml
 cookies.txt
 youtube-notifier-bot.db
