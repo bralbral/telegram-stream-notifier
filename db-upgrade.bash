@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "🗄️  Starting database migrations..."
+echo "🗄️  Starting database setup..."
 
 # Wait for PostgreSQL to be ready
 MAX_RETRIES=30
@@ -34,6 +34,10 @@ if [ $DB_READY -eq 0 ]; then
   exit 1
 fi
 
+# Initialize database with aerich
+echo "🛠️  Running Aerich init-db..."
+aerich init-db
+
 echo "🛠️  Running Aerich migrations..."
 aerich upgrade
-echo "✅ Migrations applied"
+echo "✅ Database setup complete"
