@@ -10,7 +10,7 @@ pydantic_settings==2.14.2
 structlog==26.1.0
 orjson==3.11.9
 uvloop==0.22.1
-SQLAlchemy==2.0.48
+SQLAlchemy==2.0.51
 alembic==1.18.5
 aiosqlite==0.22.1
 asyncclick==8.4.2.1
