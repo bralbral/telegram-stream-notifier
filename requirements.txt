@@ -1,4 +1,4 @@
-aiogram==3.29.1
+aiogram==3.30.0
 aiogram-dialog==2.6.0
 APScheduler==3.11.3
 yt-dlp==2026.7.4
